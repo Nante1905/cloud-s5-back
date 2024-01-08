@@ -158,5 +158,26 @@ INSERT INTO utilisateur (nom, prenom, email, mot_de_passe, date_inscription, adr
 ('Andriamazaoro', 'Minohary Nantenaina', 'nantemino15@gmail.com', 'nantenaina', '2023-12-15 15:20:00', 'Ambatobe', 2 ),
 ('Rakotondriaka', 'Mialisoa Murielle', 'mialisoamurielle@gmail.com', 'mialisoa', '2024-01-05 15:20:00', 'Ambatobe', 2 );
 
+--boite de vitesse
+INSERT INTO boite_vitesse (nom) VALUES ('Boite de vitesses Audi S tronic');
+INSERT INTO boite_vitesse (nom) VALUES ('Boite de vitesses BMW M Steptronic');
+INSERT INTO boite_vitesse (nom) VALUES ('Boite de vitesses Mercedes AMG Speedshift');
 
+--energie
+insert into energie values
+(default, 'Gasoil'),
+(default, 'Essence SP 95'),
+(default, 'Electrique'),
+(default, 'Hybride');
 
+--couleur
+insert into couleur values
+(default, 'Noir', '#333');
+
+--voitures
+insert into voiture values 
+(default, 20, 2000, 1,1, 41,1, 4);
+
+--annonce
+insert into annonce values 
+(default, 'AN890', 'Telephone:+2613434556, Lieu: Tanjombato',1,now(),35000000,30,12, 1, 2);

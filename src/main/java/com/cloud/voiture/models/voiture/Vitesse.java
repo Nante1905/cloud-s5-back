@@ -6,8 +6,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name="boite_vitesse")
 public class Vitesse extends GenericModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

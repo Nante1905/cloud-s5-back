@@ -7,5 +7,5 @@ import com.cloud.voiture.models.voiture.Categorie;
 
 @Service
 public class CategorieService extends GenericService<Categorie> {
-
+    
 }
