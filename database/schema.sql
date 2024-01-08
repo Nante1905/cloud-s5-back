@@ -142,12 +142,11 @@ CREATE TABLE annonce(
    commission NUMERIC(15,2)   NOT NULL,
    nb_vue INTEGER,
    id_utilisateur INTEGER NOT NULL,
-   id_id_voiture INTEGER NOT NULL,
+   id_voiture INTEGER NOT NULL,
    PRIMARY KEY(id),
-   UNIQUE(id_id_voiture),
    UNIQUE(reference),
    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
-   FOREIGN KEY(id_id_voiture) REFERENCES voiture(id)
+   FOREIGN KEY(id_voiture) REFERENCES voiture(id)
 );
 
 CREATE TABLE historique_annonce(
