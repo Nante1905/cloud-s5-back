@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
 
 @Entity
 public class Utilisateur extends GenericModel {
@@ -14,6 +15,7 @@ public class Utilisateur extends GenericModel {
     int id;
 
     String email;
+    @Column(name="mot_de_passe")
     String password;
 
     public int getId() {
