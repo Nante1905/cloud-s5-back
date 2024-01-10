@@ -7,7 +7,7 @@ import com.cloud.voiture.crud.controller.GenericController;
 import com.cloud.voiture.models.voiture.Categorie;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("/categories")
 public class CategorieController extends GenericController<Categorie> {
-    
+
 }
