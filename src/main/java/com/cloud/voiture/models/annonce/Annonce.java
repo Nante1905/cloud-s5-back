@@ -49,9 +49,8 @@ public class Annonce extends GenericModel {
   Utilisateur utilisateur;
 
   @OneToOne
-  @JoinColumn(name = "id_voiture", referencedColumnName = "id")
+  @JoinColumn(name = "id_voiture", referencedColumnName = "id", insertable = false, updatable = false)
   Voiture voiture;
-
 
 
   public String getReference() {

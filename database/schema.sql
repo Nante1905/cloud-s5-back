@@ -132,6 +132,10 @@ CREATE TABLE voiture(
    FOREIGN KEY(id_energie) REFERENCES energie(id)
 );
 
+-- 0 : cree 
+-- 5: valide
+-- -5: refuse
+-- 10: vendu
 CREATE TABLE annonce(
    id SERIAL,
    reference VARCHAR(50)  NOT NULL,
