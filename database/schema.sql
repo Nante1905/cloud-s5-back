@@ -132,6 +132,10 @@ CREATE TABLE voiture(
    FOREIGN KEY(id_energie) REFERENCES energie(id)
 );
 
+-- 0 : cree 
+-- 5: valide
+-- -5: refuse
+-- 10: vendu
 CREATE TABLE annonce(
    id SERIAL,
    reference VARCHAR(50)  NOT NULL,
@@ -142,12 +146,11 @@ CREATE TABLE annonce(
    commission NUMERIC(15,2)   NOT NULL,
    nb_vue INTEGER,
    id_utilisateur INTEGER NOT NULL,
-   id_id_voiture INTEGER NOT NULL,
+   id_voiture INTEGER NOT NULL,
    PRIMARY KEY(id),
-   UNIQUE(id_id_voiture),
    UNIQUE(reference),
    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
-   FOREIGN KEY(id_id_voiture) REFERENCES voiture(id)
+   FOREIGN KEY(id_voiture) REFERENCES voiture(id)
 );
 
 CREATE TABLE historique_annonce(
