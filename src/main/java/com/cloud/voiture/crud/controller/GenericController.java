@@ -47,10 +47,10 @@ public class GenericController<T extends GenericModel> {
     }
   }
 
-  @GetMapping("/page")
+  @GetMapping
   public ResponseEntity<?> findAll(
-    @RequestParam int page,
-    @RequestParam int pageSize
+    @RequestParam(required =false, defaultValue = "0") int page,
+    @RequestParam(required = false, defaultValue = "0") int pageSize
   ) {
     try {
       if (page == 0 && pageSize == 0) {
