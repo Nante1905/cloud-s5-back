@@ -13,6 +13,8 @@ import com.cloud.voiture.services.voiture.VoitureService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+
+@Service
 public class AnnonceService extends GenericService<Annonce> {
 
   @PersistenceContext
@@ -35,7 +37,9 @@ public class AnnonceService extends GenericService<Annonce> {
   }
 
   public List<Annonce> findComplex(RechercheAnnonce rechercheAnnonce) {
-    return (List<Annonce>) entityManager.createNativeQuery("select * from annonce where id in ("+rechercheAnnonce.generateSql()+")", Annonce.class).getResultList();
+    return (List<Annonce>) entityManager
+        .createNativeQuery("select * from annonce where id in (" + rechercheAnnonce.generateSql() + ")", Annonce.class)
+        .getResultList();
   }
 
   @Override

@@ -14,7 +14,7 @@ public class UtilisateurService {
 
     public Utilisateur findByEmailAndPassword(String email, String password) throws Exception {
         return this.utilisateurRepository.findByEmailAndPassword(email, password)
-                .orElseThrow(() -> new Exception("Utilisateur not found"));
+                .orElseThrow(() -> new Exception("Invalid credentials"));
     }
 
     public Utilisateur findByEmail(String email) throws Exception {
