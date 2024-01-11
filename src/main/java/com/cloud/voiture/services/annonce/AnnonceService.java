@@ -8,10 +8,15 @@ import org.springframework.stereotype.Service;
 import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.models.annonce.Annonce;
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
+import com.cloud.voiture.search.RechercheAnnonce;
 import com.cloud.voiture.services.voiture.VoitureService;
 
-@Service
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 public class AnnonceService extends GenericService<Annonce> {
+
+  @PersistenceContext
+  private EntityManager entityManager;
 
   @Autowired
   private VoitureService voitureService;
@@ -27,6 +32,10 @@ public class AnnonceService extends GenericService<Annonce> {
   public Annonce save(Annonce model) {
     model.setVoiture(voitureService.save(model.getVoiture()));
     return super.save(model);
+  }
+
+  public List<Annonce> findComplex(RechercheAnnonce rechercheAnnonce) {
+    return (List<Annonce>) entityManager.createNativeQuery("select * from annonce where id in ("+rechercheAnnonce.generateSql()+")", Annonce.class).getResultList();
   }
 
   @Override
