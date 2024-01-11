@@ -1,6 +1,4 @@
-package com.cloud.voiture.models.voiture;
-
-import com.cloud.voiture.crud.model.GenericModel;
+package com.cloud.voiture.models.auth;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,22 +6,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class Marque extends GenericModel {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
-
     String nom;
-    String logo;
-
-    public Marque(int id, String nom, String logo) {
-        setNom(nom);
-        setLogo(logo);
-        setId(id);
-    }
-
-    public Marque() {
-    }
+    String reference;
 
     public int getId() {
         return id;
@@ -41,12 +29,12 @@ public class Marque extends GenericModel {
         this.nom = nom;
     }
 
-    public String getLogo() {
-        return logo;
+    public String getReference() {
+        return reference;
     }
 
-    public void setLogo(String logo) {
-        this.logo = logo;
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
 }

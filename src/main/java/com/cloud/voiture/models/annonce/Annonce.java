@@ -1,8 +1,11 @@
 package com.cloud.voiture.models.annonce;
 
+import java.sql.Date;
+
 import com.cloud.voiture.crud.model.GenericModel;
-import com.cloud.voiture.models.Utilisateur;
+import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.voiture.Voiture;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,7 +14,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
-import java.sql.Date;
 
 @Entity
 public class Annonce extends GenericModel {
@@ -51,7 +53,6 @@ public class Annonce extends GenericModel {
   @OneToOne
   @JoinColumn(name = "id_voiture", referencedColumnName = "id", insertable = false, updatable = false)
   Voiture voiture;
-
 
   public String getReference() {
     return reference;

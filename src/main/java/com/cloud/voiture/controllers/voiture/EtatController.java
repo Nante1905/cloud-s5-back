@@ -4,10 +4,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cloud.voiture.crud.controller.GenericController;
-import com.cloud.voiture.models.voiture.Categorie;
+import com.cloud.voiture.models.voiture.Etat;
 
 @RestController
-@RequestMapping("/categories")
-public class CategorieController extends GenericController<Categorie> {
+@RequestMapping("/etats")
+public class EtatController extends GenericController<Etat> {
 
 }
