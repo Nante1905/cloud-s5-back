@@ -26,7 +26,7 @@ public class RechercheAnnonce {
       prixMin != null ||
       prixMax != null
     ) {
-      sql = sql + " where";
+      sql = sql + " where ";
     }
     else{
         System.out.println(sql);
@@ -35,64 +35,64 @@ public class RechercheAnnonce {
     boolean firstCondition = true;
 
     if ( motCle != null && ! motCle.isEmpty()) {
-      appendCondition(
+      sql = appendCondition(
         sql,
-        "motCle LIKE '%" +  motCle + "%'",
+        "lower(description) LIKE lower('%" +  motCle + "%')",
         firstCondition
       );
       firstCondition = false;
     }
 
     if ( categorie != null) {
-      appendCondition(
+      sql = appendCondition(
         sql,
-        "categorie = " +  categorie.getId() ,
+        "id_categorie = " +  categorie.getId() ,
         firstCondition
       );
       firstCondition = false;
     }
 
     if ( marque != null) {
-      appendCondition(
+      sql = appendCondition(
         sql,
-        "marque = " +  marque.getId(),
+        "id_marque = " +  marque.getId(),
         firstCondition
       );
       firstCondition = false;
     }
 
     if ( modele != null) {
-      appendCondition(
+      sql = appendCondition(
         sql,
-        "modele = " +  modele.getId(),
+        "id_modele = " +  modele.getId(),
         firstCondition
       );
       firstCondition = false;
     }
 
     if ( anneeMiseCirculation != null) {
-      appendCondition(
+      sql = appendCondition(
         sql,
-        "anneeMiseCirculation = "+anneeMiseCirculation,
+        "annee_sortie = "+anneeMiseCirculation,
         firstCondition
       );
       firstCondition = false;
     }
 
     if ( prixMin != null) {
-      appendCondition(sql, "prix >= " +  prixMin, firstCondition);
+      sql = appendCondition(sql, "prix >= " +  prixMin, firstCondition);
       firstCondition = false;
     }
 
     if ( prixMax != null) {
-      appendCondition(sql, "prix <= " +  prixMax, firstCondition);
+      sql = appendCondition(sql, "prix <= " +  prixMax, firstCondition);
       firstCondition = false;
     }
     System.out.println(sql);
     return sql;
   }
 
-  public void appendCondition(
+  public String appendCondition(
     String sql,
     String condition,
     boolean firstCondition
@@ -101,6 +101,7 @@ public class RechercheAnnonce {
       sql += " AND ";
     }
     sql += condition;
+    return sql;
   }
 
   public String getMotCle() {
