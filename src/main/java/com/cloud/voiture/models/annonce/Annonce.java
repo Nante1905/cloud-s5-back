@@ -1,6 +1,7 @@
 package com.cloud.voiture.models.annonce;
 
 import com.cloud.voiture.crud.model.GenericModel;
+import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.Utilisateur;
 import com.cloud.voiture.models.voiture.Voiture;
 import jakarta.persistence.Column;
@@ -51,8 +52,6 @@ public class Annonce extends GenericModel {
   @OneToOne
   @JoinColumn(name = "id_voiture", referencedColumnName = "id")
   Voiture voiture;
-
-
 
   public String getReference() {
     return reference;
