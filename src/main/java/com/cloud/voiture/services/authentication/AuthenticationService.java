@@ -29,4 +29,13 @@ public class AuthenticationService {
             throw e;
         }
     }
+
+    public void register(Utilisateur utilisateur) throws Exception {
+        try {
+            this.utilisateurService.save(utilisateur);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }

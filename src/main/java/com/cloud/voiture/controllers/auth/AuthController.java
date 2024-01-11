@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.services.authentication.AuthenticationService;
 import com.cloud.voiture.types.auth.AuthModel;
 import com.cloud.voiture.types.response.Response;
@@ -24,6 +25,16 @@ public class AuthController {
             String token = this.authenticationService.login(body.getEmail(), body.getPassword());
 
             return ResponseEntity.ok(new Response(token, "Login successful"));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(new Response(e.getMessage()));
+        }
+    }
+
+    @PostMapping("register")
+    public ResponseEntity<?> register(@RequestBody Utilisateur newUser) throws Exception {
+        try {
+            this.authenticationService.register(newUser);
+            return ResponseEntity.ok(new Response("", "Register successful"));
         } catch (Exception e) {
             return ResponseEntity.status(401).body(new Response(e.getMessage()));
         }

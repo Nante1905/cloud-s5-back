@@ -3,11 +3,12 @@ package com.cloud.voiture.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.repositories.auth.UtilisateurRepository;
 
 @Service
-public class UtilisateurService {
+public class UtilisateurService extends GenericService<Utilisateur> {
 
     @Autowired
     private UtilisateurRepository utilisateurRepository;

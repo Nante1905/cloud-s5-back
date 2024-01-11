@@ -26,7 +26,10 @@ public class Utilisateur extends GenericModel {
     String email;
     @Column(name = "mot_de_passe")
     String password;
+
+    @Column(insertable = false)
     LocalDate dateInscription;
+
     String adresse;
 
     @Column(name = "id_role")
