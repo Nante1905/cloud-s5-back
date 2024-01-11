@@ -24,6 +24,13 @@ public class StatistiqueService {
     @Autowired
     private Constant constant;
 
+    public HashMap<String, Object> getBeneficeStatistique(StatRequest params, EntityManager entityManager) {
+        HashMap<String, Object> data = new HashMap<String, Object>();
+        data.put("benefice", this.getTotalBenefice(params.getMois(), params.getAnnee()));
+        data.put("beneficeMarque", this.findBeneficeParMarque(params, entityManager));
+        return data;
+    }
+
     public List<MarqueBenefice> findBeneficeParMarque(StatRequest params, EntityManager entityManager) {
         String req = "select id_marque, m.nom nom_marque, m.logo, montant from f_benefice_par_marque(:mois, :annee) f join marque m on f.id_marque = m.id order by montant desc, nom_marque asc limit :taille offset(:numero - 1)*:taille";
 

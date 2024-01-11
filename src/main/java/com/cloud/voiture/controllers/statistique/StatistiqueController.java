@@ -30,13 +30,7 @@ public class StatistiqueController {
     @PostMapping("/benefice")
     public ResponseEntity<?> getBeneficeStats(@RequestBody StatRequest params) {
         try {
-            HashMap<String, Object> data = new HashMap<>() {
-                {
-                    put("benefice", statService.getBeneficeParMois(params.getMois(), params.getAnnee()));
-                    put("beneficeMarque", statService.findBeneficeParMarque(params, entityManager));
-                };
-            };
-
+            HashMap<String, Object> data = statService.getBeneficeStatistique(params, entityManager);
             return ResponseEntity.ok(new Response(data, ""));
         } catch (Exception e) {
             e.printStackTrace();
