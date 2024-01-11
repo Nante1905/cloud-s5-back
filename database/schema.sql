@@ -189,3 +189,6 @@ CREATE TABLE annonce_vendu(
    FOREIGN KEY(id_acheteur) REFERENCES utilisateur(id),
    FOREIGN KEY(id_annonce) REFERENCES annonce(id)
 );
+
+-- 2024-11-01 11:01
+alter table utilisateur alter column date_inscription set default now();
