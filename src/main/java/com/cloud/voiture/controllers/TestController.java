@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cloud.voiture.services.authentication.AuthenticationService;
 import com.cloud.voiture.services.stats.StatistiqueService;
 import com.cloud.voiture.types.response.Response;
 
@@ -16,9 +17,13 @@ public class TestController {
     @Autowired
     private StatistiqueService statistiqueService;
 
+    @Autowired
+    private AuthenticationService authenticationService;
+
     @GetMapping("")
-    public ResponseEntity<?> test() {
-        return ResponseEntity.ok().body(new Response("test works", ""));
+    public ResponseEntity<?> test() throws Exception {
+        String token = this.authenticationService.login("nante@nante.com", "nante");
+        return ResponseEntity.ok().body(new Response(token, ""));
     }
 
     @GetMapping("/stat")
