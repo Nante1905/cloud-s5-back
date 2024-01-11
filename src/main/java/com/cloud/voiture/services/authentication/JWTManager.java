@@ -11,7 +11,7 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import com.cloud.voiture.models.Utilisateur;
+import com.cloud.voiture.models.auth.Utilisateur;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -23,17 +23,18 @@ public class JWTManager {
     private static final Key key = new SecretKeySpec(Base64.getDecoder().decode(secret),
             SignatureAlgorithm.HS256.getJcaName());
 
-    public String generateToken(Utilisateur utilisateur, Collection<? extends GrantedAuthority> authorities) {
+    public String generateToken(Utilisateur user,
+            Collection<? extends GrantedAuthority> authorities) {
         Date currentDate = new Date();
         String auths = authorities.stream().map(a -> a.getAuthority()).toList().toString();
         auths = auths.substring(1, auths.length() - 1);
 
         String token = Jwts.builder()
-                .setSubject(utilisateur.getEmail())
+                .setSubject(user.getEmail())
                 .setIssuedAt(currentDate)
                 .setExpiration(new Date(currentDate.getTime() + dayToMs(1)))
-                .claim("email", utilisateur.getEmail())
-                .claim("id", utilisateur.getId())
+                .claim("email", user.getEmail())
+                .claim("id", user.getId())
                 .claim("authorization", auths)
                 .signWith(key)
                 .compact();
