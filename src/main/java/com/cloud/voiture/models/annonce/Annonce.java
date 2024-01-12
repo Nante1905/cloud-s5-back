@@ -3,6 +3,8 @@ package com.cloud.voiture.models.annonce;
 import java.sql.Date;
 
 import com.cloud.voiture.crud.model.GenericModel;
+import com.cloud.voiture.exceptions.ValidationException;
+
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.voiture.Voiture;
 
