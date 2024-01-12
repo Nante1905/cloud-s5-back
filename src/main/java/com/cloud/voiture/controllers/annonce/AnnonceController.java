@@ -49,7 +49,7 @@ public class AnnonceController extends GenericController<Annonce> {
   public ResponseEntity<Response> refuserAnnonce(@PathVariable(name = "id") int id) {
     try {
       annonceService.refuser(id);
-      return ResponseEntity.ok().body(new Response(null, "Annoncevalidée"));
+      return ResponseEntity.ok().body(new Response(null, "Annonce refusée"));
     } catch (NotFoundException e) {
       e.printStackTrace();
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response(e.getMessage()));
