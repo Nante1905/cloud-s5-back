@@ -19,7 +19,6 @@ where extract(month from date_vente) = 1 and extract(year from date_vente) = 201
 
 -- vente par mois
 create view v_mois as select generate_series(1,12) mois;
-
 create view v_vente as select a.*, av.date_vente 
 from annonce_vendu av 
 join annonce a on av.id_annonce = a.id;
@@ -34,36 +33,42 @@ on m.mois = extract(month from v.date_vente)
 group by m.mois
 order by m.mois;
 
-create view v_modele as (
-    select 
-    modele.id as id_modele, categorie.id as id_categorie, marque.id as id_marque , annee_sortie
-    from modele
-    join categorie
-        on categorie.id = modele.id_categorie
-    join marque 
-        on marque.id = modele.id_marque
+
+
+
+
+
+
+
+
+
+
+create or replace view v_top_seller as
+(select 
+utilisateur.id, utilisateur.nom, coalesce(count(v_annonce_valide.id),0) as valide, coalesce(count(v_annonce_vendu.id),0) as vendu, coalesce(sum(v_annonce_valide.commission),0) as commission,
+case when 
+count(v_annonce_valide.id) = 0 then 0
+else 
+    (count(v_annonce_vendu.id)/count(v_annonce_valide.id))*100
+end as pourcentage 
+from 
+utilisateur
+left join v_annonce_valide
+    on v_annonce_valide.id_utilisateur = utilisateur.id
+    and TO_CHAR(v_annonce_valide.date_maj, 'YYYYMM') <= '202402'
+left join v_annonce_vendu
+    on v_annonce_vendu.id_utilisateur = utilisateur.id
+    and TO_CHAR(v_annonce_vendu.date_maj, 'YYYYMM') <= '202402'
+group by utilisateur.id, utilisateur.nom 
+order by valide limit 1
 );
 
-create or replace view v_annonce_non_valide as
-(
-    select 
-    *
-    from annonce 
-    where status = 0
-);
+insert into historique_annonce values 
+(default, '2024-01-01', 5,1),
+(default, '2023-12-22', 5,2),
+(default, '2023-12-23', 5,10),
+(default, '2023-12-15', 5,12),
+(default, '2023-12-14', 5,13);
 
-create view v_voiture as (
-    select 
-    voiture.id as id_voiture, modele.id_modele,  id_categorie, id_marque, annee_sortie
-    from voiture    
-    join v_modele as modele 
-    on modele.id_modele = voiture.id_modele
-);
-
-create or replace view v_annonce as (
-    select 
-    id as id_annonce, id_modele,id_categorie, id_marque, description, prix, annee_sortie
-    from annonce
-    join v_voiture as voiture
-        on voiture.id_voiture = annonce.id_voiture 
-);
+insert into historique_annonce values 
+(default, '2024-01-01', 10,1);
