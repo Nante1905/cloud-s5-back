@@ -7,6 +7,17 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import com.cloud.voiture.crud.controller.GenericController;
+import com.cloud.voiture.models.annonce.Annonce;
+import com.cloud.voiture.search.RechercheAnnonce;
+import com.cloud.voiture.services.annonce.AnnonceService;
+import com.cloud.voiture.types.response.Response;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,4 +72,23 @@ public class AnnonceController extends GenericController<Annonce> {
                     .body(new Response("Une erreur s'est produite"));
         }
     }
+
+  @GetMapping("/nonValide")
+  public ResponseEntity<Response> findNonValide() {
+    try {
+      List<Annonce> results = annonceService.getAllNonValide();
+      return ResponseEntity.ok(new Response(results, ""));
+    } catch (Exception e) {
+      return ResponseEntity.status(500).body(new Response(e.getMessage()));
+    }
+  }
+  @PostMapping("/find")
+  public ResponseEntity<Response> findComplex(@RequestBody RechercheAnnonce rechercheAnnonce) {
+    try {
+      List<Annonce> results = annonceService.findComplex(rechercheAnnonce);
+      return ResponseEntity.ok(new Response(results, ""));
+    } catch (Exception e) {
+      return ResponseEntity.status(500).body(new Response(e.getMessage()));
+    }
+  }
 }

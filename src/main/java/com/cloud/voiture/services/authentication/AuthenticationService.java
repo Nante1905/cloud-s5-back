@@ -1,11 +1,9 @@
 package com.cloud.voiture.services.authentication;
 
-import java.util.ArrayList;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.cloud.voiture.models.Utilisateur;
+import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.services.UtilisateurService;
 
 @Service
@@ -21,10 +19,20 @@ public class AuthenticationService {
     private JWTManager jwtManager;
 
     public String login(String email, String password) throws Exception {
+
         try {
             Utilisateur user = utilisateurService.findByEmailAndPassword(email, password);
             // TODO : change new array list to fun getAuthorities
-            return jwtManager.generateToken(user, new ArrayList<>());
+            return jwtManager.generateToken(user, this.customUserDetailsService.getAuthorities(user));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public void register(Utilisateur utilisateur) throws Exception {
+        try {
+            this.utilisateurService.save(utilisateur);
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

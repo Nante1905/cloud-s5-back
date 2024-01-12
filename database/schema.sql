@@ -132,6 +132,10 @@ CREATE TABLE voiture(
    FOREIGN KEY(id_energie) REFERENCES energie(id)
 );
 
+-- 0 : cree 
+-- 5: valide
+-- -5: refuse
+-- 10: vendu
 CREATE TABLE annonce(
    id SERIAL,
    reference VARCHAR(50)  NOT NULL,
@@ -185,3 +189,6 @@ CREATE TABLE annonce_vendu(
    FOREIGN KEY(id_acheteur) REFERENCES utilisateur(id),
    FOREIGN KEY(id_annonce) REFERENCES annonce(id)
 );
+
+-- 2024-11-01 11:01
+alter table utilisateur alter column date_inscription set default now();
