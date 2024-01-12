@@ -172,10 +172,10 @@ CREATE TABLE utilisateur_notif_token(
 );
 
 CREATE TABLE annonce_favori(
+   id SERIAL PRIMARY key,
    id_utilisateur INTEGER,
    id_annonce INTEGER,
    date_ajout TIMESTAMP NOT NULL,
-   PRIMARY KEY(id_utilisateur, id_annonce),
    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
    FOREIGN KEY(id_annonce) REFERENCES annonce(id)
 );
