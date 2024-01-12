@@ -1,5 +1,6 @@
 package com.cloud.voiture.repositories.voiture;
 
+import com.cloud.voiture.models.statistique.StatInscription;
 import com.cloud.voiture.models.statistique.StatTopSeller;
 import com.cloud.voiture.models.voiture.Couleur;
 import java.util.List;
@@ -51,29 +52,4 @@ public interface StatistiqueRepo extends JpaRepository<Couleur, Integer> {
   )
   public double getTotalBenefice(int mois, int annee);
 
-  @Query(
-    value = "select \r\n" + //
-        "utilisateur.id, utilisateur.nom, coalesce(count(v_annonce_valide.id),0) as valide, coalesce(count(v_annonce_vendu.id),0) as vendu, coalesce(sum(v_annonce_valide.commission),0) as commission,\r\n" + //
-        "case when \r\n" + //
-        "count(v_annonce_valide.id) = 0 then 0\r\n" + //
-        "else \r\n" + //
-        "    (count(v_annonce_vendu.id)/count(v_annonce_valide.id))*100\r\n" + //
-        "end as pourcentage \r\n" + //
-        "from \r\n" + //
-        "utilisateur\r\n" + //
-        "left join v_annonce_valide\r\n" + //
-        "    on v_annonce_valide.id_utilisateur = utilisateur.id\r\n" + //
-        "    and TO_CHAR(v_annonce_valide.date_maj, 'YYYYMM') <= :dateMax\r\n" + //
-        "left join v_annonce_vendu\r\n" + //
-        "    on v_annonce_vendu.id_utilisateur = utilisateur.id\r\n" + //
-        "    and TO_CHAR(v_annonce_vendu.date_maj, 'YYYYMM') <= :dateMax\r\n" + //
-        "group by utilisateur.id, utilisateur.nom \r\n" + //
-        "order by valide limit :limitation\r\n" + //
-        ";",
-    nativeQuery = true
-  )
-  public List<StatTopSeller> getTopSeller(
-    @Param("dateMax") String yyyymm,
-    @Param("limitation") int limit
-  );
 }

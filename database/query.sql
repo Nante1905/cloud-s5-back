@@ -33,36 +33,6 @@ on m.mois = extract(month from v.date_vente)
 group by m.mois
 order by m.mois;
 
-
-
-
-
-
-
-
-
-
-
-create or replace view v_top_seller as
-(select 
-utilisateur.id, utilisateur.nom, coalesce(count(v_annonce_valide.id),0) as valide, coalesce(count(v_annonce_vendu.id),0) as vendu, coalesce(sum(v_annonce_valide.commission),0) as commission,
-case when 
-count(v_annonce_valide.id) = 0 then 0
-else 
-    (count(v_annonce_vendu.id)/count(v_annonce_valide.id))*100
-end as pourcentage 
-from 
-utilisateur
-left join v_annonce_valide
-    on v_annonce_valide.id_utilisateur = utilisateur.id
-    and TO_CHAR(v_annonce_valide.date_maj, 'YYYYMM') <= '202402'
-left join v_annonce_vendu
-    on v_annonce_vendu.id_utilisateur = utilisateur.id
-    and TO_CHAR(v_annonce_vendu.date_maj, 'YYYYMM') <= '202402'
-group by utilisateur.id, utilisateur.nom 
-order by valide limit 1
-);
-
 insert into historique_annonce values 
 (default, '2024-01-01', 5,1),
 (default, '2023-12-22', 5,2),
@@ -72,3 +42,5 @@ insert into historique_annonce values
 
 insert into historique_annonce values 
 (default, '2024-01-01', 10,1);
+
+

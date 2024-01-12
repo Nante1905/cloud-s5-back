@@ -1,6 +1,7 @@
 package com.cloud.voiture.controllers.statistique;
 
 import com.cloud.voiture.models.statistique.MarqueBenefice;
+import com.cloud.voiture.models.statistique.StatInscription;
 import com.cloud.voiture.models.statistique.StatRequest;
 import com.cloud.voiture.models.statistique.StatTopSeller;
 import com.cloud.voiture.models.statistique.StatTopSellerRequest;
@@ -33,6 +34,22 @@ public class StatistiqueController {
   ) {
     try {
       List<StatTopSeller> stat = statService.getTopSellers(params);
+      return ResponseEntity.ok(new Response(stat, ""));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity
+        .status(500)
+        .body(new Response("Oups, une erreur s'est produite."));
+    }
+  }
+
+  @PostMapping("/inscriptions")
+  public ResponseEntity<?> getInscriptionsParMois(
+    @RequestBody StatRequest request
+  ) {
+    try {
+      List<StatInscription> stat = statService.getInscriptionsParMois(request);
+      
       return ResponseEntity.ok(new Response(stat, ""));
     } catch (Exception e) {
       e.printStackTrace();

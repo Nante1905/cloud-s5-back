@@ -3,6 +3,7 @@ package com.cloud.voiture.services.stats;
 import com.cloud.voiture.config.Constant;
 import com.cloud.voiture.models.customPagination.CustomPagination;
 import com.cloud.voiture.models.statistique.MarqueBenefice;
+import com.cloud.voiture.models.statistique.StatInscription;
 import com.cloud.voiture.models.statistique.StatRequest;
 import com.cloud.voiture.models.statistique.StatTopSeller;
 import com.cloud.voiture.models.statistique.StatTopSellerRequest;
@@ -34,8 +35,17 @@ public class StatistiqueService {
   @PersistenceContext
   private EntityManager entityManager;
 
-  public List<StatTopSeller> getTopSellers(StatTopSellerRequest request) {
+  public List<StatInscription> getInscriptionsParMois(StatRequest request) {
+    return entityManager
+      .createNativeQuery(
+        "select * from inscription_par_mois(:annee)",
+        StatInscription.class
+      )
+      .setParameter("annee", request.getAnnee())
+      .getResultList();
+  }
 
+  public List<StatTopSeller> getTopSellers(StatTopSellerRequest request) {
     return entityManager
       .createNativeQuery(
         "select  * from topSellers(:dateMax, :limitation)",
