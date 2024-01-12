@@ -12,7 +12,6 @@ import com.cloud.voiture.models.customPagination.CustomPagination;
 import com.cloud.voiture.models.statistique.MarqueBenefice;
 import com.cloud.voiture.models.statistique.StatRequest;
 import com.cloud.voiture.repositories.voiture.StatistiqueRepo;
-import com.cloud.voiture.services.voiture.MarqueService;
 
 import jakarta.persistence.EntityManager;
 

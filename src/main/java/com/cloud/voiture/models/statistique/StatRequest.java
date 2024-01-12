@@ -1,7 +1,5 @@
 package com.cloud.voiture.models.statistique;
 
-import org.springframework.beans.factory.annotation.Value;
-
 import com.cloud.voiture.models.customPagination.CustomPagination;
 
 public class StatRequest {
