@@ -71,7 +71,7 @@ public class AnnonceService extends GenericService<Annonce> {
       if (a.getStatus() == params.getAnnonceValide()) {
         throw new ValidationException("Impossible de modifier le status de cette annonce. Elle est déjà validée");
       }
-      if (a.getStatus() == -params.getAnnonceRefuse()) {
+      if (a.getStatus() == params.getAnnonceRefuse()) {
         throw new ValidationException("Impossible de modifier le status de cette annonce. Elle est déjà refusée");
       }
       if (a.getStatus() == params.getAnnonceVendu()) {
