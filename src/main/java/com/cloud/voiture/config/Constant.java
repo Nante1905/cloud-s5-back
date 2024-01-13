@@ -15,6 +15,9 @@ public class Constant {
     private int annonceRefuse;
     @Value("${app.annonceStatus.vendu}")
     private int annonceVendu;
+    @Value("${app.estimation.etat.marge}")
+    private int margeEtat;
+    
 
     public int getDefaultPageSize() {
         return defaultPageSize;
@@ -54,6 +57,14 @@ public class Constant {
 
     public void setAnnonceVendu(int annonceVendu) {
         this.annonceVendu = annonceVendu;
+    }
+
+    public int getMargeEtat() {
+        return margeEtat;
+    }
+
+    public void setMargeEtat(int margeEtat) {
+        this.margeEtat = margeEtat;
     }
 
 }
