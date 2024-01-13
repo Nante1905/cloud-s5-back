@@ -87,7 +87,7 @@ public class GenericController<T extends GenericModel> {
     public ResponseEntity<?> findAll(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "0") int pageSize) {
-
+        System.out.println("Page " + page + " taille " + pageSize + "=============");
         try {
             if (page == 0 && pageSize == 0) {
                 List<T> results = service.findAll();

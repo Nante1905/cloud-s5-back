@@ -7,6 +7,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -21,8 +23,8 @@ public class Etat extends GenericModel {
     @NotNull
     String nom;
 
-    @NotBlank
-    @NotNull
+    @Min(value = 0)
+    @Digits(fraction = 0, integer = 2, message = "La valeur doit être un entier entre 1 et 10")
     int valeur;
 
     public int getId() {

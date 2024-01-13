@@ -191,3 +191,7 @@ CREATE TABLE annonce_vendu(
 
 -- 2024-11-01 11:01
 alter table utilisateur alter column date_inscription set default now();
+
+-- 2024-01-13 18:44
+alter table annonce alter column date_creation set default now();
+alter table etat alter column nom drop default;
