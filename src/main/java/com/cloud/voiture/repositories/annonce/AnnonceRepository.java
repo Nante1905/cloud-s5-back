@@ -19,4 +19,8 @@ public interface AnnonceRepository extends GenericRepository<Annonce> {
 
   @Query(value = "select * from annonce where id in (:sql) ", nativeQuery = true)
   List<Annonce> findComplex(@Param("sql") String sql);
+
+  @Modifying
+  @Query(value = "update annonce set nb_vue = nb_vue+1 where id = :id", nativeQuery = true)
+  int addView(@Param("id")int id);
 }

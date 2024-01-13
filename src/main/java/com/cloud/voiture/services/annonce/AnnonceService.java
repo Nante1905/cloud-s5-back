@@ -37,6 +37,11 @@ public class AnnonceService extends GenericService<Annonce> {
   @Autowired
   private AnnonceRepository annonceRepository;
 
+  @Transactional
+  public Annonce getByIdAndView(int id){
+    annonceRepository.addView(id);
+    return annonceRepository.findById(id).get();
+  }
   @Transactional(rollbackOn = Exception.class)
   public void valider(int idAnnonce) throws NotFoundException, ValidationException {
     Annonce a = this.find(idAnnonce);
