@@ -26,7 +26,7 @@ public class AnnonceController extends GenericController<Annonce> {
   @Autowired
   AnnonceService annonceService;
 
-  @GetMapping("/{id}")
+  @GetMapping("/{id}/view")
   public ResponseEntity<Response> getByIdThenView(
     @PathVariable(name = "id") int id
   ) {
