@@ -7,6 +7,8 @@ import com.cloud.voiture.models.voiture.Etat;
 import com.cloud.voiture.services.utilities.Utilities;
 import com.cloud.voiture.types.response.Response;
 
+import jakarta.validation.Valid;
+
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +52,7 @@ public class GenericController<T extends GenericModel> {
     }
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody T model) {
+    public ResponseEntity<?> save(@Valid @RequestBody T model) {
         try {
             T results = service.save(model);
             return ResponseEntity.ok(new Response(results, "Inséré avec succes"));
@@ -60,17 +62,19 @@ public class GenericController<T extends GenericModel> {
             if (e.getCause() instanceof ConstraintViolationException) {
                 ConstraintViolationException sqlException = (ConstraintViolationException) e.getCause();
                 String sqlState = sqlException.getSQLState();
-                if ("23505".equals(sqlState)) {
-                    String columnName = Utilities.extractColumnName(
-                            type,
-                            sqlException.getMessage());
+                String columnName = Utilities.extractColumnName(
+                        type,
+                        sqlException.getMessage());
 
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                            .body(new Response(
-                                    "Contrainte : " + columnName + " doit être unique. "));
-                }
+                System.out.println("================== " + sqlException.getMessage());
+
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new Response(
+                                SqlErrorMessage.getMessage(sqlState, columnName,
+                                        type.getSimpleName())));
+
             }
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new Response("Contrainte de donnée violée"));
 
         } catch (Exception e) {
@@ -98,7 +102,7 @@ public class GenericController<T extends GenericModel> {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> save(
-            @RequestBody T model,
+            @RequestBody @Valid T model,
             @PathVariable(name = "id") int id) {
 
         try {
@@ -111,15 +115,17 @@ public class GenericController<T extends GenericModel> {
             if (e.getCause() instanceof ConstraintViolationException) {
                 ConstraintViolationException sqlException = (ConstraintViolationException) e.getCause();
                 String sqlState = sqlException.getSQLState();
-                if ("23505".equals(sqlState)) {
-
-                    String columnName = Utilities.extractColumnName(type, sqlException.getMessage());
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                            .body(new Response(
-                                    "Contrainte : " + columnName + " doit être unique. "));
-                }
+                String columnName = Utilities.extractColumnName(
+                        type,
+                        sqlException.getMessage());
+                System.out.println(sqlException.getMessage());
+                System.out.println(columnName + "==================");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new Response(
+                                SqlErrorMessage.getMessage(sqlState, columnName,
+                                        type.getSimpleName())));
             }
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new Response("Contrainte de donnée violée"));
 
         } catch (Exception e) {

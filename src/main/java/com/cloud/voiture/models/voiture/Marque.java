@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Marque extends GenericModel {
@@ -13,7 +15,12 @@ public class Marque extends GenericModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
+    @NotBlank
+    @NotNull
     String nom;
+
+    @NotBlank
+    @NotNull
     String logo;
 
     public Marque(int id, String nom, String logo) {
