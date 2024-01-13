@@ -22,11 +22,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 public class ValidationExceptionHandler {
     private static HashMap<String, String> ERROR_MESSAGE = new HashMap<String, String>() {
         {
-            put("NotBlank", "ne doit pas être vide.");
-            put("NotNull", "est obligatoire.");
-            put("Min", " doit être strictement supérieure à %value%");
-            put("Max", " ne doit pas dépasser %value%");
-            put("UniqueElements", " doit être unique.");
+            put("NotBlank", "%field% ne doit pas être vide.");
+            put("NotNull", "%field% est obligatoire.");
+            put("Min", "%field% doit être strictement supérieure à %value%");
+            put("Max", "%field% ne doit pas dépasser %value%");
+            put("UniqueElements", "%field% doit être unique.");
 
         };
     };
@@ -37,15 +37,17 @@ public class ValidationExceptionHandler {
         String errorMessage = "";
         List<FieldError> errors = exception.getBindingResult().getFieldErrors();
         for (FieldError fieldError : errors) {
+            System.out.println(fieldError.getDefaultMessage());
             if (fieldError.getDefaultMessage() != null) {
-                errorMessage += fieldError.getDefaultMessage() + " ";
+                errorMessage += fieldError.getDefaultMessage().replaceAll("%field%", fieldError.getField()) + ".";
             } else {
+                System.out.println("else  =======================");
+                System.out.println(fieldError.getField() + "============");
                 errorMessage += Utilities.capitalize(fieldError.getField())
                         + " " + ERROR_MESSAGE.get(fieldError.getCodes()[fieldError.getCodes().length - 1])
                                 .replaceAll("%value%", fieldError.getRejectedValue().toString());
             }
         }
-
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response(errorMessage));
     }
 

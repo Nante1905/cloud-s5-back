@@ -14,6 +14,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Utilisateur extends GenericModel {
@@ -21,15 +24,29 @@ public class Utilisateur extends GenericModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
+    @NotNull
+    @NotBlank
     String nom;
+
+    @NotNull
+    @NotBlank
     String prenom;
+
+    @NotNull
+    @NotBlank
+    @Email
     String email;
+
+    @NotNull
+    @NotBlank
     @Column(name = "mot_de_passe")
     String password;
 
     @Column(insertable = false)
     LocalDate dateInscription;
 
+    @NotNull
+    @NotBlank
     String adresse;
 
     @Column(name = "id_role")

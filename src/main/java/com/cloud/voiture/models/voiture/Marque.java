@@ -19,7 +19,7 @@ public class Marque extends GenericModel {
     @NotNull
     String nom;
 
-    @NotBlank
+    @NotBlank(message = "Le logo ne doit pas être vide.")
     @NotNull
     String logo;
 
