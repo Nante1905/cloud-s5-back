@@ -1,11 +1,9 @@
 package com.cloud.voiture.models.annonce;
 
-import java.sql.Date;
-
+import com.cloud.voiture.config.Constant;
 import com.cloud.voiture.crud.model.GenericModel;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.voiture.Voiture;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,6 +12,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import java.sql.Date;
+import java.time.format.DateTimeFormatter;
+
+import java.time.LocalDateTime;
 
 @Entity
 public class Annonce extends GenericModel {
@@ -32,16 +34,16 @@ public class Annonce extends GenericModel {
 
   String reference;
   String description;
-  int status;
+  int status = 0;
 
   @Column(name = "date_creation")
-  Date dateCreation;
+  LocalDateTime dateCreation = LocalDateTime.now();
 
   Double prix;
   Double commission;
 
   @Column(name = "nb_vue")
-  Integer nbVues;
+  Integer nbVues = 0;
 
   @Column(name = "id_utilisateur")
   int idUtilisateur;
@@ -51,11 +53,22 @@ public class Annonce extends GenericModel {
   Utilisateur utilisateur;
 
   @OneToOne
-  @JoinColumn(name = "id_voiture", referencedColumnName = "id", insertable = false, updatable = false)
+  @JoinColumn(
+    name = "id_voiture",
+    referencedColumnName = "id",
+    insertable = false,
+    updatable = false
+  )
   Voiture voiture;
+  @Column(name="id_voiture")
+  int idVoiture;
 
   public String getReference() {
     return reference;
+  }
+
+  public void defineCommission(Commission commission) {
+    setCommission(prix * commission.getPourcentage());
   }
 
   public void setReference(String reference) {
@@ -76,14 +89,6 @@ public class Annonce extends GenericModel {
 
   public void setStatus(int status) {
     this.status = status;
-  }
-
-  public Date getDateCreation() {
-    return dateCreation;
-  }
-
-  public void setDateCreation(Date dateCreation) {
-    this.dateCreation = dateCreation;
   }
 
   public Double getPrix() {
@@ -132,5 +137,29 @@ public class Annonce extends GenericModel {
 
   public void setVoiture(Voiture voiture) {
     this.voiture = voiture;
+  }
+
+  public LocalDateTime getDateCreation() {
+    return dateCreation;
+  }
+
+  public void setDateCreation(LocalDateTime dateCreation) {
+    this.dateCreation = dateCreation;
+  }
+
+  public void generateReference(int todaysAnnonce,Constant params) {
+    todaysAnnonce++;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+    String formatted = dateCreation.format(formatter);
+    String ref = params.getAnnonceRefPrefix()+""+formatted+"/"+todaysAnnonce;
+    setReference(ref);
+  }
+
+  public int getIdVoiture() {
+    return idVoiture;
+  }
+
+  public void setIdVoiture(int idVoiture) {
+    this.idVoiture = idVoiture;
   }
 }

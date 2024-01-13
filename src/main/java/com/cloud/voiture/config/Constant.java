@@ -5,55 +5,70 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class Constant {
-    @Value("${app.defaultPageSize}")
-    private int defaultPageSize;
-    @Value("${app.annonceStatus.cree}")
-    private int annonceCree;
-    @Value("${app.annonceStatus.valide}")
-    private int annonceValide;
-    @Value("${app.annonceStatus.refuse}")
-    private int annonceRefuse;
-    @Value("${app.annonceStatus.vendu}")
-    private int annonceVendu;
 
-    public int getDefaultPageSize() {
-        return defaultPageSize;
-    }
+  @Value("${app.defaultPageSize}")
+  private int defaultPageSize;
 
-    public void setDefaultPageSize(int defaultPageSize) {
-        this.defaultPageSize = defaultPageSize;
-    }
+  @Value("${app.annonceStatus.cree}")
+  private int annonceCree;
 
-    public int getAnnonceCree() {
-        return annonceCree;
-    }
+  @Value("${app.annonceStatus.valide}")
+  private int annonceValide;
 
-    public void setAnnonceCree(int annonceCree) {
-        this.annonceCree = annonceCree;
-    }
+  @Value("${app.annonceStatus.refuse}")
+  private int annonceRefuse;
 
-    public int getAnnonceValide() {
-        return annonceValide;
-    }
+  @Value("${app.annonceStatus.vendu}")
+  private int annonceVendu;
 
-    public void setAnnonceValide(int annonceValide) {
-        this.annonceValide = annonceValide;
-    }
+  @Value("${app.annonce.reference.prefix}")
+  private String annonceRefPrefix;
 
-    public int getAnnonceRefuse() {
-        return annonceRefuse;
-    }
+  public int getDefaultPageSize() {
+    return defaultPageSize;
+  }
 
-    public void setAnnonceRefuse(int annonceRefuse) {
-        this.annonceRefuse = annonceRefuse;
-    }
+  public void setDefaultPageSize(int defaultPageSize) {
+    this.defaultPageSize = defaultPageSize;
+  }
 
-    public int getAnnonceVendu() {
-        return annonceVendu;
-    }
+  public int getAnnonceCree() {
+    return annonceCree;
+  }
 
-    public void setAnnonceVendu(int annonceVendu) {
-        this.annonceVendu = annonceVendu;
-    }
+  public void setAnnonceCree(int annonceCree) {
+    this.annonceCree = annonceCree;
+  }
 
+  public int getAnnonceValide() {
+    return annonceValide;
+  }
+
+  public void setAnnonceValide(int annonceValide) {
+    this.annonceValide = annonceValide;
+  }
+
+  public int getAnnonceRefuse() {
+    return annonceRefuse;
+  }
+
+  public void setAnnonceRefuse(int annonceRefuse) {
+    this.annonceRefuse = annonceRefuse;
+  }
+
+  public int getAnnonceVendu() {
+    return annonceVendu;
+  }
+
+  public void setAnnonceVendu(int annonceVendu) {
+    this.annonceVendu = annonceVendu;
+  }
+
+public String getAnnonceRefPrefix() {
+    return annonceRefPrefix;
+}
+
+public void setAnnonceRefPrefix(String annonceRefPrefix) {
+    this.annonceRefPrefix = annonceRefPrefix;
+}
 }
