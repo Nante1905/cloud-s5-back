@@ -10,6 +10,8 @@ import com.cloud.voiture.crud.repository.GenericRepository;
 import com.cloud.voiture.models.annonce.Annonce;
 
 public interface AnnonceRepository extends GenericRepository<Annonce> {
+  @Query(value="select * from annonce where id_utilisateur = :utilisateur", nativeQuery = true)
+  List<Annonce> findByUser(@Param("utilisateur") int idUtilisateur);
   @Modifying
   @Query(nativeQuery = true, value = "update annonce set status = ?2 where id = ?1 ")
   public void updateStatus(int idAnnonce, int status);
@@ -17,6 +19,7 @@ public interface AnnonceRepository extends GenericRepository<Annonce> {
   @Query(value = "select * from v_annonce_non_valide", nativeQuery = true)
   List<Annonce> getAllNonValide();
 
+  
   @Query(value = "select * from annonce where id in (:sql) ", nativeQuery = true)
   List<Annonce> findComplex(@Param("sql") String sql);
 }

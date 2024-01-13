@@ -37,6 +37,9 @@ public class AnnonceService extends GenericService<Annonce> {
   @Autowired
   private AnnonceRepository annonceRepository;
 
+  public List<Annonce> findByUser(int idUser){
+    return annonceRepository.findByUser(idUser);
+  }
   @Transactional(rollbackOn = Exception.class)
   public void valider(int idAnnonce) throws NotFoundException, ValidationException {
     Annonce a = this.find(idAnnonce);
@@ -51,6 +54,7 @@ public class AnnonceService extends GenericService<Annonce> {
     historiqueService.save(historique);
   }
 
+  
   @Transactional
   public void refuser(int idAnnonce) throws NotFoundException, ValidationException {
     Annonce a = this.find(idAnnonce);
