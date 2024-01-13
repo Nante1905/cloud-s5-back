@@ -191,3 +191,11 @@ CREATE TABLE annonce_vendu(
 
 -- 2024-11-01 11:01
 alter table utilisateur alter column date_inscription set default now();
+
+--2024-01-13 23:58
+create table vue_annonce (
+   id SERIAL PRIMARY key, 
+   id_utilisateur INTEGER not null references utilisateur(id),
+   id_annonce INTEGER not null references annonce(id),
+   date_vue TIMESTAMP default now()
+);
