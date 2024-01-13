@@ -191,3 +191,9 @@ CREATE TABLE annonce_vendu(
 
 -- 2024-11-01 11:01
 alter table utilisateur alter column date_inscription set default now();
+
+
+--2024-01-13 22:19 
+ALTER TABLE annonce_favori
+DROP CONSTRAINT annonce_favori_pkey;
+alter table annonce_favori add column id serial PRIMARY key;
