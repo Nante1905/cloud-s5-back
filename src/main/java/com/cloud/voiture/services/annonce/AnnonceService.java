@@ -37,6 +37,7 @@ public class AnnonceService extends GenericService<Annonce> {
   private AnnonceRepository annonceRepository;
 
   public List<Annonce> findByUser(int idUser){
+    System.out.println(idUser);
     return annonceRepository.findByUser(idUser);
   }
   @Transactional(rollbackOn = Exception.class)
