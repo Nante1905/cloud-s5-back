@@ -20,6 +20,13 @@ create view v_vente as select a.*, av.date_vente, av.id_acheteur
 from annonce_vendu av 
 join annonce a on av.id_annonce = a.id;
 
+
+-- derniere commission 12-01-2024 17:53
+create view v_last_commission as(
+    select *
+    from commission
+    where date_debut = (select max(date_debut) from commission)
+);
 create  view v_annonce as (
     select 
     id as id_annonce, id_modele,id_categorie, id_marque, description, prix, annee_sortie
