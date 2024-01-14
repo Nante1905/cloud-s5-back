@@ -45,17 +45,12 @@ public class AnnonceService extends GenericService<Annonce> {
   public HistoriqueAnnonceDTO findHistorique(int idAnnonce) throws NotFoundException, ValidationException {
     Annonce annonce = find(idAnnonce);
     List<HistoriqueAnnonce> historiques = historiqueService.findByIdAnnonce(idAnnonce);
-    // si tsy ao anaty historique ny crréation
-    // HistoriqueAnnonce h = new HistoriqueAnnonce();
-    // h.setAnnonce(annonce);
-    // h.setDateMaj(annonce.getDateCreation());
-    // h.setStatus(config.getAnnonceCree());
-    // historiques.add(h);
+
     List<HistoriqueAnnonceMin> historiqueMin = new ArrayList<HistoriqueAnnonceMin>();
 
     for (HistoriqueAnnonce histo : historiques) {
       HistoriqueAnnonceMin m = new HistoriqueAnnonceMin();
-      m.setDate(h.getDateMaj());
+      m.setDate(histo.getDateMaj());
       m.setStatus(historiqueService.getEtat(histo));
       historiqueMin.add(m);
     }
