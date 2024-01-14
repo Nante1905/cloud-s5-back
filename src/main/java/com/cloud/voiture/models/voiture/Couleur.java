@@ -6,13 +6,21 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Couleur extends GenericModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
+
+    @NotBlank(message = "")
+    @NotNull(message = "")
     String nom;
+
+    @NotBlank(message = "Le code hexadécimal ne doit pas être vide.")
+    @NotNull(message = "Le code hexadécimal est obligatoire.")
     String hexa;
 
     public int getId() {

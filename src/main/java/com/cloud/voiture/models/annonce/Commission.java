@@ -7,7 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "commission")
@@ -20,7 +20,7 @@ public class Commission extends GenericModel {
   double pourcentage;
 
   @Column(name = "date_debut")
-  LocalDate dateAjout = LocalDate.now();
+  LocalDateTime dateAjout = LocalDateTime.now();
 
   public int getId() {
     return id;
@@ -38,11 +38,11 @@ public class Commission extends GenericModel {
     this.pourcentage = pourcentage;
   }
 
-  public LocalDate getDateAjout() {
+  public LocalDateTime getDateAjout() {
     return dateAjout;
   }
 
-  public void setDateAjout(LocalDate dateAjout) {
+  public void setDateAjout(LocalDateTime dateAjout) {
     this.dateAjout = dateAjout;
   }
 }

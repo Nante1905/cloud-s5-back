@@ -19,3 +19,66 @@ $$
     group by vendu.id_marque, nom_marque
 $$
     LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION topSellers(dateYYYYMM character varying, limit_value integer)
+RETURNS TABLE (
+    id integer,
+    nom character varying,
+    valide bigint,
+    vendu bigint,
+    commission numeric,
+    pourcentage numeric
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        utilisateur.id,
+        utilisateur.nom,
+        COALESCE(COUNT(v_annonce_valide.id), 0) AS valide,
+        COALESCE(COUNT(v_annonce_vendu.id), 0) AS vendu,
+        COALESCE(SUM(v_annonce_valide.commission), 0) AS commission,
+        CASE
+            WHEN COUNT(v_annonce_valide.id) = 0 THEN 0.0
+            ELSE (COUNT(v_annonce_vendu.id) / COUNT(v_annonce_valide.id)) * 100
+        END AS pourcentage
+    FROM
+        utilisateur
+    LEFT JOIN v_annonce_valide ON v_annonce_valide.id_utilisateur = utilisateur.id AND TO_CHAR(v_annonce_valide.date_maj::date, 'YYYYMM') <= dateYYYYMM
+    LEFT JOIN v_annonce_vendu ON v_annonce_vendu.id_utilisateur = utilisateur.id AND TO_CHAR(v_annonce_vendu.date_maj::date, 'YYYYMM') <= dateYYYYMM
+    GROUP BY
+        utilisateur.id,
+        utilisateur.nom
+    ORDER BY
+        valide desc
+    LIMIT
+        limit_value;
+
+    RETURN;
+END;
+$$ LANGUAGE plpgsql;
+select * from  topSellers('202401',2);
+
+
+CREATE OR REPLACE FUNCTION inscription_par_mois(annee integer)
+RETURNS TABLE (
+    nb_inscription bigint,
+    mois integer
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        COALESCE(COUNT(utilisateur.id), 0) AS nb_inscription,
+        v_mois.mois
+    FROM
+        v_mois
+    LEFT JOIN utilisateur ON
+        v_mois.mois = EXTRACT(MONTH FROM date_inscription)
+        AND EXTRACT(YEAR FROM date_inscription) = annee
+    GROUP BY
+        v_mois.mois
+    ORDER BY
+        v_mois.mois;
+
+    RETURN;
+END;
+$$ LANGUAGE plpgsql;
