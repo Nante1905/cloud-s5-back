@@ -40,9 +40,8 @@ public class GenericService<T extends GenericModel> {
     Pageable pageable = PageRequest.of(nbPage, pageSize);
     Page<T> page = repository.findAll(pageable);
     return new Paginated<T>(
-      page.getContent(),
-      page.getTotalPages(),
-      page.getNumber()
-    );
+        page.getContent(),
+        page.getTotalPages(),
+        page.getNumber());
   }
 }
