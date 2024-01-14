@@ -7,14 +7,24 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name="etat_voiture")
+@Table(name = "etat_voiture")
 public class Etat extends GenericModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
+
+    @NotBlank(message = "")
+    @NotNull(message = "")
     String nom;
+
+    @Min(value = 0)
+    @Digits(fraction = 0, integer = 2, message = "La valeur doit être un entier entre 1 et 10")
     int valeur;
 
     public int getId() {

@@ -197,3 +197,11 @@ alter table utilisateur alter column date_inscription set default now();
 ALTER TABLE annonce_favori
 DROP CONSTRAINT annonce_favori_pkey;
 alter table annonce_favori add column id serial PRIMARY key;
+
+--2024-01-13 22:07
+ALTER TABLE commission
+ALTER COLUMN date_debut TYPE TIMESTAMP;
+
+-- 2024-01-13 18:44
+alter table annonce alter column date_creation set default now();
+alter table etat alter column nom drop default;

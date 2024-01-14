@@ -23,7 +23,8 @@ public class Utilities {
             tableName = table.name();
         }
         System.out.println("tableName " + tableName);
-        Pattern pattern = Pattern.compile(tableName.toLowerCase() + "_(.*?)_key");
+
+        Pattern pattern = Pattern.compile(tableName.toLowerCase() + "_(.*?)_(key|fkey)");
         Matcher matcher = pattern.matcher(errorMessage);
 
         if (matcher.find()) {
