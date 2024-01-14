@@ -19,8 +19,8 @@ public class Etat extends GenericModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "")
+    @NotNull(message = "")
     String nom;
 
     @Min(value = 0)

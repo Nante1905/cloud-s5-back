@@ -33,19 +33,21 @@ public class ValidationExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Response> handleValidationError(MethodArgumentNotValidException exception) {
-        System.out.println("Ato zanyyyyyy");
         String errorMessage = "";
         List<FieldError> errors = exception.getBindingResult().getFieldErrors();
         for (FieldError fieldError : errors) {
-            System.out.println(fieldError.getDefaultMessage());
-            if (fieldError.getDefaultMessage() != null) {
-                errorMessage += fieldError.getDefaultMessage().replaceAll("%field%", fieldError.getField()) + ".";
+            System.out.println(
+                    fieldError.getDefaultMessage().equals("") + fieldError.getCode() + " " + fieldError.getField());
+            if (fieldError.getDefaultMessage() != null && !fieldError.getDefaultMessage().equals("")) {
+                System.out.println("miditra ato " + fieldError.getField());
+                errorMessage += fieldError.getDefaultMessage() + ".";
             } else {
-                System.out.println("else  =======================");
-                System.out.println(fieldError.getField() + "============");
-                errorMessage += Utilities.capitalize(fieldError.getField())
-                        + " " + ERROR_MESSAGE.get(fieldError.getCodes()[fieldError.getCodes().length - 1])
-                                .replaceAll("%value%", fieldError.getRejectedValue().toString());
+                errorMessage += ERROR_MESSAGE.get(fieldError.getCodes()[fieldError.getCodes().length - 1])
+                        .replaceAll("%field%", Utilities.capitalize(fieldError.getField()));
+                if (fieldError.getRejectedValue() != null
+                        && ERROR_MESSAGE.get(fieldError.getCode()).contains("%value%")) {
+                    errorMessage = errorMessage.replaceAll("%value%", fieldError.getRejectedValue().toString());
+                }
             }
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response(errorMessage));

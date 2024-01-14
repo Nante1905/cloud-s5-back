@@ -15,8 +15,8 @@ public class Couleur extends GenericModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "")
+    @NotNull(message = "")
     String nom;
 
     @NotBlank(message = "Le code hexadécimal ne doit pas être vide.")

@@ -17,8 +17,8 @@ public class Vitesse extends GenericModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "")
+    @NotNull(message = "")
     String nom;
 
     public int getId() {

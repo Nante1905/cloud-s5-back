@@ -32,8 +32,8 @@ public class Annonce extends GenericModel {
 
   String reference;
 
-  @NotBlank
-  @NotNull
+  @NotBlank(message = "")
+  @NotNull(message = "")
   String description;
 
   int status;
@@ -41,7 +41,7 @@ public class Annonce extends GenericModel {
   @Column(name = "date_creation")
   Date dateCreation;
 
-  @NotNull
+  @NotNull(message = "")
   @Min(value = 0, message = "Le prix doit être strictement positif.")
   Double prix;
 

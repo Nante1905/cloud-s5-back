@@ -24,29 +24,29 @@ public class Utilisateur extends GenericModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "")
+    @NotBlank(message = "")
     String nom;
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "")
+    @NotBlank(message = "")
     String prenom;
 
-    @NotNull
-    @NotBlank
-    @Email
+    @NotNull(message = "")
+    @NotBlank(message = "")
+    @Email(message = "Cet email n'est pas valide.")
     String email;
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "")
+    @NotBlank(message = "")
     @Column(name = "mot_de_passe")
     String password;
 
     @Column(insertable = false)
     LocalDate dateInscription;
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "")
+    @NotBlank(message = "")
     String adresse;
 
     @Column(name = "id_role")

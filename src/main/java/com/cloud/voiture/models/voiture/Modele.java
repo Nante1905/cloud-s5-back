@@ -31,16 +31,16 @@ public class Modele extends GenericModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "")
+    @NotNull(message = "")
     String nom;
 
-    @NotNull
+    @NotNull(message = "")
     @Digits(fraction = 0, integer = 2, message = "Le nombre de place doit être numérique.")
     @Min(value = 2, message = "Le nombre de place doit être supérieur à 2.")
     int nbPlace;
 
-    @NotNull
+    @NotNull(message = "")
     @Digits(fraction = 0, integer = 2, message = "Le nombre de porte doit être numérique.")
     @Min(value = 2, message = "Le nombre de porte doit être supérieur à 2.")
     int nbPorte;

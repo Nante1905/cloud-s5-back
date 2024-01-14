@@ -15,12 +15,12 @@ public class Marque extends GenericModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "")
+    @NotNull(message = "")
     String nom;
 
-    @NotBlank(message = "Le logo ne doit pas être vide.")
-    @NotNull
+    @NotBlank(message = "")
+    @NotNull(message = "")
     String logo;
 
     public Marque(int id, String nom, String logo) {
