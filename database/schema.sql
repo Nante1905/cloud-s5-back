@@ -53,7 +53,6 @@ CREATE TABLE etat_voiture(
    nom VARCHAR(250)  NOT NULL,
    valeur INTEGER NOT NULL,
    PRIMARY KEY(id),
-   UNIQUE(nom),
    UNIQUE(valeur)
 );
 
