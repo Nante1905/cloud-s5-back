@@ -53,7 +53,6 @@ CREATE TABLE etat_voiture(
    nom VARCHAR(250)  NOT NULL,
    valeur INTEGER NOT NULL,
    PRIMARY KEY(id),
-   UNIQUE(nom),
    UNIQUE(valeur)
 );
 
@@ -196,3 +195,8 @@ alter table utilisateur alter column date_inscription set default now();
 --2024-01-13 22:07
 ALTER TABLE commission
 ALTER COLUMN date_debut TYPE TIMESTAMP;
+
+-- 2024-01-13 18:44
+alter table annonce alter column date_creation set default now();
+alter table etat alter column nom drop default;
+
