@@ -15,6 +15,11 @@ public class Constant {
     private int annonceRefuse;
     @Value("${app.annonceStatus.vendu}")
     private int annonceVendu;
+    @Value("${app.estimation.etat.marge}")
+    private int margeEtat;
+   @Value("${app.annonce.reference.prefix}")
+  private String annonceRefPrefix;
+    
 
     public int getDefaultPageSize() {
         return defaultPageSize;
@@ -56,4 +61,20 @@ public class Constant {
         this.annonceVendu = annonceVendu;
     }
 
+    public int getMargeEtat() {
+        return margeEtat;
+    }
+
+    public void setMargeEtat(int margeEtat) {
+        this.margeEtat = margeEtat;
+    }
+
+
+public String getAnnonceRefPrefix() {
+    return annonceRefPrefix;
+}
+
+public void setAnnonceRefPrefix(String annonceRefPrefix) {
+    this.annonceRefPrefix = annonceRefPrefix;
+}
 }
