@@ -5,6 +5,8 @@ import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonce;
+import com.cloud.voiture.models.annonce.HistoriqueAnnonceDTO;
+import com.cloud.voiture.models.annonce.HistoriqueAnnonceMin;
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
 import com.cloud.voiture.search.RechercheAnnonce;
 import com.cloud.voiture.services.voiture.VoitureService;
@@ -12,6 +14,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -20,7 +23,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AnnonceService extends GenericService<Annonce> {
 
-  @Autowired 
+  @Autowired
   private CommissionService commissionService;
   @Autowired
   private VoitureService voitureService;
@@ -36,9 +39,32 @@ public class AnnonceService extends GenericService<Annonce> {
   @Autowired
   private AnnonceRepository annonceRepository;
 
+  @Autowired
+  Constant config;
+
+  public HistoriqueAnnonceDTO findHistorique(int idAnnonce) throws NotFoundException, ValidationException {
+    Annonce annonce = find(idAnnonce);
+    List<HistoriqueAnnonce> historiques = historiqueService.findByIdAnnonce(idAnnonce);
+    // si tsy ao anaty historique ny crréation
+    // HistoriqueAnnonce h = new HistoriqueAnnonce();
+    // h.setAnnonce(annonce);
+    // h.setDateMaj(annonce.getDateCreation());
+    // h.setStatus(config.getAnnonceCree());
+    // historiques.add(h);
+    List<HistoriqueAnnonceMin> historiqueMin = new ArrayList<HistoriqueAnnonceMin>();
+
+    for (HistoriqueAnnonce histo : historiques) {
+      HistoriqueAnnonceMin m = new HistoriqueAnnonceMin();
+      m.setDate(h.getDateMaj());
+      m.setStatus(historiqueService.getEtat(histo));
+      historiqueMin.add(m);
+    }
+    return new HistoriqueAnnonceDTO(annonce, historiqueMin);
+  }
+
   @Transactional(rollbackOn = Exception.class)
   public void valider(int idAnnonce)
-    throws NotFoundException, ValidationException {
+      throws NotFoundException, ValidationException {
     Annonce a = this.find(idAnnonce);
     checkValidation(a);
 
@@ -53,7 +79,7 @@ public class AnnonceService extends GenericService<Annonce> {
 
   @Transactional
   public void refuser(int idAnnonce)
-    throws NotFoundException, ValidationException {
+      throws NotFoundException, ValidationException {
     Annonce a = this.find(idAnnonce);
     checkValidation(a);
 
@@ -70,22 +96,18 @@ public class AnnonceService extends GenericService<Annonce> {
     if (a.getStatus() != params.getAnnonceCree()) {
       if (a.getStatus() == params.getAnnonceValide()) {
         throw new ValidationException(
-          "Impossible de modifier le status de cette annonce. Elle est déjà validée"
-        );
+            "Impossible de modifier le status de cette annonce. Elle est déjà validée");
       }
       if (a.getStatus() == params.getAnnonceRefuse()) {
         throw new ValidationException(
-          "Impossible de modifier le status de cette annonce. Elle est déjà refusée"
-        );
+            "Impossible de modifier le status de cette annonce. Elle est déjà refusée");
       }
       if (a.getStatus() == params.getAnnonceVendu()) {
         throw new ValidationException(
-          "Impossible de modifier le status de cette annonce. Elle est déjà vendue"
-        );
+            "Impossible de modifier le status de cette annonce. Elle est déjà vendue");
       }
       throw new ValidationException(
-        "Impossible de modifier le status de cette annonce. Status inconnu"
-      );
+          "Impossible de modifier le status de cette annonce. Status inconnu");
     }
   }
 
@@ -94,11 +116,10 @@ public class AnnonceService extends GenericService<Annonce> {
     annonceRepository.updateStatus(idAnnonce, status);
   }
 
-
   @Override
   @Transactional(rollbackOn = Exception.class)
   public Annonce save(Annonce model) {
-    model.generateReference(annonceRepository.getNumOfTheDay(),params);
+    model.generateReference(annonceRepository.getNumOfTheDay(), params);
     System.out.println(model.getReference());
     model.setVoiture(voitureService.save(model.getVoiture()));
     System.out.println(model.getVoiture().getId());
@@ -119,13 +140,12 @@ public class AnnonceService extends GenericService<Annonce> {
 
   public List<Annonce> findComplex(RechercheAnnonce rechercheAnnonce) {
     return (List<Annonce>) entityManager
-      .createNativeQuery(
-        "select * from annonce where id in (" +
-        rechercheAnnonce.generateSql() +
-        ")",
-        Annonce.class
-      )
-      .getResultList();
+        .createNativeQuery(
+            "select * from annonce where id in (" +
+                rechercheAnnonce.generateSql() +
+                ")",
+            Annonce.class)
+        .getResultList();
   }
 
   @Override

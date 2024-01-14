@@ -1,17 +1,19 @@
 package com.cloud.voiture.models.annonce;
 
-
 import com.cloud.voiture.config.Constant;
 import java.sql.Date;
 import java.time.LocalDate;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import com.cloud.voiture.crud.model.GenericModel;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.voiture.Voiture;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -59,17 +61,15 @@ public class Annonce extends GenericModel {
 
   @ManyToOne
   @JoinColumn(name = "id_utilisateur", insertable = false, updatable = false)
+  @Fetch(FetchMode.JOIN)
   Utilisateur utilisateur;
 
   @OneToOne
-  @JoinColumn(
-    name = "id_voiture",
-    referencedColumnName = "id",
-    insertable = false,
-    updatable = false
-  )
+  @JoinColumn(name = "id_voiture", referencedColumnName = "id", insertable = false, updatable = false)
+  @Fetch(FetchMode.JOIN)
   Voiture voiture;
-  @Column(name="id_voiture")
+
+  @Column(name = "id_voiture")
   int idVoiture;
 
   public int getId() {
@@ -164,11 +164,11 @@ public class Annonce extends GenericModel {
     this.dateCreation = dateCreation;
   }
 
-  public void generateReference(int todaysAnnonce,Constant params) {
+  public void generateReference(int todaysAnnonce, Constant params) {
     todaysAnnonce++;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
     String formatted = dateCreation.format(formatter);
-    String ref = params.getAnnonceRefPrefix()+""+formatted+"/"+todaysAnnonce;
+    String ref = params.getAnnonceRefPrefix() + "" + formatted + "/" + todaysAnnonce;
     setReference(ref);
   }
 
