@@ -6,6 +6,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import com.cloud.voiture.crud.model.GenericModel;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,6 +41,7 @@ public class Utilisateur extends GenericModel {
     @NotNull(message = "")
     @NotBlank(message = "")
     @Column(name = "mot_de_passe")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     String password;
 
     @Column(insertable = false)
@@ -50,11 +52,13 @@ public class Utilisateur extends GenericModel {
     String adresse;
 
     @Column(name = "id_role")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     int idRole;
 
     @ManyToOne
     @JoinColumn(name = "id_role", insertable = false, updatable = false)
     @Fetch(FetchMode.JOIN)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     Role role;
 
     public int getId() {
