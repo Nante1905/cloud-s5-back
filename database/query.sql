@@ -43,4 +43,17 @@ insert into historique_annonce values
 insert into historique_annonce values 
 (default, '2024-01-01', 10,1);
 
+create or replace view v_annonce as (
+    select 
+    id as id_annonce, id_modele,id_categorie, id_marque, description, prix, annee_sortie
+    from annonce
+    join v_voiture as voiture
+        on voiture.id_voiture = annonce.id_voiture 
+);
 
+select 
+avg(annonce.prix) as prix
+from annonce
+join voiture
+on voiture.id = annonce.id_voiture
+where voiture.id_modele = 1 and voiture.id_energie=4 and voiture.id_boite_vitesse=1 and etat <= 5+2 or etat >=5-2 
