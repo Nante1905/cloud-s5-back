@@ -90,6 +90,10 @@ public class AnnonceService extends GenericService<Annonce> {
     return new HistoriqueAnnonceDTO(annonce, historiqueMin);
   }
 
+  public List<Annonce> findByUser(int idUser){
+    System.out.println(idUser);
+    return annonceRepository.findByUser(idUser);
+  }
   @Transactional(rollbackOn = Exception.class)
   public void valider(int idAnnonce)
       throws NotFoundException, ValidationException {
@@ -105,6 +109,7 @@ public class AnnonceService extends GenericService<Annonce> {
     historiqueService.save(historique);
   }
 
+  
   @Transactional
   public void refuser(int idAnnonce)
       throws NotFoundException, ValidationException {

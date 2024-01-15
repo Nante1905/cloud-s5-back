@@ -34,6 +34,19 @@ public class AnnonceController extends GenericController<Annonce> {
   @Autowired
   VoitureService voitureService;
 
+  @GetMapping("/yours")
+  public ResponseEntity<Response> getConnectedUserAnnonces(){
+    try {
+      // TODO: change to the connected user id
+      int userId = 1;
+      List<Annonce> annonces  = annonceService.findByUser(userId);
+      System.out.println(annonces.size());
+      return ResponseEntity.ok(new Response(annonces, ""));
+    } catch (Exception e) {
+      return ResponseEntity.status(500).body(new Response(e.getMessage()));
+    }
+  }
+  
   @GetMapping("{id}/historiques")
   public ResponseEntity<Response> getHistorique(@PathVariable(name = "id") int id) {
     try {
