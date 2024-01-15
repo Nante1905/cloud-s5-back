@@ -5,12 +5,8 @@ import jakarta.persistence.Column;
 import java.math.BigDecimal;
 
 public class StatTopSeller {
-
-  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   @Column(name = "id")
   int idUtilisateur;
-
-  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   @Column(name = "nom")
   String nomUtilisateur;
 
