@@ -24,7 +24,7 @@ public class Utilities {
         }
         System.out.println("tableName " + tableName);
 
-        Pattern pattern = Pattern.compile(tableName.toLowerCase() + "_(.*?)_(key|fkey)");
+        Pattern pattern = Pattern.compile(tableName.toLowerCase() + "_(.*?)_((?:key)|(?:fkey))");
         Matcher matcher = pattern.matcher(errorMessage);
 
         if (matcher.find()) {
@@ -32,6 +32,6 @@ public class Utilities {
             return matcher.group(1);
         }
 
-        return "";
+        return "entité";
     }
 }

@@ -67,7 +67,6 @@ public class GenericController<T extends GenericModel> {
                         sqlException.getMessage());
 
                 System.out.println("================== " + sqlException.getMessage());
-
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new Response(
                                 SqlErrorMessage.getMessage(sqlState, columnName,
