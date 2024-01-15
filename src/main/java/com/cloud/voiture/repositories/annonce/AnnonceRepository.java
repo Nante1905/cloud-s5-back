@@ -16,7 +16,7 @@ public interface AnnonceRepository extends GenericRepository<Annonce> {
   public void updateStatus(int idAnnonce, int status);
 
   @Query(
-    value = "select count(annonce.id) from annonce where date_creation = current_date", nativeQuery =  true
+    value = "select count(annonce.id) from annonce where date(date_creation) = current_date", nativeQuery =  true
   )
   int getNumOfTheDay();
 
