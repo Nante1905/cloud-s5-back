@@ -37,11 +37,11 @@ public class GenericService<T extends GenericModel> {
   }
 
   public Paginated<T> findAll(int nbPage, int pageSize) {
-    Pageable pageable = PageRequest.of(nbPage, pageSize);
+    Pageable pageable = PageRequest.of(nbPage-1, pageSize);
     Page<T> page = repository.findAll(pageable);
     return new Paginated<T>(
         page.getContent(),
         page.getTotalPages(),
-        page.getNumber());
+        page.getNumber()+1);
   }
 }

@@ -18,6 +18,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -46,8 +47,8 @@ public class GenericController<T extends GenericModel> {
         try {
             T results = service.find(id);
             return ResponseEntity.ok(new Response(results, ""));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new Response(e.getMessage()));
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(404).body(new Response("Cette identifiant n'existe pas."));
         }
     }
 

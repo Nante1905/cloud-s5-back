@@ -7,6 +7,8 @@ import com.cloud.voiture.models.annonce.Annonce;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonce;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhotoID;
+import com.cloud.voiture.models.annonce.HistoriqueAnnonceDTO;
+import com.cloud.voiture.models.annonce.HistoriqueAnnonceMin;
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
 import com.cloud.voiture.search.RechercheAnnonce;
 import com.cloud.voiture.services.voiture.VoitureService;
@@ -14,6 +16,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -37,6 +40,24 @@ public class AnnonceService extends GenericService<Annonce> {
 
   @Autowired
   private AnnonceRepository annonceRepository;
+
+  @Autowired
+  Constant config;
+
+  public HistoriqueAnnonceDTO findHistorique(int idAnnonce) throws NotFoundException, ValidationException {
+    Annonce annonce = find(idAnnonce);
+    List<HistoriqueAnnonce> historiques = historiqueService.findByIdAnnonce(idAnnonce);
+
+    List<HistoriqueAnnonceMin> historiqueMin = new ArrayList<HistoriqueAnnonceMin>();
+
+    for (HistoriqueAnnonce histo : historiques) {
+      HistoriqueAnnonceMin m = new HistoriqueAnnonceMin();
+      m.setDate(histo.getDateMaj());
+      m.setStatus(historiqueService.getEtat(histo));
+      historiqueMin.add(m);
+    }
+    return new HistoriqueAnnonceDTO(annonce, historiqueMin);
+  }
 
   @Transactional(rollbackOn = Exception.class)
   public void valider(int idAnnonce)

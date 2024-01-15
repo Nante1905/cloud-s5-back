@@ -32,6 +32,19 @@ public class AnnonceController extends GenericController<Annonce> {
   @Autowired
   VoitureService voitureService;
 
+  @GetMapping("{id}/historiques")
+  public ResponseEntity<Response> getHistorique(@PathVariable(name = "id") int id) {
+    try {
+      return ResponseEntity.ok().body(new Response(annonceService.findHistorique(id), null));
+    } catch (NotFoundException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(new Response("Il n'existe aucune annonce avec l'identifiant " + id));
+    } catch (ValidationException e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response(e.getMessage()));
+    }
+  }
+
   @PostMapping("/estimate")
   public ResponseEntity<Response> estimatePrice(@RequestBody Voiture voiture) {
     try {
@@ -44,51 +57,49 @@ public class AnnonceController extends GenericController<Annonce> {
 
   @PutMapping("{id}/valider")
   public ResponseEntity<Response> validerAnnonce(
-    @PathVariable(name = "id") int id
-  ) {
+      @PathVariable(name = "id") int id) {
     try {
       annonceService.valider(id);
       return ResponseEntity.ok().body(new Response(null, "Annonce validée"));
     } catch (NotFoundException e) {
       e.printStackTrace();
       return ResponseEntity
-        .status(HttpStatus.NOT_FOUND)
-        .body(new Response(e.getMessage()));
+          .status(HttpStatus.NOT_FOUND)
+          .body(new Response(e.getMessage()));
     } catch (ValidationException e) {
       e.printStackTrace();
       return ResponseEntity
-        .status(HttpStatus.FORBIDDEN)
-        .body(new Response(e.getMessage()));
+          .status(HttpStatus.FORBIDDEN)
+          .body(new Response(e.getMessage()));
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(new Response("Une erreur s'est produite"));
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new Response("Une erreur s'est produite"));
     }
   }
 
   @PutMapping("{id}/refuser")
   public ResponseEntity<Response> refuserAnnonce(
-    @PathVariable(name = "id") int id
-  ) {
+      @PathVariable(name = "id") int id) {
     try {
       annonceService.refuser(id);
       return ResponseEntity.ok().body(new Response(null, "Annonce refusée"));
     } catch (NotFoundException e) {
       e.printStackTrace();
       return ResponseEntity
-        .status(HttpStatus.NOT_FOUND)
-        .body(new Response(e.getMessage()));
+          .status(HttpStatus.NOT_FOUND)
+          .body(new Response(e.getMessage()));
     } catch (ValidationException e) {
       e.printStackTrace();
       return ResponseEntity
-        .status(HttpStatus.FORBIDDEN)
-        .body(new Response(e.getMessage()));
+          .status(HttpStatus.FORBIDDEN)
+          .body(new Response(e.getMessage()));
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(new Response("Une erreur s'est produite"));
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new Response("Une erreur s'est produite"));
     }
   }
 
@@ -104,8 +115,7 @@ public class AnnonceController extends GenericController<Annonce> {
 
   @PostMapping("/find")
   public ResponseEntity<Response> findComplex(
-    @RequestBody RechercheAnnonce rechercheAnnonce
-  ) {
+      @RequestBody RechercheAnnonce rechercheAnnonce) {
     try {
       List<Annonce> results = annonceService.findComplex(rechercheAnnonce);
       return ResponseEntity.ok(new Response(results, ""));

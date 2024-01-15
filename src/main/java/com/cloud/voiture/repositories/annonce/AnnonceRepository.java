@@ -12,7 +12,9 @@ public interface AnnonceRepository extends GenericRepository<Annonce> {
   @Query(nativeQuery = true, value = "update annonce set status = ?2 where id = ?1 ")
   public void updateStatus(int idAnnonce, int status);
 
+
   @Query(value = "select count(annonce.id) from annonce where cast(date_creation as date) =  cast(current_date as date)", nativeQuery = true)
+
   int getNumOfTheDay();
 
   @Query(value = "select * from v_annonce_non_valide", nativeQuery = true)
