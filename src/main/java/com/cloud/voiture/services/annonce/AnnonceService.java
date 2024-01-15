@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 
 import com.cloud.voiture.config.Constant;
 import com.cloud.voiture.crud.service.GenericService;
@@ -44,7 +45,7 @@ public class AnnonceService extends GenericService<Annonce> {
   private AnnonceRepository annonceRepository;
 
   @Transactional
-  public Annonce getByIdAndView(int idAnnonce, int iduser) {
+  public void getByIdAndView(int idAnnonce, int iduser) throws Exception {
     VueAnnonce vueAnnonce = new VueAnnonce();
     vueAnnonce.setIdUtilisateur(iduser);
     vueAnnonce.setIdAnnonce(idAnnonce);
@@ -54,7 +55,6 @@ public class AnnonceService extends GenericService<Annonce> {
     } catch (DataIntegrityViolationException e) {
       System.out.println("deja vu");
     }
-    return annonceRepository.findById(idAnnonce).get();
   }
 
   @Transactional(rollbackOn = Exception.class)
