@@ -1,26 +1,32 @@
 package com.cloud.voiture.models.annonce;
 
-
 import com.cloud.voiture.config.Constant;
 import java.sql.Date;
 import java.time.LocalDate;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import com.cloud.voiture.crud.model.GenericModel;
+import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.voiture.Voiture;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.sql.Date;
 import java.time.format.DateTimeFormatter;
-
+import java.util.List;
 import java.time.LocalDateTime;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -59,18 +65,19 @@ public class Annonce extends GenericModel {
 
   @ManyToOne
   @JoinColumn(name = "id_utilisateur", insertable = false, updatable = false)
+  @Fetch(FetchMode.JOIN)
   Utilisateur utilisateur;
 
   @OneToOne
-  @JoinColumn(
-    name = "id_voiture",
-    referencedColumnName = "id",
-    insertable = false,
-    updatable = false
-  )
+  @JoinColumn(name = "id_voiture", referencedColumnName = "id", insertable = false, updatable = false)
+  @Fetch(FetchMode.JOIN)
   Voiture voiture;
-  @Column(name="id_voiture")
+
+  @Column(name = "id_voiture")
   int idVoiture;
+
+  @OneToMany(mappedBy = "annonce", cascade = CascadeType.PERSIST)
+  List<AnnoncePhoto> photos;
 
   public int getId() {
     return id;
@@ -164,11 +171,11 @@ public class Annonce extends GenericModel {
     this.dateCreation = dateCreation;
   }
 
-  public void generateReference(int todaysAnnonce,Constant params) {
+  public void generateReference(int todaysAnnonce, Constant params) {
     todaysAnnonce++;
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
     String formatted = dateCreation.format(formatter);
-    String ref = params.getAnnonceRefPrefix()+""+formatted+"/"+todaysAnnonce;
+    String ref = params.getAnnonceRefPrefix() + "" + formatted + "/" + todaysAnnonce;
     setReference(ref);
   }
 
@@ -178,5 +185,13 @@ public class Annonce extends GenericModel {
 
   public void setIdVoiture(int idVoiture) {
     this.idVoiture = idVoiture;
+  }
+
+  public List<AnnoncePhoto> getPhotos() {
+    return photos;
+  }
+
+  public void setPhotos(List<AnnoncePhoto> photos) {
+    this.photos = photos;
   }
 }
