@@ -138,7 +138,7 @@ public class GenericController<T extends GenericModel> {
     public ResponseEntity<Response> delete(@PathVariable(name = "id") int id) {
         try {
             service.delete(id);
-            return ResponseEntity.ok().body(new Response(null, "Entité id " + id + " suprimé."));
+            return ResponseEntity.ok().body(new Response(null, "Entité suprimé."));
         } catch (DataIntegrityViolationException e) {
             if (e.getCause() instanceof ConstraintViolationException) {
                 ConstraintViolationException sqlException = (ConstraintViolationException) e.getCause();
