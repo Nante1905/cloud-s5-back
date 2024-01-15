@@ -1,27 +1,23 @@
 package com.cloud.voiture.services.annonce;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 
 import com.cloud.voiture.config.Constant;
 import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonce;
-
-import com.cloud.voiture.models.annonce.VueAnnonce;
-
-import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
-import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhotoID;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceDTO;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceMin;
-
+import com.cloud.voiture.models.annonce.VueAnnonce;
+import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
 import com.cloud.voiture.search.RechercheAnnonce;
 import com.cloud.voiture.services.voiture.VoitureService;
@@ -29,14 +25,6 @@ import com.cloud.voiture.services.voiture.VoitureService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
-import org.springframework.stereotype.Service;
-
 
 @Service
 public class AnnonceService extends GenericService<Annonce> {
@@ -58,7 +46,7 @@ public class AnnonceService extends GenericService<Annonce> {
 
   @Autowired
   private AnnonceRepository annonceRepository;
-  
+
   @Autowired
   Constant config;
 
@@ -73,7 +61,7 @@ public class AnnonceService extends GenericService<Annonce> {
     } catch (DataIntegrityViolationException e) {
       System.out.println("deja vu");
     }
-  
+  }
 
   public HistoriqueAnnonceDTO findHistorique(int idAnnonce) throws NotFoundException, ValidationException {
     Annonce annonce = find(idAnnonce);
@@ -90,10 +78,11 @@ public class AnnonceService extends GenericService<Annonce> {
     return new HistoriqueAnnonceDTO(annonce, historiqueMin);
   }
 
-  public List<Annonce> findByUser(int idUser){
+  public List<Annonce> findByUser(int idUser) {
     System.out.println(idUser);
     return annonceRepository.findByUser(idUser);
   }
+
   @Transactional(rollbackOn = Exception.class)
   public void valider(int idAnnonce)
       throws NotFoundException, ValidationException {
@@ -109,7 +98,6 @@ public class AnnonceService extends GenericService<Annonce> {
     historiqueService.save(historique);
   }
 
-  
   @Transactional
   public void refuser(int idAnnonce)
       throws NotFoundException, ValidationException {
