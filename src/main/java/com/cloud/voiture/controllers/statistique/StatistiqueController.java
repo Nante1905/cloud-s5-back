@@ -5,13 +5,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cloud.voiture.models.statistique.StatInscription;
 import com.cloud.voiture.models.statistique.StatRequest;
 import com.cloud.voiture.models.statistique.StatTopSeller;
 import com.cloud.voiture.models.statistique.StatTopSellerRequest;
@@ -45,13 +43,12 @@ public class StatistiqueController {
     }
   }
 
-  @PostMapping("/inscriptions")
+  @PostMapping("/users")
   public ResponseEntity<?> getInscriptionsParMois(
       @RequestBody StatRequest request) {
     try {
-      List<StatInscription> stat = statService.getInscriptionsParMois(request);
 
-      return ResponseEntity.ok(new Response(stat, ""));
+      return ResponseEntity.ok(new Response(statService.getUserStat(request), ""));
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseEntity
