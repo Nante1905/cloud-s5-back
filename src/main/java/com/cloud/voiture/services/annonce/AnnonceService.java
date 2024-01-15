@@ -5,6 +5,8 @@ import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonce;
+import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
+import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhotoID;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceDTO;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceMin;
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
@@ -114,18 +116,27 @@ public class AnnonceService extends GenericService<Annonce> {
   @Override
   @Transactional(rollbackOn = Exception.class)
   public Annonce save(Annonce model) {
+    System.out.println("nbr aujourd'hui " + annonceRepository.getNumOfTheDay());
     model.generateReference(annonceRepository.getNumOfTheDay(), params);
     System.out.println(model.getReference());
     model.setVoiture(voitureService.save(model.getVoiture()));
     System.out.println(model.getVoiture().getId());
     model.setIdVoiture(model.getVoiture().getId());
     model.defineCommission(commissionService.getLast());
+
+    if (model.getPhotos() != null) {
+      for (AnnoncePhoto photo : model.getPhotos()) {
+        photo.setAnnonce(model);
+      }
+    }
+
     model = super.save(model);
     HistoriqueAnnonce historiqueAnnonce = new HistoriqueAnnonce();
     historiqueAnnonce.setIdAnnonce(model.getId());
     historiqueAnnonce.setDateMaj(LocalDateTime.now());
     historiqueAnnonce.setStatus(params.getAnnonceCree());
     historiqueService.save(historiqueAnnonce);
+
     return model;
   }
 
