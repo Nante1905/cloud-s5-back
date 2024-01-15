@@ -7,14 +7,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name="boite_vitesse")
+@Table(name = "boite_vitesse")
 public class Vitesse extends GenericModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
+    @NotBlank(message = "")
+    @NotNull(message = "")
     String nom;
 
     public int getId() {

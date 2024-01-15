@@ -3,8 +3,11 @@ package com.cloud.voiture.controllers.annonce;
 import com.cloud.voiture.crud.controller.GenericController;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
+import com.cloud.voiture.models.voiture.EstimationPrix;
+import com.cloud.voiture.models.voiture.Voiture;
 import com.cloud.voiture.search.RechercheAnnonce;
 import com.cloud.voiture.services.annonce.AnnonceService;
+import com.cloud.voiture.services.voiture.VoitureService;
 import com.cloud.voiture.types.response.Response;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,19 @@ public class AnnonceController extends GenericController<Annonce> {
 
   @Autowired
   AnnonceService annonceService;
+
+  @Autowired
+  VoitureService voitureService;
+
+  @PostMapping("/estimate")
+  public ResponseEntity<Response> estimatePrice(@RequestBody Voiture voiture) {
+    try {
+      EstimationPrix estimationPrix = voitureService.estimate(voiture);
+      return ResponseEntity.ok(new Response(estimationPrix, ""));
+    } catch (Exception e) {
+      return ResponseEntity.status(500).body(new Response(e.getMessage()));
+    }
+  }
 
   @GetMapping("/{id}/view")
   public ResponseEntity<Response> getByIdThenView(
@@ -48,6 +64,9 @@ public class AnnonceController extends GenericController<Annonce> {
       return ResponseEntity.ok().body(new Response(null, "Annonce validée"));
     } catch (NotFoundException e) {
       e.printStackTrace();
+      return ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .body(new Response(e.getMessage()));
       return ResponseEntity
         .status(HttpStatus.NOT_FOUND)
         .body(new Response(e.getMessage()));
@@ -76,6 +95,9 @@ public class AnnonceController extends GenericController<Annonce> {
       return ResponseEntity
         .status(HttpStatus.NOT_FOUND)
         .body(new Response(e.getMessage()));
+      return ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .body(new Response(e.getMessage()));
     } catch (ValidationException e) {
       e.printStackTrace();
       return ResponseEntity
@@ -83,6 +105,9 @@ public class AnnonceController extends GenericController<Annonce> {
         .body(new Response(e.getMessage()));
     } catch (Exception e) {
       e.printStackTrace();
+      return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(new Response("Une erreur s'est produite"));
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(new Response("Une erreur s'est produite"));
@@ -111,3 +136,4 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 }
+
