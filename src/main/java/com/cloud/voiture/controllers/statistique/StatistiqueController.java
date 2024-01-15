@@ -75,7 +75,7 @@ public class StatistiqueController {
     }
   }
 
-  @GetMapping("/general")
+  @PostMapping("/general")
   public ResponseEntity<?> getGeneralStats(@RequestBody StatRequest params) {
     try {
 
