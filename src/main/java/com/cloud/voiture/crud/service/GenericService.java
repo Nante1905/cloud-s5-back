@@ -3,6 +3,9 @@ package com.cloud.voiture.crud.service;
 import com.cloud.voiture.crud.model.GenericModel;
 import com.cloud.voiture.crud.pagination.Paginated;
 import com.cloud.voiture.crud.repository.GenericRepository;
+
+import jakarta.transaction.Transactional;
+
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -32,16 +35,22 @@ public class GenericService<T extends GenericModel> {
     return repository.save(model);
   }
 
+  public void delete(int id) throws NotFoundException {
+    T model = find(id);
+    repository.delete(model);
+    System.out.println("deleted =========================");
+  }
+
   public GenericRepository<T> getRepository() {
     return repository;
   }
 
   public Paginated<T> findAll(int nbPage, int pageSize) {
-    Pageable pageable = PageRequest.of(nbPage-1, pageSize);
+    Pageable pageable = PageRequest.of(nbPage - 1, pageSize);
     Page<T> page = repository.findAll(pageable);
     return new Paginated<T>(
         page.getContent(),
         page.getTotalPages(),
-        page.getNumber()+1);
+        page.getNumber() + 1);
   }
 }
