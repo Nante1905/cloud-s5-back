@@ -211,7 +211,7 @@ ALTER COLUMN date_debut TYPE TIMESTAMP;
 
 -- 2024-01-13 18:44
 alter table annonce alter column date_creation set default now();
-alter table etat alter column nom drop default;
+alter table etat_voiture alter column nom drop default;
 
 --2024-01-15 09:17
 ALTER TABLE vue_annonce
@@ -222,4 +222,4 @@ create table annonce_photo (
    id_annonce int not null REFERENCES annonce(id),
    photo_url VARCHAR(255) not null,
    unique(photo_url)
-
+);
