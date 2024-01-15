@@ -1,20 +1,35 @@
 package com.cloud.voiture.services.annonce;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+
 import com.cloud.voiture.config.Constant;
 import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonce;
+
+import com.cloud.voiture.models.annonce.VueAnnonce;
+
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhotoID;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceDTO;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceMin;
+
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
 import com.cloud.voiture.search.RechercheAnnonce;
 import com.cloud.voiture.services.voiture.VoitureService;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +37,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class AnnonceService extends GenericService<Annonce> {
 
+  @Autowired
+  private VueAnnonceService vueAnnonceService;
   @Autowired
   private CommissionService commissionService;
   @Autowired
@@ -40,9 +58,22 @@ public class AnnonceService extends GenericService<Annonce> {
 
   @Autowired
   private AnnonceRepository annonceRepository;
-
+  
   @Autowired
   Constant config;
+
+  @Transactional
+  public void getByIdAndView(int idAnnonce, int iduser) throws Exception {
+    VueAnnonce vueAnnonce = new VueAnnonce();
+    vueAnnonce.setIdUtilisateur(iduser);
+    vueAnnonce.setIdAnnonce(idAnnonce);
+    try {
+      vueAnnonceService.save(vueAnnonce);
+      annonceRepository.addView(idAnnonce);
+    } catch (DataIntegrityViolationException e) {
+      System.out.println("deja vu");
+    }
+  
 
   public HistoriqueAnnonceDTO findHistorique(int idAnnonce) throws NotFoundException, ValidationException {
     Annonce annonce = find(idAnnonce);
@@ -116,7 +147,7 @@ public class AnnonceService extends GenericService<Annonce> {
   @Override
   @Transactional(rollbackOn = Exception.class)
   public Annonce save(Annonce model) {
-    System.out.println("nbr aujourd'hui " + annonceRepository.getNumOfTheDay());
+
     model.generateReference(annonceRepository.getNumOfTheDay(), params);
     System.out.println(model.getReference());
     model.setVoiture(voitureService.save(model.getVoiture()));
