@@ -47,8 +47,10 @@ public class AnnonceController extends GenericController<Annonce> {
     @PathVariable(name = "id") int id
   ) {
     try {
+      // TODO: change this line to the connected user from userdetails
+      int idUser = 1;
       return ResponseEntity.ok(
-        new Response(annonceService.getByIdAndView(id), "")
+        new Response(annonceService.getByIdAndView(id,idUser), "")
       );
     } catch (Exception e) {
       return ResponseEntity.status(500).body(new Response(e.getMessage()));
@@ -64,9 +66,6 @@ public class AnnonceController extends GenericController<Annonce> {
       return ResponseEntity.ok().body(new Response(null, "Annonce validée"));
     } catch (NotFoundException e) {
       e.printStackTrace();
-      return ResponseEntity
-        .status(HttpStatus.NOT_FOUND)
-        .body(new Response(e.getMessage()));
       return ResponseEntity
         .status(HttpStatus.NOT_FOUND)
         .body(new Response(e.getMessage()));
@@ -95,9 +94,7 @@ public class AnnonceController extends GenericController<Annonce> {
       return ResponseEntity
         .status(HttpStatus.NOT_FOUND)
         .body(new Response(e.getMessage()));
-      return ResponseEntity
-        .status(HttpStatus.NOT_FOUND)
-        .body(new Response(e.getMessage()));
+
     } catch (ValidationException e) {
       e.printStackTrace();
       return ResponseEntity
@@ -108,9 +105,7 @@ public class AnnonceController extends GenericController<Annonce> {
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(new Response("Une erreur s'est produite"));
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(new Response("Une erreur s'est produite"));
+
     }
   }
 

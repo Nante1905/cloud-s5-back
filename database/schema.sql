@@ -212,3 +212,7 @@ ALTER COLUMN date_debut TYPE TIMESTAMP;
 -- 2024-01-13 18:44
 alter table annonce alter column date_creation set default now();
 alter table etat alter column nom drop default;
+
+--2024-01-15 09:17
+ALTER TABLE vue_annonce
+ADD CONSTRAINT unique_annonce_user UNIQUE (id_annonce, id_utilisateur);
