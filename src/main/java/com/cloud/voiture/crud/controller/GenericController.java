@@ -18,8 +18,10 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,10 +57,9 @@ public class GenericController<T extends GenericModel> {
     public ResponseEntity<?> save(@Valid @RequestBody T model) {
         try {
             T results = service.save(model);
-            return ResponseEntity.ok(new Response(results, "Inséré avec succes"));
+            return ResponseEntity.status(HttpStatus.CREATED).body(new Response(results, "Inséré avec succes"));
         } catch (DataIntegrityViolationException e) {
             // e.printStackTrace();
-            System.out.println(e.getMessage());
             if (e.getCause() instanceof ConstraintViolationException) {
                 ConstraintViolationException sqlException = (ConstraintViolationException) e.getCause();
                 String sqlState = sqlException.getSQLState();
@@ -66,14 +67,13 @@ public class GenericController<T extends GenericModel> {
                         type,
                         sqlException.getMessage());
 
-                System.out.println("================== " + sqlException.getMessage());
-
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new Response(
                                 SqlErrorMessage.getMessage(sqlState, columnName,
                                         type.getSimpleName())));
 
             }
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new Response("Contrainte de donnée violée"));
 
@@ -101,7 +101,7 @@ public class GenericController<T extends GenericModel> {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> save(
+    public ResponseEntity<?> update(
             @RequestBody @Valid T model,
             @PathVariable(name = "id") int id) {
 
@@ -131,6 +131,30 @@ public class GenericController<T extends GenericModel> {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(new Response("Erreur interne du serveur"));
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Response> delete(@PathVariable(name = "id") int id) {
+        try {
+            service.delete(id);
+            return ResponseEntity.ok().body(new Response(null, "Entité id " + id + " suprimé."));
+        } catch (DataIntegrityViolationException e) {
+            if (e.getCause() instanceof ConstraintViolationException) {
+                ConstraintViolationException sqlException = (ConstraintViolationException) e.getCause();
+                String sqlState = sqlException.getSQLState();
+                if (sqlState.equals("23503")) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                            .body(new Response("Cette entité ne peut être supprimée car elle est déjà utilisée."));
+                }
+            }
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new Response("Contrainte de donnée violée"));
+            // TODO: handle exception
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new Response("Il n'existe aucun " + type.getSimpleName() + " avec l'identifiant " + id));
         }
     }
 
