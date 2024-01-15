@@ -216,3 +216,10 @@ alter table etat alter column nom drop default;
 --2024-01-15 09:17
 ALTER TABLE vue_annonce
 ADD CONSTRAINT unique_annonce_user UNIQUE (id_annonce, id_utilisateur);
+
+-- 2024-01-15 8:54
+create table annonce_photo (
+   id_annonce int not null REFERENCES annonce(id),
+   photo_url VARCHAR(255) not null,
+   unique(photo_url)
+

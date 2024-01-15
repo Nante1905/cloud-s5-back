@@ -14,7 +14,14 @@ import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonce;
+
 import com.cloud.voiture.models.annonce.VueAnnonce;
+
+import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
+import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhotoID;
+import com.cloud.voiture.models.annonce.HistoriqueAnnonceDTO;
+import com.cloud.voiture.models.annonce.HistoriqueAnnonceMin;
+
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
 import com.cloud.voiture.search.RechercheAnnonce;
 import com.cloud.voiture.services.voiture.VoitureService;
@@ -22,6 +29,14 @@ import com.cloud.voiture.services.voiture.VoitureService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.stereotype.Service;
+
 
 @Service
 public class AnnonceService extends GenericService<Annonce> {
@@ -43,6 +58,9 @@ public class AnnonceService extends GenericService<Annonce> {
 
   @Autowired
   private AnnonceRepository annonceRepository;
+  
+  @Autowired
+  Constant config;
 
   @Transactional
   public void getByIdAndView(int idAnnonce, int iduser) throws Exception {
@@ -55,6 +73,21 @@ public class AnnonceService extends GenericService<Annonce> {
     } catch (DataIntegrityViolationException e) {
       System.out.println("deja vu");
     }
+  
+
+  public HistoriqueAnnonceDTO findHistorique(int idAnnonce) throws NotFoundException, ValidationException {
+    Annonce annonce = find(idAnnonce);
+    List<HistoriqueAnnonce> historiques = historiqueService.findByIdAnnonce(idAnnonce);
+
+    List<HistoriqueAnnonceMin> historiqueMin = new ArrayList<HistoriqueAnnonceMin>();
+
+    for (HistoriqueAnnonce histo : historiques) {
+      HistoriqueAnnonceMin m = new HistoriqueAnnonceMin();
+      m.setDate(histo.getDateMaj());
+      m.setStatus(historiqueService.getEtat(histo));
+      historiqueMin.add(m);
+    }
+    return new HistoriqueAnnonceDTO(annonce, historiqueMin);
   }
 
   @Transactional(rollbackOn = Exception.class)
@@ -114,18 +147,27 @@ public class AnnonceService extends GenericService<Annonce> {
   @Override
   @Transactional(rollbackOn = Exception.class)
   public Annonce save(Annonce model) {
+
     model.generateReference(annonceRepository.getNumOfTheDay(), params);
     System.out.println(model.getReference());
     model.setVoiture(voitureService.save(model.getVoiture()));
     System.out.println(model.getVoiture().getId());
     model.setIdVoiture(model.getVoiture().getId());
     model.defineCommission(commissionService.getLast());
+
+    if (model.getPhotos() != null) {
+      for (AnnoncePhoto photo : model.getPhotos()) {
+        photo.setAnnonce(model);
+      }
+    }
+
     model = super.save(model);
     HistoriqueAnnonce historiqueAnnonce = new HistoriqueAnnonce();
     historiqueAnnonce.setIdAnnonce(model.getId());
     historiqueAnnonce.setDateMaj(LocalDateTime.now());
     historiqueAnnonce.setStatus(params.getAnnonceCree());
     historiqueService.save(historiqueAnnonce);
+
     return model;
   }
 

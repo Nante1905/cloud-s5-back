@@ -34,6 +34,19 @@ public class AnnonceController extends GenericController<Annonce> {
   @Autowired
   VoitureService voitureService;
 
+  @GetMapping("{id}/historiques")
+  public ResponseEntity<Response> getHistorique(@PathVariable(name = "id") int id) {
+    try {
+      return ResponseEntity.ok().body(new Response(annonceService.findHistorique(id), null));
+    } catch (NotFoundException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(new Response("Il n'existe aucune annonce avec l'identifiant " + id));
+    } catch (ValidationException e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response(e.getMessage()));
+    }
+  }
+
   @PostMapping("/estimate")
   public ResponseEntity<Response> estimatePrice(@RequestBody Voiture voiture) {
     try {
@@ -97,7 +110,6 @@ public class AnnonceController extends GenericController<Annonce> {
       return ResponseEntity
           .status(HttpStatus.NOT_FOUND)
           .body(new Response(e.getMessage()));
-
     } catch (ValidationException e) {
       e.printStackTrace();
       return ResponseEntity
@@ -108,7 +120,6 @@ public class AnnonceController extends GenericController<Annonce> {
       return ResponseEntity
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body(new Response("Une erreur s'est produite"));
-
     }
   }
 
