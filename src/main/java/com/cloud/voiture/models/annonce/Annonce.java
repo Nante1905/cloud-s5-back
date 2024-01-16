@@ -1,13 +1,13 @@
 package com.cloud.voiture.models.annonce;
 
-import com.cloud.voiture.config.Constant;
-import java.sql.Date;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.springframework.boot.context.properties.bind.DefaultValue;
+
+import com.cloud.voiture.config.Constant;
 import com.cloud.voiture.crud.model.GenericModel;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 import com.cloud.voiture.models.auth.Utilisateur;
@@ -16,7 +16,6 @@ import com.cloud.voiture.models.voiture.Voiture;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,14 +23,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import java.sql.Date;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.time.LocalDateTime;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
 
 @Entity
 public class Annonce extends GenericModel {
@@ -92,7 +86,7 @@ public class Annonce extends GenericModel {
   }
 
   public void defineCommission(Commission commission) {
-    setCommission(prix * commission.getPourcentage());
+    setCommission(prix * commission.getPourcentage() / 100);
   }
 
   public void setReference(String reference) {
