@@ -223,3 +223,7 @@ create table annonce_photo (
    photo_url VARCHAR(255) not null,
    unique(photo_url)
 );
+
+-- 2024-01-15 17:58
+alter table commission alter column prourcentage type numeric;
+alter table commission alter column date_debut default now();
