@@ -26,7 +26,7 @@ public interface StatistiqueRepo extends JpaRepository<Couleur, Integer> {
     @Query(value = "select count(*) from annonce where extract(month from date_creation) = ?1 and extract(year from date_creation) = ?2", nativeQuery = true)
     public int getNbAnnonce(int mois, int annee);
 
-    @Query(value = "select avg(a.date_creation - av.date_vente)\r\n" + //
+    @Query(value = "select coalesce(avg(a.date_creation - av.date_vente), 0)\r\n" + //
             "from annonce_vendu av\r\n" + //
             "join annonce a \r\n" + //
             "on av.id_annonce = a.id\r\n" + //
