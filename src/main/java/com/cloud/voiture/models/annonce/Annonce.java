@@ -54,7 +54,6 @@ public class Annonce extends GenericModel {
   Integer nbVues = 0;
 
   @Column(name = "id_utilisateur")
-  @Min(value = 1, message = "L'utilisateur est obligatoire.")
   int idUtilisateur;
 
   @ManyToOne
