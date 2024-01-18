@@ -40,19 +40,23 @@ public class StatistiqueService {
         .getResultList();
   }
 
-  public int getNbUser(StatRequest request){
-    return (Integer) entityManager.createNativeQuery("SELECT count(id) as count from utilisateur where extract(year from date_inscription) <= :annee", Integer.class).setParameter("annee", request.getAnnee()).getSingleResult();
+  public int getNbUser(StatRequest request) {
+    return (Integer) entityManager.createNativeQuery(
+        "SELECT count(id) as count from utilisateur where extract(year from date_inscription) <= :annee", Integer.class)
+        .setParameter("annee", request.getAnnee()).getSingleResult();
   }
-  public HashMap<String,Object> getUserStat(StatRequest request){
+
+  public HashMap<String, Object> getUserStat(StatRequest request) {
     HashMap<String, Object> data = new HashMap<String, Object>();
     data.put(
         "users",
         this.getNbUser(request));
     data.put(
         "inscriptions",
-       this.getInscriptionsParMois(request));
+        this.getInscriptionsParMois(request));
     return data;
   }
+
   public List<StatTopSeller> getTopSellers(StatTopSellerRequest request) {
     return entityManager
         .createNativeQuery(
@@ -118,8 +122,8 @@ public class StatistiqueService {
     return statistiqueRepo.getNbVendu(mois, annee);
   }
 
-  public int getNbAnnonce(int mois, int annee) {
-    return statistiqueRepo.getNbAnnonce(mois, annee);
+  public int getNbAnnonceValide(int mois, int annee) {
+    return statistiqueRepo.getNbAnnonceValide(mois, annee);
   }
 
   // en jours

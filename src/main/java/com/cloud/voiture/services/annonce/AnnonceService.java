@@ -18,12 +18,15 @@ import com.cloud.voiture.models.annonce.HistoriqueAnnonceDTO;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceMin;
 import com.cloud.voiture.models.annonce.VueAnnonce;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
+import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
 import com.cloud.voiture.search.RechercheAnnonce;
+import com.cloud.voiture.services.UtilisateurService;
 import com.cloud.voiture.services.voiture.VoitureService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.security.auth.message.AuthException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -46,6 +49,9 @@ public class AnnonceService extends GenericService<Annonce> {
 
   @Autowired
   private AnnonceRepository annonceRepository;
+
+  @Autowired
+  private UtilisateurService utilisateurService;
 
   @Autowired
   Constant config;
@@ -140,7 +146,6 @@ public class AnnonceService extends GenericService<Annonce> {
   @Override
   @Transactional(rollbackOn = Exception.class)
   public Annonce save(Annonce model) {
-
     model.generateReference(annonceRepository.getNumOfTheDay(), params);
     System.out.println(model.getReference());
     model.setVoiture(voitureService.save(model.getVoiture()));

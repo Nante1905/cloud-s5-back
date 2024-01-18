@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION topSellers(dateYYYYMM character varying, limit_value 
 RETURNS TABLE (
     id integer,
     nom character varying,
+    prenom character varying,
     valide bigint,
     vendu bigint,
     commission numeric,
@@ -34,6 +35,7 @@ BEGIN
     SELECT
         utilisateur.id,
         utilisateur.nom,
+        utilisateur.prenom, 
         COALESCE(COUNT(v_annonce_valide.id), 0) AS valide,
         COALESCE(COUNT(v_annonce_vendu.id), 0) AS vendu,
         COALESCE(SUM(v_annonce_valide.commission), 0) AS commission,
@@ -82,3 +84,18 @@ BEGIN
     RETURN;
 END;
 $$ LANGUAGE plpgsql;
+
+-- 2024-01-18 fix/stats-general
+
+create function f_benefice_par_mois(mois int, annee int) returns table (mois int, commission numeric) as $$
+
+  select m.mois, coalesce(sum(v.commission), 0) commission  
+from v_mois m  
+left outer join   
+(select *   
+  from v_annonce_vendu   
+  where extract(month from date_maj) = mois and extract(year from date_maj) = annee) v   
+on m.mois = extract(month from v.date_maj)  
+group by m.mois  
+order by m.mois
+$$ language sql;
