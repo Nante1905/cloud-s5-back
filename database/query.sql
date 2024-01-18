@@ -33,6 +33,8 @@ on m.mois = extract(month from v.date_vente)
 group by m.mois
 order by m.mois;
 
+-- TODO: fix stat general : le annonce_vendu solona v_annonce_vendu
+
 insert into historique_annonce values 
 (default, '2024-01-01', 5,1),
 (default, '2023-12-22', 5,2),
@@ -57,3 +59,6 @@ from annonce
 join voiture
 on voiture.id = annonce.id_voiture
 where voiture.id_modele = 1 and voiture.id_energie=4 and voiture.id_boite_vitesse=1 and etat <= 5+2 or etat >=5-2 
+
+
+-- TODO: manala id_acheteur

@@ -79,7 +79,7 @@ public class StatistiqueController {
       List<HashMap<String, Object>> beneficeParMois = this.statService.getBeneficeParMois(params.getMois(),
           params.getAnnee());
       int nbVendu = this.statService.getNbVendu(params.getMois(), params.getAnnee());
-      int nbAnnonce = this.statService.getNbAnnonce(params.getMois(), params.getAnnee());
+      int nbAnnonce = this.statService.getNbAnnonceValide(params.getMois(), params.getAnnee());
       int avgCreationVente = this.statService.getAvgCreationVente(params.getMois(), params.getAnnee());
 
       HashMap<String, Object> data = new HashMap<String, Object>();
