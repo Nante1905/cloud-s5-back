@@ -8,7 +8,9 @@ public class StatTopSeller {
   @Column(name = "id")
   int idUtilisateur;
   @Column(name = "nom")
-  String nomUtilisateur;
+  String nom;
+  @Column(name="prenom")
+  String prenom;
 
   double valide;
   double vendu;
@@ -18,13 +20,15 @@ public class StatTopSeller {
   public StatTopSeller(
     Integer id,
     String nom,
+    String prenom,
     Long valide,
     Long vendu,
     BigDecimal commission,
     BigDecimal pourcentage
   ) {
     setIdUtilisateur(id);
-    setNomUtilisateur(nom);
+    setNom(nom);
+    setPrenom(prenom);
     setCommission(commission);
     setValide(valide);
     setVendu(vendu);
@@ -84,11 +88,17 @@ public class StatTopSeller {
     this.idUtilisateur = idUtilisateur;
   }
 
-  public String getNomUtilisateur() {
-    return nomUtilisateur;
+  public String getNom() {
+    return nom;
   }
 
-  public void setNomUtilisateur(String nomUtilisateur) {
-    this.nomUtilisateur = nomUtilisateur;
+  public void setNom(String nomUtilisateur) {
+    this.nom = nomUtilisateur;
+  }
+  public String getPrenom() {
+    return prenom;
+  }
+  public void setPrenom(String prenom) {
+    this.prenom = prenom;
   }
 }
