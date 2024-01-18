@@ -82,3 +82,18 @@ BEGIN
     RETURN;
 END;
 $$ LANGUAGE plpgsql;
+
+-- 2024-01-18 fix/stats-general
+
+create function f_benefice_par_mois(mois int, annee int) returns table (mois int, commission numeric) as $$
+
+  select m.mois, coalesce(sum(v.commission), 0) commission  
+from v_mois m  
+left outer join   
+(select *   
+  from v_annonce_vendu   
+  where extract(month from date_maj) = mois and extract(year from date_maj) = annee) v   
+on m.mois = extract(month from v.date_maj)  
+group by m.mois  
+order by m.mois
+$$ language sql;

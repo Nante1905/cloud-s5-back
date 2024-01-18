@@ -8,32 +8,21 @@ import org.springframework.data.jpa.repository.Query;
 import com.cloud.voiture.models.voiture.Couleur;
 
 public interface StatistiqueRepo extends JpaRepository<Couleur, Integer> {
-    @Query(value = "select m.mois, coalesce(sum(v.commission), 0) commission\r\n" + //
-            "from v_mois m\r\n" + //
-            "left outer join \r\n" + //
-            "    (select * \r\n" + //
-            "    from v_vente \r\n" + //
-            "    where extract(month from date_vente) = ?1 and extract(year from date_vente) = ?2) v \r\n" + //
-            "on m.mois = extract(month from v.date_vente)\r\n" + //
-            "group by m.mois\r\n" + //
-            "order by m.mois", nativeQuery = true)
+    @Query(value = "select * from f_benefice_par_mois(?1, ?2)", nativeQuery = true)
     public List<Object[]> getBeneficeParMois(int mois, int annee);
 
-    @Query(value = "select count(*) from annonce_vendu \r\n" + //
-            "where extract(month from date_vente) = ?1 and extract(year from date_vente) = ?2", nativeQuery = true)
+    @Query(value = "select count(*) from v_annonce_vendu vav where extract(month from vav.date_maj) = 1 and extract(year from vav.date_maj) = 2024", nativeQuery = true)
     public int getNbVendu(int mois, int annee);
 
-    @Query(value = "select count(*) from annonce where extract(month from date_creation) = ?1 and extract(year from date_creation) = ?2", nativeQuery = true)
-    public int getNbAnnonce(int mois, int annee);
+    @Query(value = "select count(*) from v_annonce_valide where extract(month from date_maj) = ?1 and extract(year from date_maj) = ?2", nativeQuery = true)
+    public int getNbAnnonceValide(int mois, int annee);
 
-    @Query(value = "select coalesce(avg(a.date_creation - av.date_vente), 0)\r\n" + //
-            "from annonce_vendu av\r\n" + //
-            "join annonce a \r\n" + //
-            "on av.id_annonce = a.id\r\n" + //
-            "where extract(month from date_vente) = ?1 and extract(year from date_vente) = ?2", nativeQuery = true)
+    @Query(value = "select coalesce(avg(EXTRACT('days' FROM (av.date_creation - av.date_maj))), 0)\r\n" + //
+            "from v_annonce_vendu av\r\n" + //
+            "where extract(month from date_maj) = ?1 and extract(year from date_maj) = ?2", nativeQuery = true)
     public int getAvgCreationVente(int mois, int annee);
 
-    @Query(value = "select coalesce(sum(commission), 0) commission from annonce_vendu av join annonce a on av.id_annonce = a.id where extract(month from date_vente) = ?1 and extract(year from date_vente) = ?2", nativeQuery = true)
+    @Query(value = "select coalesce(sum(commission), 0) commission from v_annonce_vendu av where extract(month from av.date_maj) = ?1 and extract(year from av.date_maj) = ?2", nativeQuery = true)
     public double getTotalBenefice(int mois, int annee);
 
 }
