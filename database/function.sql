@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION topSellers(dateYYYYMM character varying, limit_value 
 RETURNS TABLE (
     id integer,
     nom character varying,
+    prenom character varying,
     valide bigint,
     vendu bigint,
     commission numeric,
@@ -34,6 +35,7 @@ BEGIN
     SELECT
         utilisateur.id,
         utilisateur.nom,
+        utilisateur.prenom, 
         COALESCE(COUNT(v_annonce_valide.id), 0) AS valide,
         COALESCE(COUNT(v_annonce_vendu.id), 0) AS vendu,
         COALESCE(SUM(v_annonce_valide.commission), 0) AS commission,
