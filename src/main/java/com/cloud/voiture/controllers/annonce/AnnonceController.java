@@ -17,12 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cloud.voiture.crud.controller.GenericController;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
+import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.voiture.EstimationPrix;
 import com.cloud.voiture.models.voiture.Voiture;
 import com.cloud.voiture.search.RechercheAnnonce;
+import com.cloud.voiture.services.UtilisateurService;
 import com.cloud.voiture.services.annonce.AnnonceService;
 import com.cloud.voiture.services.voiture.VoitureService;
 import com.cloud.voiture.types.response.Response;
+
+import jakarta.security.auth.message.AuthException;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/annonces")
@@ -34,19 +39,22 @@ public class AnnonceController extends GenericController<Annonce> {
   @Autowired
   VoitureService voitureService;
 
+  @Autowired
+  UtilisateurService utilisateurService;
+
   @GetMapping("/yours")
-  public ResponseEntity<Response> getConnectedUserAnnonces(){
+  public ResponseEntity<Response> getConnectedUserAnnonces() {
     try {
       // TODO: change to the connected user id
       int userId = 1;
-      List<Annonce> annonces  = annonceService.findByUser(userId);
+      List<Annonce> annonces = annonceService.findByUser(userId);
       System.out.println(annonces.size());
       return ResponseEntity.ok(new Response(annonces, ""));
     } catch (Exception e) {
       return ResponseEntity.status(500).body(new Response(e.getMessage()));
     }
   }
-  
+
   @GetMapping("{id}/historiques")
   public ResponseEntity<Response> getHistorique(@PathVariable(name = "id") int id) {
     try {
@@ -67,6 +75,19 @@ public class AnnonceController extends GenericController<Annonce> {
       return ResponseEntity.ok(new Response(estimationPrix, ""));
     } catch (Exception e) {
       return ResponseEntity.status(500).body(new Response(e.getMessage()));
+    }
+  }
+
+  @Override
+  @PostMapping
+  public ResponseEntity<Response> save(@Valid @RequestBody Annonce annonce) {
+    try {
+      Utilisateur u = utilisateurService.getAuthenticated();
+      annonce.setIdUtilisateur(u.getId());
+      Annonce nouvelAnnonce = annonceService.save(annonce);
+      return ResponseEntity.status(HttpStatus.CREATED).body(new Response(nouvelAnnonce, "Annonce créée"));
+    } catch (AuthException e) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Response("Aucun utilisateur connecté"));
     }
   }
 
