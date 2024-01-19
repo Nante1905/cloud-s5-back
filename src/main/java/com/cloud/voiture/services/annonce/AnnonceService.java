@@ -56,6 +56,8 @@ public class AnnonceService extends GenericService<Annonce> {
   @Autowired
   Constant config;
 
+  private static int TAILLE_PAGE = 10;
+
   @Transactional
   public void getByIdAndView(int idAnnonce, int iduser) throws Exception {
     VueAnnonce vueAnnonce = new VueAnnonce();
@@ -167,6 +169,13 @@ public class AnnonceService extends GenericService<Annonce> {
     historiqueService.save(historiqueAnnonce);
 
     return model;
+  }
+
+  public List<Annonce> getAllNonValide(int page) {
+    if (page == 0) {
+      return annonceRepository.getAllNonValide();
+    }
+    return annonceRepository.getAllNonValide(page, TAILLE_PAGE);
   }
 
   public List<Annonce> getAllNonValide() {

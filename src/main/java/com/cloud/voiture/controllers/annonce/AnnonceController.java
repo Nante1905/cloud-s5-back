@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cloud.voiture.crud.controller.GenericController;
@@ -158,9 +159,9 @@ public class AnnonceController extends GenericController<Annonce> {
   }
 
   @GetMapping("/nonValide")
-  public ResponseEntity<Response> findNonValide() {
+  public ResponseEntity<Response> findNonValide(@RequestParam(required = false, defaultValue = "0") int page) {
     try {
-      List<Annonce> results = annonceService.getAllNonValide();
+      List<Annonce> results = annonceService.getAllNonValide(page);
       return ResponseEntity.ok(new Response(results, ""));
     } catch (Exception e) {
       return ResponseEntity.status(500).body(new Response(e.getMessage()));
