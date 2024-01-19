@@ -138,9 +138,10 @@ public class AnnonceController extends GenericController<Annonce> {
   }
 
   @GetMapping("/nonValide")
-  public ResponseEntity<Response> findNonValide(@RequestParam(required = false, defaultValue = "0") int page) {
+  public ResponseEntity<Response> findNonValide(@RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
     try {
-      List<Annonce> results = annonceService.getAllNonValide(page);
+      List<Annonce> results = annonceService.getAllNonValide(page, taille);
       return ResponseEntity.ok(new Response(results, ""));
     } catch (Exception e) {
       return ResponseEntity.status(500).body(new Response(e.getMessage()));

@@ -166,17 +166,20 @@ public class AnnonceService extends GenericService<Annonce> {
     return model;
   }
 
-  public List<Annonce> getAllNonValide(int page) {
-    if (page == 0) {
+  public List<Annonce> getAllNonValide(int page, int taille) {
+    if (page == 0 || taille == 0) {
       return annonceRepository.getAllNonValide();
     }
-    return annonceRepository.getAllNonValide(page, TAILLE_PAGE);
+    return annonceRepository.getAllNonValide(page, taille);
   }
 
   public List<Annonce> getAllNonValide() {
     return annonceRepository.getAllNonValide();
   }
 
+  // SOLOINA V_ANNONCE_VALIDE
+  // ATAO AFAKA MANDRAY MARQUE SY MODELE MAROMARO
+  // LAY FAVORI
   public List<Annonce> findComplex(RechercheAnnonce rechercheAnnonce) {
     return (List<Annonce>) entityManager
         .createNativeQuery(
