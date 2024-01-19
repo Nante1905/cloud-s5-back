@@ -1,5 +1,8 @@
 package com.cloud.voiture.search;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.cloud.voiture.models.voiture.Categorie;
 import com.cloud.voiture.models.voiture.Marque;
 import com.cloud.voiture.models.voiture.Modele;
@@ -7,85 +10,83 @@ import com.cloud.voiture.models.voiture.Modele;
 public class RechercheAnnonce {
 
   String motCle;
-  Categorie categorie;
-  Marque marque;
-  Modele modele;
+  List<Categorie> categorie;
+  List<Marque> marque;
+  List<Modele> modele;
   Double anneeMiseCirculation;
   Double prixMin;
   Double prixMax;
 
   public String generateSql() {
     String sql = "select id_annonce from v_annonce ";
-    if (
-      motCle != null ||
-      categorie != null ||
-      marque != null ||
-      modele != null ||
-      anneeMiseCirculation != null ||
-      prixMax != null ||
-      prixMin != null ||
-      prixMax != null
-    ) {
+    if (motCle != null ||
+        categorie != null ||
+        marque != null ||
+        modele != null ||
+        anneeMiseCirculation != null ||
+        prixMax != null ||
+        prixMin != null ||
+        prixMax != null) {
       sql = sql + " where ";
-    }
-    else{
-        System.out.println(sql);
-        return sql;
+    } else {
+      System.out.println(sql);
+      return sql;
     }
     boolean firstCondition = true;
 
-    if ( motCle != null && ! motCle.isEmpty()) {
+    if (motCle != null && !motCle.isEmpty()) {
       sql = appendCondition(
-        sql,
-        "lower(description) LIKE lower('%" +  motCle + "%')",
-        firstCondition
-      );
+          sql,
+          "lower(description) LIKE lower('%" + motCle + "%')",
+          firstCondition);
       firstCondition = false;
     }
 
-    if ( categorie != null) {
+    if (categorie != null) {
       sql = appendCondition(
-        sql,
-        "id_categorie = " +  categorie.getId() ,
-        firstCondition
-      );
+          sql,
+          "id_categorie in " + categorie.stream()
+              .map(Categorie::getId)
+              .collect(Collectors.toList()).toString().replace("[", "(").replace("]", ")"),
+          firstCondition);
       firstCondition = false;
     }
 
-    if ( marque != null) {
+    if (marque != null) {
       sql = appendCondition(
-        sql,
-        "id_marque = " +  marque.getId(),
-        firstCondition
-      );
+          sql,
+          "id_marque in " + marque.stream()
+              .map(Marque::getId)
+              .collect(Collectors.toList()).toString().replace("[", "(").replace("]", ")"),
+          firstCondition);
       firstCondition = false;
     }
 
-    if ( modele != null) {
+    if (modele != null) {
       sql = appendCondition(
-        sql,
-        "id_modele = " +  modele.getId(),
-        firstCondition
-      );
+          sql,
+          "id_modele in " + modele.stream()
+              .map(Modele::getId)
+              .collect(Collectors.toList()).toString().replace("[", "(").replace("]", ")"),
+          firstCondition);
       firstCondition = false;
     }
 
-    if ( anneeMiseCirculation != null) {
+    if (anneeMiseCirculation != null) {
       sql = appendCondition(
-        sql,
-        "annee_sortie = "+anneeMiseCirculation,
-        firstCondition
-      );
+          sql,
+          "annee_sortie = " + anneeMiseCirculation,
+          firstCondition);
       firstCondition = false;
     }
 
-    if ( prixMin != null) {
-      sql = appendCondition(sql, "prix >= " +  prixMin, firstCondition);
+    if (prixMin != null) {
+      sql = appendCondition(sql, "prix >= " + prixMin, firstCondition);
       firstCondition = false;
     }
 
-    if ( prixMax != null) {
-      sql = appendCondition(sql, "prix <= " +  prixMax, firstCondition);
+    if (prixMax != null) {
+      sql = appendCondition(sql, "prix <= " + prixMax, firstCondition);
       firstCondition = false;
     }
     System.out.println(sql);
@@ -93,10 +94,9 @@ public class RechercheAnnonce {
   }
 
   public String appendCondition(
-    String sql,
-    String condition,
-    boolean firstCondition
-  ) {
+      String sql,
+      String condition,
+      boolean firstCondition) {
     if (!firstCondition) {
       sql += " AND ";
     }
@@ -112,27 +112,27 @@ public class RechercheAnnonce {
     this.motCle = motCle;
   }
 
-  public Categorie getCategorie() {
+  public List<Categorie> getCategorie() {
     return categorie;
   }
 
-  public void setCategorie(Categorie categorie) {
+  public void setCategorie(List<Categorie> categorie) {
     this.categorie = categorie;
   }
 
-  public Marque getMarque() {
+  public List<Marque> getMarque() {
     return marque;
   }
 
-  public void setMarque(Marque marque) {
+  public void setMarque(List<Marque> marque) {
     this.marque = marque;
   }
 
-  public Modele getModele() {
+  public List<Modele> getModele() {
     return modele;
   }
 
-  public void setModele(Modele modele) {
+  public void setModele(List<Modele> modele) {
     this.modele = modele;
   }
 
