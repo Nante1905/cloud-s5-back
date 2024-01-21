@@ -1,5 +1,5 @@
-spring:
-  data:
-    mongodb:
-      uri : mongodb+srv://yoanrazafinjaka:root@cluster0.qucdcdd.mongodb.net/?retryWrites=true&w=majority
-      database : voitures
+# spring:
+#   data:
+#     mongodb:
+#       uri : mongodb+srv://yoanrazafinjaka:root@cluster0.qucdcdd.mongodb.net/?retryWrites=true&w=majority
+#       database : voitures

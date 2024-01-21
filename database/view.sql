@@ -76,3 +76,11 @@ create or replace  view v_annonce_vendu as (
         on historique_annonce.id_annonce = annonce.id
     where historique_annonce.status = 10 
 );
+
+-- 19/01/2024 16:06
+create view v_modele_marque as (
+    select mo.*, ma.nom nom_marque
+    from modele mo 
+    join marque ma 
+        on mo.id_marque = ma.id
+);

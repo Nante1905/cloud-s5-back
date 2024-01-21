@@ -25,11 +25,11 @@ public class RechercheAnnonce {
         modele != null ||
         anneeMiseCirculation != null ||
         prixMax != null ||
-        prixMin != null ||
-        prixMax != null) {
+        prixMin != null) {
+      System.out.println("misy filtre motClé" + motCle + "min " + prixMin);
       sql = sql + " where ";
     } else {
-      System.out.println(sql);
+      System.out.println("tsisy filtre " + sql);
       return sql;
     }
     boolean firstCondition = true;

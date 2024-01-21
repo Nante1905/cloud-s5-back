@@ -176,7 +176,7 @@ public class AnnonceController extends GenericController<Annonce> {
       List<Annonce> results = annonceService.findComplex(rechercheAnnonce, page, taille);
       return ResponseEntity.ok(new Response(results, ""));
     } catch (Exception e) {
-      // e.printStackTrace();
+      e.printStackTrace();
       return ResponseEntity.status(500).body(new Response(e.getMessage()));
     }
   }
