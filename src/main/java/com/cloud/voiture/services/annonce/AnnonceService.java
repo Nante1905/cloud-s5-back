@@ -13,11 +13,13 @@ import com.cloud.voiture.config.Constant;
 import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
+import com.cloud.voiture.models.annonce.AnnonceEtFavori;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonce;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceDTO;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceMin;
 import com.cloud.voiture.models.annonce.VueAnnonce;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
+import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
 import com.cloud.voiture.search.RechercheAnnonce;
 import com.cloud.voiture.services.UtilisateurService;
@@ -25,6 +27,7 @@ import com.cloud.voiture.services.voiture.VoitureService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.security.auth.message.AuthException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -181,20 +184,48 @@ public class AnnonceService extends GenericService<Annonce> {
   }
 
   // SYSOUT QUERY
-  public List<Annonce> findComplex(RechercheAnnonce rechercheAnnonce, int page, int taille) {
+  public List<AnnonceEtFavori> findComplex(RechercheAnnonce rechercheAnnonce, int page, int taille) {
     System.out.println("RECHERCHE COMPLEXE");
-    String query = "select id, reference, description, status, date_maj as date_creation, prix, commission, nb_vue, id_utilisateur, id_voiture from v_annonce_valide where id in ("
-        +
-        rechercheAnnonce.generateSql();
-    if (taille != 0) {
-      query += ") order by date_maj desc limit " + taille + " offset(" + page + " - 1)*" + taille;
+    int idUtilisateur = 0;
+
+    try {
+      Utilisateur u = utilisateurService.getAuthenticated();
+      idUtilisateur = u.getId();
+    } catch (AuthException e) {
+      System.out.println("Recherche sans connexion");
     }
-    // query += "";
+
+    String query = """
+        select id, reference, description, status, prix, commission, nb_vue, a.id_utilisateur, id_voiture, date_maj as date_creation,
+        case
+          when f.date_ajout is null
+            then false
+          else
+            true
+          end favori
+          from v_annonce_valide a
+            left outer join annonce_favori f on a.id = f.id_annonce and f.id_utilisateur = %id%
+            where id in (
+          """
+        + rechercheAnnonce.generateSql();
+    // if (taille != 0) {
+    // query += ") order by date_maj desc limit " + taille + " offset(" + page + " -
+    // 1)*" + taille;
+    // } else {
+    // query += ")";
+    // }
+    query = query.replace("%id%", String.valueOf(idUtilisateur));
+    if (taille != 0) {
+      query += ") order by a.date_maj desc limit " + taille + " offset(" + page + " - 1)*" + taille;
+    } else {
+      query += ")";
+    }
+
     System.out.println(query + "==========================");
-    return (List<Annonce>) entityManager
+    return (List<AnnonceEtFavori>) entityManager
         .createNativeQuery(
             query,
-            Annonce.class)
+            AnnonceEtFavori.class)
         .getResultList();
   }
 
