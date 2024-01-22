@@ -14,10 +14,12 @@ import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
 import com.cloud.voiture.models.annonce.AnnonceEtFavori;
+import com.cloud.voiture.models.annonce.AnnonceGeneral;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonce;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceDTO;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceMin;
 import com.cloud.voiture.models.annonce.VueAnnonce;
+import com.cloud.voiture.models.annonce.DTO.AnnonceDTO;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
@@ -26,6 +28,7 @@ import com.cloud.voiture.services.UtilisateurService;
 import com.cloud.voiture.services.voiture.VoitureService;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.security.auth.message.AuthException;
 import jakarta.transaction.Transactional;
@@ -57,7 +60,35 @@ public class AnnonceService extends GenericService<Annonce> {
   @Autowired
   Constant config;
 
+  @Autowired
+  AnnonceGeneralService aGeneralService;
+
   private static int TAILLE_PAGE = 10;
+
+  public List<AnnoncePhoto> findPhotos(int idAnnonce) {
+    return annonceRepository.getPhotos(idAnnonce);
+  }
+
+  public Annonce findById(int idAnnonce) throws NotFoundException {
+
+    Utilisateur u = new Utilisateur();
+    u.setId(0);
+    try {
+      u = utilisateurService.getAuthenticated();
+    } catch (AuthException e) {
+      System.out.println("details sans connexion");
+    }
+    try {
+      AnnonceEtFavori a = (AnnonceEtFavori) entityManager.createNativeQuery(
+          "select a.*, f.date_ajout from v_annonce_gen_valide a left outer join annonce_favori f on a.id = f.id_annonce and f.id_utilisateur = :user where a.id = :id",
+          AnnonceEtFavori.class).setParameter("user", u.getId()).setParameter("id", idAnnonce).getSingleResult();
+      a.setPhotos(findPhotos(a.getId()));
+      return new Annonce(a);
+    } catch (NoResultException e) {
+      e.printStackTrace();
+      throw new NotFoundException();
+    }
+  }
 
   @Transactional
   public void getByIdAndView(int idAnnonce, int iduser) throws Exception {
@@ -87,9 +118,16 @@ public class AnnonceService extends GenericService<Annonce> {
     return new HistoriqueAnnonceDTO(annonce, historiqueMin);
   }
 
-  public List<Annonce> findByUser(int idUser) {
-    System.out.println(idUser);
-    return annonceRepository.findByUser(idUser);
+  public List<AnnonceDTO> findByUser() throws AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    List<AnnonceGeneral> aG = aGeneralService.findByIdUtilisateur(u.getId());
+    List<AnnonceDTO> annonces = new ArrayList<>();
+    for (AnnonceGeneral a : aG) {
+      AnnonceDTO dto = new AnnonceDTO(a);
+      dto.setPhotos(findPhotos(a.getId()));
+      annonces.add(dto);
+    }
+    return annonces;
   }
 
   @Transactional(rollbackOn = Exception.class)
@@ -172,11 +210,15 @@ public class AnnonceService extends GenericService<Annonce> {
     return model;
   }
 
-  public List<Annonce> getAllNonValide(int page) {
-    if (page == 0) {
-      return annonceRepository.getAllNonValide();
+  public List<AnnonceDTO> getAllNonValide(int page, int taille) {
+    List<AnnonceGeneral> aGenerals = aGeneralService.findNonValide(page, taille);
+    List<AnnonceDTO> a = new ArrayList<>();
+    for (AnnonceGeneral annonce : aGenerals) {
+      AnnonceDTO dto = new AnnonceDTO(annonce);
+      dto.setPhotos(findPhotos(annonce.getId()));
+      a.add(dto);
     }
-    return annonceRepository.getAllNonValide(page, TAILLE_PAGE);
+    return a;
   }
 
   public List<Annonce> getAllNonValide() {
@@ -184,7 +226,7 @@ public class AnnonceService extends GenericService<Annonce> {
   }
 
   // SYSOUT QUERY
-  public List<AnnonceEtFavori> findComplex(RechercheAnnonce rechercheAnnonce, int page, int taille) {
+  public List<AnnonceDTO> findComplex(RechercheAnnonce rechercheAnnonce, int page, int taille) {
     System.out.println("RECHERCHE COMPLEXE");
     int idUtilisateur = 0;
 
@@ -195,38 +237,26 @@ public class AnnonceService extends GenericService<Annonce> {
       System.out.println("Recherche sans connexion");
     }
 
-    String query = """
-        select id, reference, description, status, prix, commission, nb_vue, a.id_utilisateur, id_voiture, date_maj as date_creation,
-        case
-          when f.date_ajout is null
-            then false
-          else
-            true
-          end favori
-          from v_annonce_valide a
-            left outer join annonce_favori f on a.id = f.id_annonce and f.id_utilisateur = %id%
-            where id in (
-          """
-        + rechercheAnnonce.generateSql();
-    // if (taille != 0) {
-    // query += ") order by date_maj desc limit " + taille + " offset(" + page + " -
-    // 1)*" + taille;
-    // } else {
-    // query += ")";
-    // }
+    String query = rechercheAnnonce.generateSql();
+
     query = query.replace("%id%", String.valueOf(idUtilisateur));
     if (taille != 0) {
-      query += ") order by a.date_maj desc limit " + taille + " offset(" + page + " - 1)*" + taille;
-    } else {
-      query += ")";
+      query += " order by a.date_maj desc limit " + taille + " offset(" + page + " - 1)*" + taille;
     }
 
     System.out.println(query + "==========================");
-    return (List<AnnonceEtFavori>) entityManager
+    List<AnnonceEtFavori> annonces = (List<AnnonceEtFavori>) entityManager
         .createNativeQuery(
             query,
             AnnonceEtFavori.class)
         .getResultList();
+    List<AnnonceDTO> a = new ArrayList<>();
+    for (AnnonceEtFavori annonce : annonces) {
+      AnnonceDTO dto = new AnnonceDTO(annonce);
+      dto.setPhotos(findPhotos(annonce.getId()));
+      a.add(dto);
+    }
+    return a;
   }
 
   @Override

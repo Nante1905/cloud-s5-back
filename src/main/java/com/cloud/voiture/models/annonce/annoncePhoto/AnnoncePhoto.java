@@ -47,6 +47,13 @@ public class AnnoncePhoto {
     // this.photoUrl = photoUrl;
     // }
 
+    public AnnoncePhoto() {
+    }
+
+    public AnnoncePhoto(AnnoncePhotoID id) {
+        this.id = id;
+    }
+
     public Annonce getAnnonce() {
         return annonce;
     }

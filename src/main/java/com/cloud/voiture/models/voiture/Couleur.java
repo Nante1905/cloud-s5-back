@@ -23,6 +23,16 @@ public class Couleur extends GenericModel {
     @NotNull(message = "Le code hexadécimal est obligatoire.")
     String hexa;
 
+    public Couleur(int id, String nom,
+            String hexa) {
+        setId(id);
+        setNom(nom);
+        setHexa(hexa);
+    }
+
+    public Couleur() {
+    }
+
     public int getId() {
         return id;
     }

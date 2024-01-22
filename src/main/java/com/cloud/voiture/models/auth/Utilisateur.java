@@ -1,11 +1,12 @@
 package com.cloud.voiture.models.auth;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import com.cloud.voiture.crud.model.GenericModel;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,27 +36,44 @@ public class Utilisateur extends GenericModel {
     @NotNull(message = "")
     @NotBlank(message = "")
     @Email(message = "Cet email n'est pas valide.")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     String email;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotNull(message = "")
     @NotBlank(message = "")
     @Column(name = "mot_de_passe")
     String password;
 
     @Column(insertable = false)
-    LocalDate dateInscription;
+    LocalDateTime dateInscription;
 
     @NotNull(message = "")
     @NotBlank(message = "")
     String adresse;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "id_role")
     int idRole;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne
     @JoinColumn(name = "id_role", insertable = false, updatable = false)
     @Fetch(FetchMode.JOIN)
     Role role;
+
+    public Utilisateur(int id, String nom,
+            String prenom, LocalDateTime dateInscription,
+            String adresse) {
+        setId(id);
+        setPrenom(prenom);
+        setNom(nom);
+        setDateInscription(dateInscription);
+        setAdresse(adresse);
+    }
+
+    public Utilisateur() {
+    }
 
     public int getId() {
         return id;
@@ -97,11 +115,11 @@ public class Utilisateur extends GenericModel {
         this.prenom = prenom;
     }
 
-    public LocalDate getDateInscription() {
+    public LocalDateTime getDateInscription() {
         return dateInscription;
     }
 
-    public void setDateInscription(LocalDate dateInscription) {
+    public void setDateInscription(LocalDateTime dateInscription) {
         this.dateInscription = dateInscription;
     }
 

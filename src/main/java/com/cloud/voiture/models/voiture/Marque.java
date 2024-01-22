@@ -29,6 +29,11 @@ public class Marque extends GenericModel {
         setId(id);
     }
 
+    public Marque(String nom, String logo) {
+        setNom(nom);
+        setLogo(logo);
+    }
+
     public Marque() {
     }
 

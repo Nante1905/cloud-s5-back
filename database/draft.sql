@@ -36,15 +36,7 @@ from annonce a
   join utilisateur u on a.id_utilisateur = u.id
 limit 2;
 
-
-
-select a.id, a.reference,
-  case 
-    when f.date_ajout is null
-    then false
-    else true
-    end favori
-  from v_annonce_valide a
-  left outer join annonce_favori f
-    on a.id = f.id_annonce and f.id_utilisateur = 1
-limit 4;
+select a.*,  
+v_annonve_gen_valide a 
+left join annonce_favori f 
+  on f.id_annonce = a.id and f.id_utilisateur = 1

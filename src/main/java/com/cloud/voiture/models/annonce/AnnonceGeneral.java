@@ -1,6 +1,7 @@
 package com.cloud.voiture.models.annonce;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,16 +37,21 @@ public class AnnonceGeneral extends GenericModel {
     @Column(name = "id_voiture")
     int idVoiture;
     double consommation;
-    double kilometrage;
+    int kilometrage;
     int etat;
     @Column(name = "id_couleur")
     int idCouleur;
+    @Column(name = "id_modele")
+    int idModele;
+    @Column(name = "id_boite_vitesse")
+    int idBoiteVitesse;
+    @Column(name = "id_energie")
+    int idEnergie;
+
     @Column(name = "nom_couleur")
     String nomCouleur;
     String hexa;
 
-    @Column(name = "id_modele")
-    int idModele;
     @Column(name = "nom_modele")
     String nomModele;
     @Column(name = "nb_place")
@@ -57,11 +63,16 @@ public class AnnonceGeneral extends GenericModel {
 
     @Column(name = "id_categorie")
     int idCategorie;
+    @Column(name = "id_marque")
+    int idMarque;
+
+    @Column(name = "nom_vitesse")
+    String nomVitesse;
+    @Column(name = "nom_energie")
+    String nomEnergie;
     @Column(name = "nom_categorie")
     String nomCategorie;
 
-    @Column(name = "id_marque")
-    int idMarque;
     @Column(name = "nom_marque")
     String nomMarque;
     String logo;
@@ -71,10 +82,104 @@ public class AnnonceGeneral extends GenericModel {
     @Column(name = "utilisateur_prenom")
     String utilisateurPrenom;
     @Column(name = "date_inscription")
-    LocalDate dateInscription;
+    LocalDateTime dateInscription;
+    String adresse;
 
     @OneToMany(mappedBy = "annonceGeneral", cascade = CascadeType.PERSIST)
     List<AnnoncePhoto> photos;
+
+    public AnnonceGeneral(int id, String reference, String description, int status, LocalDateTime dateCreation,
+            double prix, double commission, int nbVues, int idUtilisateur, int idVoiture, double consommation,
+            int kilometrage, int etat, int idCouleur, int idModele, int idBoiteVitesse, int idEnergie,
+            String nomCouleur, String hexa, String nomModele, int nbPlace, int nbPorte, int anneeSortie,
+            int idCategorie, int idMarque, String nomVitesse, String nomEnergie, String nomCategorie, String nomMarque,
+            String logo, String utilisateurNom, String utilisateurPrenom, LocalDateTime dateInscription, String adresse,
+            List<AnnoncePhoto> photos) {
+        this.id = id;
+        this.reference = reference;
+        this.description = description;
+        this.status = status;
+        this.dateCreation = dateCreation;
+        this.prix = prix;
+        this.commission = commission;
+        this.nbVues = nbVues;
+        this.idUtilisateur = idUtilisateur;
+        this.idVoiture = idVoiture;
+        this.consommation = consommation;
+        this.kilometrage = kilometrage;
+        this.etat = etat;
+        this.idCouleur = idCouleur;
+        this.idModele = idModele;
+        this.idBoiteVitesse = idBoiteVitesse;
+        this.idEnergie = idEnergie;
+        this.nomCouleur = nomCouleur;
+        this.hexa = hexa;
+        this.nomModele = nomModele;
+        this.nbPlace = nbPlace;
+        this.nbPorte = nbPorte;
+        this.anneeSortie = anneeSortie;
+        this.idCategorie = idCategorie;
+        this.idMarque = idMarque;
+        this.nomVitesse = nomVitesse;
+        this.nomEnergie = nomEnergie;
+        this.nomCategorie = nomCategorie;
+        this.nomMarque = nomMarque;
+        this.logo = logo;
+        this.utilisateurNom = utilisateurNom;
+        this.utilisateurPrenom = utilisateurPrenom;
+        this.dateInscription = dateInscription;
+        this.adresse = adresse;
+        this.photos = photos;
+    }
+
+    public AnnonceGeneral(Integer id, String reference, String description, Integer status, Timestamp dateCreation,
+            BigDecimal prix, BigDecimal commission, Integer nbVues, Integer idUtilisateur, Integer idVoiture,
+            BigDecimal consommation,
+            Integer kilometrage, Integer etat, Integer idCouleur, Integer idModele, Integer idBoiteVitesse,
+            Integer idEnergie,
+            String nomCouleur, String hexa, String nomModele, Integer nbPlace, Integer nbPorte, Integer anneeSortie,
+            Integer idCategorie, Integer idMarque, String nomVitesse, String nomEnergie, String nomCategorie,
+            String nomMarque,
+            String logo, String utilisateurNom, String utilisateurPrenom, Timestamp dateInscription,
+            String adresse) {
+        this.id = id;
+        this.reference = reference;
+        this.description = description;
+        this.status = status;
+        this.dateCreation = dateCreation.toLocalDateTime();
+        this.prix = prix.doubleValue();
+        this.commission = commission.doubleValue();
+        this.nbVues = nbVues;
+        this.idUtilisateur = idUtilisateur;
+        this.idVoiture = idVoiture;
+        this.consommation = consommation.doubleValue();
+        this.kilometrage = kilometrage;
+        this.etat = etat;
+        this.idCouleur = idCouleur;
+        this.idModele = idModele;
+        this.idBoiteVitesse = idBoiteVitesse;
+        this.idEnergie = idEnergie;
+        this.nomCouleur = nomCouleur;
+        this.hexa = hexa;
+        this.nomModele = nomModele;
+        this.nbPlace = nbPlace;
+        this.nbPorte = nbPorte;
+        this.anneeSortie = anneeSortie;
+        this.idCategorie = idCategorie;
+        this.idMarque = idMarque;
+        this.nomVitesse = nomVitesse;
+        this.nomEnergie = nomEnergie;
+        this.nomCategorie = nomCategorie;
+        this.nomMarque = nomMarque;
+        this.logo = logo;
+        this.utilisateurNom = utilisateurNom;
+        this.utilisateurPrenom = utilisateurPrenom;
+        this.dateInscription = dateInscription.toLocalDateTime();
+        this.adresse = adresse;
+    }
+
+    public AnnonceGeneral() {
+    }
 
     public int getId() {
         return id;
@@ -164,11 +269,11 @@ public class AnnonceGeneral extends GenericModel {
         this.consommation = consommation;
     }
 
-    public double getKilometrage() {
+    public int getKilometrage() {
         return kilometrage;
     }
 
-    public void setKilometrage(double kilometrage) {
+    public void setKilometrage(int kilometrage) {
         this.kilometrage = kilometrage;
     }
 
@@ -300,11 +405,11 @@ public class AnnonceGeneral extends GenericModel {
         this.utilisateurPrenom = utilisateurPrenom;
     }
 
-    public LocalDate getDateInscription() {
+    public LocalDateTime getDateInscription() {
         return dateInscription;
     }
 
-    public void setDateInscription(LocalDate dateInscription) {
+    public void setDateInscription(LocalDateTime dateInscription) {
         this.dateInscription = dateInscription;
     }
 
@@ -314,6 +419,46 @@ public class AnnonceGeneral extends GenericModel {
 
     public void setPhotos(List<AnnoncePhoto> photos) {
         this.photos = photos;
+    }
+
+    public String getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
+    }
+
+    public int getIdBoiteVitesse() {
+        return idBoiteVitesse;
+    }
+
+    public void setIdBoiteVitesse(int idBoiteVitesse) {
+        this.idBoiteVitesse = idBoiteVitesse;
+    }
+
+    public int getIdEnergie() {
+        return idEnergie;
+    }
+
+    public void setIdEnergie(int idEnergie) {
+        this.idEnergie = idEnergie;
+    }
+
+    public String getNomVitesse() {
+        return nomVitesse;
+    }
+
+    public void setNomVitesse(String nomVitesse) {
+        this.nomVitesse = nomVitesse;
+    }
+
+    public String getNomEnergie() {
+        return nomEnergie;
+    }
+
+    public void setNomEnergie(String nomEnergie) {
+        this.nomEnergie = nomEnergie;
     }
 
 }

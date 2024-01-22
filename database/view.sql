@@ -86,7 +86,7 @@ create view v_modele_marque as (
 );
 
 
--- 22/01/2024
+-- 22/01/2024 10:00
 create view v_annonce_general as
 select a.*,
 v.consommation, v.kilometrage, v.etat, v.id_couleur, v.id_modele, v.id_boite_vitesse, v.id_energie,
@@ -96,7 +96,7 @@ b.nom nom_vitesse,
 e.nom nom_energie,
 ca.nom nom_categorie,
 ma.nom nom_marque, ma.logo,
-u.nom utilisateur_nom, u.prenom utilisateur_prenom, u.date_inscription   
+u.nom utilisateur_nom, u.prenom utilisateur_prenom, u.date_inscription, u.adresse   
 from annonce a
   join voiture v on a.id_voiture = v.id
   join couleur c on v.id_couleur = c.id
@@ -105,4 +105,15 @@ from annonce a
   join energie e on v.id_energie = e.id
   join categorie ca on m.id_categorie = ca.id
   join marque ma on m.id_marque = ma.id
-  join utilisateur u on a.id_utilisateur = u.id
+  join utilisateur u on a.id_utilisateur = u.id;
+
+
+create view v_annonce_gen_non_valide as 
+select * from v_annonce_general where status = 0;
+
+create view v_annonce_gen_valide as 
+select a.*, h.date_maj 
+from v_annonce_general a 
+    join historique_annonce h 
+    on a.id = h.id_annonce
+where h.status = 5;

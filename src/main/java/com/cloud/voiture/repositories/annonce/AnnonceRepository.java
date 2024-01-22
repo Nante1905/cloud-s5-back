@@ -1,11 +1,14 @@
 package com.cloud.voiture.repositories.annonce;
 
-import com.cloud.voiture.crud.repository.GenericRepository;
-import com.cloud.voiture.models.annonce.Annonce;
 import java.util.List;
+
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import com.cloud.voiture.crud.repository.GenericRepository;
+import com.cloud.voiture.models.annonce.Annonce;
+import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 
 public interface AnnonceRepository extends GenericRepository<Annonce> {
   @Query(value = "select * from annonce where id_utilisateur = :utilisateur", nativeQuery = true)
@@ -31,4 +34,8 @@ public interface AnnonceRepository extends GenericRepository<Annonce> {
   @Modifying
   @Query(value = "update annonce set nb_vue = nb_vue+1 where id = :id", nativeQuery = true)
   int addView(@Param("id") int id);
+
+  @Query(value = "select a from AnnoncePhoto a where a.id.idAnnonce = :idAnnonce")
+  public List<AnnoncePhoto> getPhotos(int idAnnonce);
+
 }

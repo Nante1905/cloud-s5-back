@@ -1,17 +1,16 @@
 package com.cloud.voiture.crud.service;
 
-import com.cloud.voiture.crud.model.GenericModel;
-import com.cloud.voiture.crud.pagination.Paginated;
-import com.cloud.voiture.crud.repository.GenericRepository;
-
-import jakarta.transaction.Transactional;
-
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+
+import com.cloud.voiture.crud.model.GenericModel;
+import com.cloud.voiture.crud.pagination.Paginated;
+import com.cloud.voiture.crud.repository.GenericRepository;
 
 public class GenericService<T extends GenericModel> {
 
