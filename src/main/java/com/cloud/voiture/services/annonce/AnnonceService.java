@@ -18,7 +18,6 @@ import com.cloud.voiture.models.annonce.HistoriqueAnnonceDTO;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceMin;
 import com.cloud.voiture.models.annonce.VueAnnonce;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
-import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
 import com.cloud.voiture.search.RechercheAnnonce;
 import com.cloud.voiture.services.UtilisateurService;
@@ -26,7 +25,6 @@ import com.cloud.voiture.services.voiture.VoitureService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.security.auth.message.AuthException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -182,12 +180,19 @@ public class AnnonceService extends GenericService<Annonce> {
     return annonceRepository.getAllNonValide();
   }
 
-  public List<Annonce> findComplex(RechercheAnnonce rechercheAnnonce) {
+  // SYSOUT QUERY
+  public List<Annonce> findComplex(RechercheAnnonce rechercheAnnonce, int page, int taille) {
+    System.out.println("RECHERCHE COMPLEXE");
+    String query = "select * from v_annonce_valide where id in (" +
+        rechercheAnnonce.generateSql();
+    if (taille != 0) {
+      query += " order by date_maj desc limit " + taille + " offset(" + page + " - 1)*" + taille;
+    }
+    query += " )";
+    System.out.println(query + "==========================");
     return (List<Annonce>) entityManager
         .createNativeQuery(
-            "select * from annonce where id in (" +
-                rechercheAnnonce.generateSql() +
-                ")",
+            query,
             Annonce.class)
         .getResultList();
   }

@@ -170,11 +170,13 @@ public class AnnonceController extends GenericController<Annonce> {
 
   @PostMapping("/find")
   public ResponseEntity<Response> findComplex(
-      @RequestBody RechercheAnnonce rechercheAnnonce) {
+      @RequestBody RechercheAnnonce rechercheAnnonce, @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
     try {
-      List<Annonce> results = annonceService.findComplex(rechercheAnnonce);
+      List<Annonce> results = annonceService.findComplex(rechercheAnnonce, page, taille);
       return ResponseEntity.ok(new Response(results, ""));
     } catch (Exception e) {
+      // e.printStackTrace();
       return ResponseEntity.status(500).body(new Response(e.getMessage()));
     }
   }
