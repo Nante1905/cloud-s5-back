@@ -1,5 +1,6 @@
 package com.cloud.voiture.services.message;
 
+import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.message.Discussion;
 import com.cloud.voiture.repositories.message.DiscussionRepository;
 
@@ -28,6 +29,13 @@ public class DiscussionService {
         System.out.println(query);
         System.out.println(mongoTemplate.find(query, Discussion.class));
         return mongoTemplate.find(query, Discussion.class);
+    }
+
+     public List<Utilisateur> findUsersByIdDiscussion(String idDiscussion) {
+        Discussion discussion = repository.findByIdDiscussion(idDiscussion);
+        Utilisateur gauche = discussion.getGauche();
+        Utilisateur droite = discussion.getDroite();
+        return List.of(gauche, droite);
     }
 
     public Discussion addDiscussion(Discussion discussion) {

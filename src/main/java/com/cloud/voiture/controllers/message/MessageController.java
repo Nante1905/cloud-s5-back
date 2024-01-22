@@ -2,12 +2,14 @@ package com.cloud.voiture.controllers.message;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.message.Discussion;
 import com.cloud.voiture.models.message.Message;
 import com.cloud.voiture.services.UtilisateurService;
+import com.cloud.voiture.services.message.DiscussionService;
 import com.cloud.voiture.services.message.MessageService;
 import com.cloud.voiture.types.response.Response;
 
@@ -22,51 +24,62 @@ public class MessageController {
     @Autowired
     private UtilisateurService serviceUser;
 
+    @Autowired
+    private DiscussionService serviceDiscussion;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Response createMessage(@RequestBody Message message)throws Exception{
-        Response result = new Response("");
+    public ResponseEntity<?>  createMessage(@RequestBody Message message)throws Exception{
         try{
-            result.setData(service.addMessage(message));
-            result.setOK(true);
+            return ResponseEntity.ok(new Response(service.addMessage(message), ""));
         }catch( Exception e ){
-            result.setErr(e.getMessage());
-            result.setOK(false);
+            return ResponseEntity
+          .status(500)
+          .body(new Response("Oups, une erreur s'est produite."));
         }
-        return result;
     }
 
     @GetMapping
-    public Response getMessages() {
-        Response result = new Response("");
+    public ResponseEntity<?>  getMessages() {
         try{
-            result.setData(service.findAllMessages());
-            result.setOK(true);
+            return ResponseEntity.ok(new Response(service.findAllMessages(), ""));
+
         }catch( Exception e ){
-            result.setErr(e.getMessage());
-            result.setOK(false);
+            return ResponseEntity
+          .status(500)
+          .body(new Response("Oups, une erreur s'est produite."));
         }
-        return result;
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<?> getMessageByUsers( @PathVariable String id ){
+        try{
+            List<Message> messages = service.findMessagesByidDiscussion(id);
+            List<Utilisateur> utilisateurs = serviceDiscussion.findUsersByIdDiscussion(id);
+            Discussion discussion = new Discussion( messages , utilisateurs.get(0) , utilisateurs.get(1) );
+
+            return ResponseEntity.ok(new Response(discussion, ""));
+        }catch(Exception e){
+            e.printStackTrace();
+            return ResponseEntity
+          .status(500)
+          .body(new Response("Oups, une erreur s'est produite."));
+
+        }
     }
 
     @GetMapping("/users/{expediteurId}/{destinataireId}")
-    public Response getMessagesByUsers(@PathVariable int expediteurId, @PathVariable int destinataireId) throws Exception{
-        Response result = new Response("");
+    public ResponseEntity<?>  getMessagesByUsers(@PathVariable int expediteurId, @PathVariable int destinataireId) throws Exception{
         try{
             List<Message> messages = service.findMessagesByUsers(expediteurId, destinataireId);
-
             List<Utilisateur> utilisateurs = serviceUser.getUtilisateurFromDiscussion(expediteurId, destinataireId);
-
             Discussion discussion = new Discussion( messages , utilisateurs.get(0) , utilisateurs.get(1) );
-            result.setData(discussion);
-            result.setOK(true);
-
-            return result;
+            return ResponseEntity.ok(new Response(discussion, ""));
         }catch( Exception e ){
-            result.setErr(e.getMessage());
-            result.setOK(false);
+            return ResponseEntity
+          .status(500)
+          .body(new Response("Oups, une erreur s'est produite."));
         }
-        return result;
     }
 
 }
