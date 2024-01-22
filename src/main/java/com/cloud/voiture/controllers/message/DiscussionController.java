@@ -29,16 +29,15 @@ public class DiscussionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Response createDiscussion(@RequestBody Discussion discussion) throws Exception {
-        Response result = new Response("");
+    public ResponseEntity<?> createDiscussion(@RequestBody Discussion discussion) throws Exception {
         try {
-            result.setData(service.addDiscussion(discussion));
-            result.setOK(true);
+            return ResponseEntity.ok(new Response(service.addDiscussion(discussion), ""));
+
         } catch (Exception e) {
-            result.setErr(e.getMessage());
-            result.setOK(false);
+            return ResponseEntity
+          .status(500)
+          .body(new Response("Oups, une erreur s'est produite."));
         }
-        return result;
     }
 
     @GetMapping("/user/{id}")
