@@ -183,12 +183,13 @@ public class AnnonceService extends GenericService<Annonce> {
   // SYSOUT QUERY
   public List<Annonce> findComplex(RechercheAnnonce rechercheAnnonce, int page, int taille) {
     System.out.println("RECHERCHE COMPLEXE");
-    String query = "select * from v_annonce_valide where id in (" +
+    String query = "select id, reference, description, status, date_maj as date_creation, prix, commission, nb_vue, id_utilisateur, id_voiture from v_annonce_valide where id in ("
+        +
         rechercheAnnonce.generateSql();
     if (taille != 0) {
-      query += " order by date_maj desc limit " + taille + " offset(" + page + " - 1)*" + taille;
+      query += ") order by date_maj desc limit " + taille + " offset(" + page + " - 1)*" + taille;
     }
-    query += " )";
+    // query += "";
     System.out.println(query + "==========================");
     return (List<Annonce>) entityManager
         .createNativeQuery(
