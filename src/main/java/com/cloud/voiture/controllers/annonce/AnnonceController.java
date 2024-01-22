@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cloud.voiture.crud.controller.GenericController;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
+import com.cloud.voiture.models.annonce.AnnonceEtFavori;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.voiture.EstimationPrix;
 import com.cloud.voiture.models.voiture.Voiture;
@@ -173,7 +174,7 @@ public class AnnonceController extends GenericController<Annonce> {
       @RequestBody RechercheAnnonce rechercheAnnonce, @RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "0") int taille) {
     try {
-      List<Annonce> results = annonceService.findComplex(rechercheAnnonce, page, taille);
+      List<AnnonceEtFavori> results = annonceService.findComplex(rechercheAnnonce, page, taille);
       return ResponseEntity.ok(new Response(results, ""));
     } catch (Exception e) {
       e.printStackTrace();
