@@ -29,6 +29,12 @@ public class MessageService {
         return repository.findAll();
     }
 
+    public List<Message> findMessagesByidDiscussion(String idDiscussion) {
+        Criteria criteria = Criteria.where("idDiscussion").is(idDiscussion);
+        Query query = new Query(criteria);
+        return mongoTemplate.find(query, Message.class);
+    }
+
     public List<Message> findMessagesByUsers(int expediteurId, int destinataireId) {
     Criteria criteria1 = Criteria.where("expediteurId").is(expediteurId).and("destinataireId").is(destinataireId);
     Criteria criteria2 = Criteria.where("expediteurId").is(destinataireId).and("destinataireId").is(expediteurId);
