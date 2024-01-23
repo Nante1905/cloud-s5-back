@@ -65,6 +65,24 @@ public class AnnonceService extends GenericService<Annonce> {
 
   private static int TAILLE_PAGE = 10;
 
+  @Transactional
+  public void updateStatusToSold(int idAnnonce) throws NotFoundException, ValidationException, AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    Annonce a = findById(idAnnonce);
+    if (a.getUtilisateur().getId() != u.getId()) {
+      throw new ValidationException("Erreur: vous n'avez aucune annonce avec cette identifiant.");
+    }
+    if (a.getStatus() != config.getAnnonceValide()) {
+      throw new ValidationException(
+          "Erreur: seules les annonces validées et non vendues peuvent être classées comme vendues");
+    }
+    HistoriqueAnnonce histo = new HistoriqueAnnonce();
+    histo.setIdAnnonce(a.getId());
+    histo.setStatus(config.getAnnonceVendu());
+    historiqueService.save(histo);
+    updateStatus(idAnnonce, config.getAnnonceVendu());
+  }
+
   public List<AnnoncePhoto> findPhotos(int idAnnonce) {
     return annonceRepository.getPhotos(idAnnonce);
   }
