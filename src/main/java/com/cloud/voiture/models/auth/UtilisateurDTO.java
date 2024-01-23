@@ -11,7 +11,7 @@ public class UtilisateurDTO {
 
     public UtilisateurDTO(int id, String nom, String prenom, String adresse, LocalDateTime inscription) {
         setId(id);
-        setNom(prenom);
+        setNom(nom);
         setPrenom(prenom);
         setAdresse(adresse);
         setInscription(inscription);

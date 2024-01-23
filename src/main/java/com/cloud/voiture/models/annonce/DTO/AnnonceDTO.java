@@ -12,6 +12,7 @@ import com.cloud.voiture.models.voiture.Marque;
 
 public class AnnonceDTO {
     int id;
+    String reference;
     Marque marque;
     double prix;
     ModeleDTO modele;
@@ -26,6 +27,7 @@ public class AnnonceDTO {
 
     public AnnonceDTO(AnnonceGeneral a) {
         setId(a.getId());
+        setReference(a.getReference());
         setMarque(new Marque(a.getIdMarque(), a.getNomMarque(), a.getLogo()));
         setModele(new ModeleDTO(a.getIdModele(), a.getNomModele()));
         setUtilisateur(new UtilisateurDTO(a.getIdUtilisateur(), a.getUtilisateurNom(), a.getUtilisateurPrenom(),
@@ -37,6 +39,7 @@ public class AnnonceDTO {
 
     public AnnonceDTO(AnnonceEtFavori a) {
         setId(a.getId());
+        setReference(a.getReference());
         setMarque(new Marque(a.getIdMarque(), a.getNomMarque(), a.getLogo()));
         setModele(new ModeleDTO(a.getIdModele(), a.getNomModele()));
         setUtilisateur(new UtilisateurDTO(a.getIdUtilisateur(), a.getUtilisateurNom(), a.getUtilisateurPrenom(),
@@ -133,6 +136,14 @@ public class AnnonceDTO {
 
     public void setPhotos(List<AnnoncePhoto> photos) {
         this.photos = photos;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
 }
