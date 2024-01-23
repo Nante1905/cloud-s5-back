@@ -202,4 +202,25 @@ public class AnnonceController extends GenericController<Annonce> {
       @RequestParam(required = false, defaultValue = "0") int pageSize) {
     return ResponseEntity.ok(aGeneralService.findAll(page, pageSize));
   }
+
+  @PutMapping("/{id}/toggle_favoris")
+  public ResponseEntity<Response> markAsFavori(@PathVariable(name = "id") int id) {
+    try {
+      int status = annonceService.toggleFavori(id);
+      String message = "Annonce ajoutée aux favoris.";
+      if (status == -1) {
+        message = "Annonce supprimée des favoris";
+      }
+
+      return ResponseEntity.ok(new Response(null, message));
+    } catch (AuthException e) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Response(e.getMessage()));
+    } catch (NotFoundException e) {
+      return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
+          .body(new Response("Annonce invalide: impossible de mettre en favori."));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(500).body(new Response("Une erreur s'est produite"));
+    }
+  }
 }

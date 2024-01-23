@@ -233,3 +233,7 @@ drop table annonce_vendu
 
 -- 2024-01-17 15:22
 -- OVAINA UNIQUE LAY EMAIL AO AM TABLE UTILISATEUR
+
+-- 2024-01-23
+-- à vérifier ny annonce_favori tsy mila id et date_ajout default now()
+alter table annonce_favori alter column date_ajout set default now();
