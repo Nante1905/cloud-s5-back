@@ -13,6 +13,6 @@ public interface AnnonceGeneralRepository extends GenericRepository<AnnonceGener
     @Query(nativeQuery = true, value = "select * from v_annonce_gen_non_valide order by date_creation asc")
     public List<AnnonceGeneral> findNonValide();
 
-    @Query(nativeQuery = true, value = "select * from v_annonce_general order by date_creation asc limit :taille offset(:page - 1)*:taille")
+    @Query(nativeQuery = true, value = "select * from v_annonce_gen_non_valide order by date_creation asc limit :taille offset(:page - 1)*:taille")
     public List<AnnonceGeneral> findNonValide(int page, int taille);
 }

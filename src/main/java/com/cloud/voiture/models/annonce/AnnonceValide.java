@@ -28,7 +28,15 @@ public class AnnonceValide extends AnnonceGeneral {
                 consommation, kilometrage, etat, idCouleur, idModele, idBoiteVitesse, idEnergie, nomCouleur, hexa,
                 nomModele, nbPlace, nbPorte, anneeSortie, idCategorie, idMarque, nomVitesse, nomEnergie, nomCategorie,
                 nomMarque, logo, utilisateurNom, utilisateurPrenom, dateInscription, adresse);
-        setValidation(validation.toLocalDateTime());
+        setValidation(validation);
+    }
+
+    private void setValidation(Timestamp v) {
+        if (v == null) {
+            this.validation = null;
+        } else {
+            setValidation(v.toLocalDateTime());
+        }
     }
 
     @Override

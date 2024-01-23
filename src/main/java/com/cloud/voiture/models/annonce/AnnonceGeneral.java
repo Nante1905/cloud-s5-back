@@ -146,7 +146,7 @@ public class AnnonceGeneral extends GenericModel {
         this.reference = reference;
         this.description = description;
         this.status = status;
-        this.dateCreation = dateCreation.toLocalDateTime();
+        setDateCreation(dateCreation);
         this.prix = prix.doubleValue();
         this.commission = commission.doubleValue();
         this.nbVues = nbVues;
@@ -174,8 +174,24 @@ public class AnnonceGeneral extends GenericModel {
         this.logo = logo;
         this.utilisateurNom = utilisateurNom;
         this.utilisateurPrenom = utilisateurPrenom;
-        this.dateInscription = dateInscription.toLocalDateTime();
+        setDateInscription(dateInscription);
         this.adresse = adresse;
+    }
+
+    private void setDateInscription(Timestamp d) {
+        if (d == null) {
+            dateInscription = null;
+        } else {
+            setDateInscription(d.toLocalDateTime());
+        }
+    }
+
+    private void setDateCreation(Timestamp d) {
+        if (d == null) {
+            dateCreation = null;
+        } else {
+            setDateCreation(d.toLocalDateTime());
+        }
     }
 
     public AnnonceGeneral() {

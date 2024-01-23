@@ -80,7 +80,7 @@ public class AnnonceService extends GenericService<Annonce> {
     }
     try {
       AnnonceEtFavori a = (AnnonceEtFavori) entityManager.createNativeQuery(
-          "select a.*, f.date_ajout from v_annonce_gen_valide a left outer join annonce_favori f on a.id = f.id_annonce and f.id_utilisateur = :user where a.id = :id",
+          "select a.*, null as date_maj, f.date_ajout from v_annonce_general a left outer join annonce_favori f on a.id = f.id_annonce and f.id_utilisateur = :user where a.id = :id",
           AnnonceEtFavori.class).setParameter("user", u.getId()).setParameter("id", idAnnonce).getSingleResult();
       a.setPhotos(findPhotos(a.getId()));
       return new Annonce(a);
