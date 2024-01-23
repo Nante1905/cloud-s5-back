@@ -67,6 +67,18 @@ public class AnnonceService extends GenericService<Annonce> {
   @Autowired
   FavoriService favoriService;
 
+  public List<AnnonceDTO> findFavoriOfAuthenticatedUser() throws AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    List<AnnonceEtFavori> res = favoriService.findFavoriOf(u.getId());
+    List<AnnonceDTO> a = new ArrayList<>();
+    for (AnnonceEtFavori annonce : res) {
+      AnnonceDTO dto = new AnnonceDTO(annonce);
+      dto.setPhotos(findPhotos(annonce.getId()));
+      a.add(dto);
+    }
+    return a;
+  }
+
   @Transactional
   public int toggleFavori(int idAnnonce) throws AuthException, NotFoundException {
     Utilisateur u = utilisateurService.getAuthenticated();
