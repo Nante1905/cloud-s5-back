@@ -66,6 +66,20 @@ public class AnnonceService extends GenericService<Annonce> {
   private static int TAILLE_PAGE = 10;
 
   @Transactional
+  public void deleteAnnonce(int idAnnonce) throws NotFoundException, ValidationException, AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    Annonce a = findById(idAnnonce);
+    if (a.getUtilisateur().getId() != u.getId()) {
+      throw new ValidationException("Erreur: vous n'avez aucune annonce avec cette identifiant.");
+    }
+    HistoriqueAnnonce histo = new HistoriqueAnnonce();
+    histo.setIdAnnonce(a.getId());
+    histo.setStatus(config.getAnnonceSupprime());
+    historiqueService.save(histo);
+    updateStatus(idAnnonce, config.getAnnonceSupprime());
+  }
+
+  @Transactional
   public void updateStatusToSold(int idAnnonce) throws NotFoundException, ValidationException, AuthException {
     Utilisateur u = utilisateurService.getAuthenticated();
     Annonce a = findById(idAnnonce);
