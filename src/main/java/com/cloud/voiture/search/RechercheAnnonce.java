@@ -18,7 +18,10 @@ public class RechercheAnnonce {
   Double prixMax;
 
   public String generateSql() {
-    String sql = "select id_annonce from v_annonce ";
+    // String sql = "select id_annonce from v_annonce ";
+
+    String sql = "select a.*, f.date_ajout from v_annonce_gen_valide a left outer join annonce_favori f on a.id = f.id_annonce and f.id_utilisateur = %id% ";
+
     if (motCle != null ||
         categorie != null ||
         marque != null ||

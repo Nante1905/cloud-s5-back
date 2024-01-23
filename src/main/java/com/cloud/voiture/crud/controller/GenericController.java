@@ -1,19 +1,8 @@
 package com.cloud.voiture.crud.controller;
 
-import com.cloud.voiture.crud.model.GenericModel;
-import com.cloud.voiture.crud.pagination.Paginated;
-import com.cloud.voiture.crud.service.GenericService;
-import com.cloud.voiture.models.voiture.Etat;
-import com.cloud.voiture.services.utilities.Utilities;
-import com.cloud.voiture.types.response.Response;
-
-import jakarta.validation.Valid;
-
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
@@ -22,7 +11,6 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,9 +18,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.cloud.voiture.crud.model.GenericModel;
+import com.cloud.voiture.crud.pagination.Paginated;
+import com.cloud.voiture.crud.service.GenericService;
+import com.cloud.voiture.services.utilities.Utilities;
+import com.cloud.voiture.types.response.Response;
+
+import jakarta.validation.Valid;
+
 public class GenericController<T extends GenericModel> {
     private final Class<T> type;
-    @Autowired
+    @Autowired(required = false)
     GenericService<T> service;
 
     HashMap<String, Object> res;
