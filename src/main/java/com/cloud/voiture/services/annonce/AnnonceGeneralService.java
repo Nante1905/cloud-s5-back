@@ -28,4 +28,34 @@ public class AnnonceGeneralService extends GenericService<AnnonceGeneral> {
         }
         return aGeneralRepository.findNonValide(page, taille);
     }
+
+    public List<AnnonceGeneral> findNonValideOf(int idUtilisateur, int page, int taille) {
+        if (page == 0) {
+            return aGeneralRepository.findNonValide(idUtilisateur);
+        }
+        if (taille == 0) {
+            taille = TAILLE_PAGE;
+        }
+        return aGeneralRepository.findNonValide(idUtilisateur, page, taille);
+    }
+
+    public List<AnnonceGeneral> findValideOf(int idUtilisateur, int page, int taille) {
+        if (page == 0) {
+            return aGeneralRepository.findValide(idUtilisateur);
+        }
+        if (taille == 0) {
+            taille = TAILLE_PAGE;
+        }
+        return aGeneralRepository.findValide(idUtilisateur, page, taille);
+    }
+
+    public List<AnnonceGeneral> findVenduOf(int idUtilisateur, int page, int taille) {
+        if (page == 0) {
+            return aGeneralRepository.findVendu(idUtilisateur);
+        }
+        if (taille == 0) {
+            taille = TAILLE_PAGE;
+        }
+        return aGeneralRepository.findVendu(idUtilisateur, page, taille);
+    }
 }
