@@ -3,6 +3,7 @@ package com.cloud.voiture.services.annonce;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,10 +24,13 @@ import com.cloud.voiture.models.annonce.DTO.AnnonceDTO;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 import com.cloud.voiture.models.annonce.favori.Favori;
 import com.cloud.voiture.models.auth.Utilisateur;
+import com.cloud.voiture.models.notification.NotificationPush;
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
 import com.cloud.voiture.search.RechercheAnnonce;
 import com.cloud.voiture.services.UtilisateurService;
+import com.cloud.voiture.services.notification.NotificationPushService;
 import com.cloud.voiture.services.voiture.VoitureService;
+import com.google.firebase.messaging.FirebaseMessagingException;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -66,6 +70,9 @@ public class AnnonceService extends GenericService<Annonce> {
 
   @Autowired
   FavoriService favoriService;
+
+  @Autowired
+  NotificationPushService notifPushService;
 
   public List<AnnonceDTO> findFavoriOfAuthenticatedUser(int page, int taille) throws AuthException {
     Utilisateur u = utilisateurService.getAuthenticated();
@@ -196,7 +203,7 @@ public class AnnonceService extends GenericService<Annonce> {
   @Transactional(rollbackOn = Exception.class)
   public void valider(int idAnnonce)
       throws NotFoundException, ValidationException {
-    Annonce a = this.find(idAnnonce);
+    AnnonceGeneral a = this.aGeneralService.find(idAnnonce);
     checkValidation(a);
 
     HistoriqueAnnonce historique = new HistoriqueAnnonce();
@@ -206,12 +213,29 @@ public class AnnonceService extends GenericService<Annonce> {
 
     updateStatus(idAnnonce, params.getAnnonceValide());
     historiqueService.save(historique);
+
+    // sending notification
+    List<String> tokens = notifPushService.getTokenOf(a.getIdUtilisateur());
+    NotificationPush notif = new NotificationPush("Annonce validée",
+        "L'admin a validé votre annonce sur " + a.getNomMarque() + " - " + a.getNomModele() + ". Ref: "
+            + a.getReference(),
+        tokens);
+    try {
+      notifPushService.sendNotif(notif);
+      System.out.println("notif envoyé");
+    } catch (FirebaseMessagingException | InterruptedException | ExecutionException e) {
+      e.printStackTrace();
+      System.out.println("==========================================");
+      System.out.println("Erreur lors de l'envoi de notification après validation de l'annonce " + a.getReference()
+          + " " + e.getMessage());
+      System.out.println("==============================================");
+    }
   }
 
   @Transactional
   public void refuser(int idAnnonce)
       throws NotFoundException, ValidationException {
-    Annonce a = this.find(idAnnonce);
+    AnnonceGeneral a = aGeneralService.find(idAnnonce);
     checkValidation(a);
 
     HistoriqueAnnonce historique = new HistoriqueAnnonce();
@@ -221,9 +245,24 @@ public class AnnonceService extends GenericService<Annonce> {
 
     updateStatus(idAnnonce, params.getAnnonceRefuse());
     historiqueService.save(historique);
+
+    // sending notification
+    List<String> tokens = notifPushService.getTokenOf(a.getIdUtilisateur());
+    NotificationPush notif = new NotificationPush("Annonce validée",
+        "L'admin a refusé votre annonce sur " + a.getNomMarque() + " - " + a.getNomModele(), tokens);
+    try {
+      notifPushService.sendNotif(notif);
+      System.out.println("notif envoyé");
+    } catch (FirebaseMessagingException | InterruptedException | ExecutionException e) {
+      e.printStackTrace();
+      System.out.println("==========================================");
+      System.out.println("Erreur lors de l'envoi de notification après refus de l'annonce  " + a.getReference() + " "
+          + e.getMessage());
+      System.out.println("==============================================");
+    }
   }
 
-  public void checkValidation(Annonce a) throws ValidationException {
+  public void checkValidation(AnnonceGeneral a) throws ValidationException {
     if (a.getStatus() != params.getAnnonceCree()) {
       if (a.getStatus() == params.getAnnonceValide()) {
         throw new ValidationException(
