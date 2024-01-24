@@ -233,3 +233,6 @@ drop table annonce_vendu
 
 -- 2024-01-17 15:22
 -- OVAINA UNIQUE LAY EMAIL AO AM TABLE UTILISATEUR
+
+-- 2024-01-24 00:40
+alter table historique_annonce alter column date_maj set default now();
