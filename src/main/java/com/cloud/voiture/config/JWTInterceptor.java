@@ -1,6 +1,7 @@
 package com.cloud.voiture.config;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,7 +12,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.cloud.voiture.services.authentication.CustomUserDetailsService;
 import com.cloud.voiture.services.authentication.JWTManager;
+import com.cloud.voiture.types.response.Response;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,8 +48,16 @@ public class JWTInterceptor extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } catch (Exception e) {
-                e.printStackTrace();
-                throw e;
+                response.setContentType("application/json");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                Response r = new Response("Token invalide. Connectez-vous.");
+                ObjectMapper mapper = new ObjectMapper();
+                OutputStream out = response.getOutputStream();
+                if (e instanceof ExpiredJwtException) {
+                    r.setErr("Session expirée. Connectez-vous.");
+                }
+                mapper.writeValue(out, r);
+                out.flush();
             }
         }
 

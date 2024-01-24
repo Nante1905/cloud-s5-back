@@ -7,15 +7,17 @@ import java.util.Date;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import com.cloud.voiture.models.auth.Utilisateur;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 
 @Component
 public class JWTManager {
@@ -50,17 +52,15 @@ public class JWTManager {
         return claims.get("email", String.class);
     }
 
-    public boolean validateToken(String token) throws AuthenticationCredentialsNotFoundException {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (Exception ex) {
-            throw new AuthenticationCredentialsNotFoundException("Invalid token",
-                    ex.fillInStackTrace());
-        }
+    public boolean validateToken(String token)
+            throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException {
+
+        Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token);
+        return true;
+
     }
 
     private long dayToMs(long day) {
