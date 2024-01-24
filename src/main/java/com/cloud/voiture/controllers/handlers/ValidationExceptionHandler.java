@@ -7,11 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.services.utilities.Utilities;
@@ -73,8 +72,13 @@ public class ValidationExceptionHandler {
 
     @ExceptionHandler(value = ValidationException.class)
     public ResponseEntity<Response> handleCustomValidationException(ValidationException exception) {
-        System.out.println("ATOOOOOOOOOOOOOOOO");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new Response(exception.getMessage()));
+    }
+
+    @ExceptionHandler(value = NoResourceFoundException.class)
+    public ResponseEntity<Response> handleCustomNoResourceFoundException(NoResourceFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new Response("Cette ressource n'existe pas."));
     }
 }
