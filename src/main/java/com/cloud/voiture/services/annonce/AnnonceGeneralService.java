@@ -19,6 +19,16 @@ public class AnnonceGeneralService extends GenericService<AnnonceGeneral> {
         return aGeneralRepository.findByIdUtilisateur(idUtilisateur);
     }
 
+    public List<AnnonceGeneral> findByIdUtilisateur(int idUtilisateur, int page, int taille) {
+        if (page == 0) {
+            return aGeneralRepository.findByIdUtilisateur(idUtilisateur);
+        }
+        if (taille == 0) {
+            taille = TAILLE_PAGE;
+        }
+        return aGeneralRepository.findByIdUtilisateur(idUtilisateur, page, taille);
+    }
+
     public List<AnnonceGeneral> findNonValide(int page, int taille) {
         if (page == 0) {
             return aGeneralRepository.findNonValide();

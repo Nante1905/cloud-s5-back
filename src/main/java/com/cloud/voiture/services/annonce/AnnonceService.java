@@ -181,9 +181,9 @@ public class AnnonceService extends GenericService<Annonce> {
     return new HistoriqueAnnonceDTO(annonce, historiqueMin);
   }
 
-  public List<AnnonceDTO> findByUser() throws AuthException {
+  public List<AnnonceDTO> findByUser(int page, int taille) throws AuthException {
     Utilisateur u = utilisateurService.getAuthenticated();
-    List<AnnonceGeneral> aG = aGeneralService.findByIdUtilisateur(u.getId());
+    List<AnnonceGeneral> aG = aGeneralService.findByIdUtilisateur(u.getId(), page, taille);
     List<AnnonceDTO> annonces = new ArrayList<>();
     for (AnnonceGeneral a : aG) {
       AnnonceDTO dto = new AnnonceDTO(a);
