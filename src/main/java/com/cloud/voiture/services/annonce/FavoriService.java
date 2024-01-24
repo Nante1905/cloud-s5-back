@@ -26,12 +26,35 @@ public class FavoriService {
     @PersistenceContext
     EntityManager entityManager;
 
-    public List<AnnonceEtFavori> findFavoriOf(int idUtilisateur) throws AuthException {
+    private static int TAILLE_PAGE = 5;
 
-        List<AnnonceEtFavori> res = entityManager.createNativeQuery(
-                "select a.*, f.date_ajout from v_annonce_gen_valide a  join annonce_favori f on a.id = f.id_annonce and f.id_utilisateur = :user",
-                AnnonceEtFavori.class).setParameter("user", idUtilisateur).getResultList();
-        return res;
+    public List<AnnonceEtFavori> findFavoriOf(int idUtilisateur, int page, int taille) throws AuthException {
+        if (page == 0) {
+            return entityManager.createNativeQuery(
+                    """
+                            select a.*, f.date_maj, f.date_ajout
+                            from v_annonce_general a
+                                join v_annonce_favori f
+                                on a.id = f.id_annonce and a.status = f.status
+                                where f.id_utilisateur = :user order by date_ajout desc
+                            """,
+                    AnnonceEtFavori.class).setParameter("user", idUtilisateur).getResultList();
+        }
+        if (taille == 0) {
+            taille = TAILLE_PAGE;
+        }
+        return entityManager.createNativeQuery(
+                """
+                        select a.*, f.date_maj, f.date_ajout
+                        from v_annonce_general a
+                        join v_annonce_favori f
+                        on a.id = f.id_annonce and a.status = f.status
+                        where f.id_utilisateur = :user order by date_ajout desc limit :taille offset(:numero - 1)*:taille
+                        """,
+                AnnonceEtFavori.class).setParameter("user", idUtilisateur)
+                .setParameter("taille", taille)
+                .setParameter("numero", page)
+                .getResultList();
 
     }
 

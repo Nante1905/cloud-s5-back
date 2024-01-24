@@ -117,3 +117,11 @@ from v_annonce_general a
     join historique_annonce h 
     on a.id = h.id_annonce
 where h.status = 5;
+
+-- 24/01/2024 08:22
+create view v_annonce_favori as
+select h.*, f.id_utilisateur, f.date_ajout
+from v_max_historique_annonce h 
+join annonce_favori f 
+	on h.id_annonce = f.id_annonce; 
+

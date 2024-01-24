@@ -67,9 +67,9 @@ public class AnnonceService extends GenericService<Annonce> {
   @Autowired
   FavoriService favoriService;
 
-  public List<AnnonceDTO> findFavoriOfAuthenticatedUser() throws AuthException {
+  public List<AnnonceDTO> findFavoriOfAuthenticatedUser(int page, int taille) throws AuthException {
     Utilisateur u = utilisateurService.getAuthenticated();
-    List<AnnonceEtFavori> res = favoriService.findFavoriOf(u.getId());
+    List<AnnonceEtFavori> res = favoriService.findFavoriOf(u.getId(), page, taille);
     List<AnnonceDTO> a = new ArrayList<>();
     for (AnnonceEtFavori annonce : res) {
       AnnonceDTO dto = new AnnonceDTO(annonce);
