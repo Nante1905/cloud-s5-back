@@ -8,6 +8,7 @@ public class HistoriqueAnnonceDTO {
     int id;
     String marque;
     String modele;
+    double prix;
     List<HistoriqueAnnonceMin> historiques;
 
     public HistoriqueAnnonceDTO() {
@@ -18,6 +19,7 @@ public class HistoriqueAnnonceDTO {
         Modele m = annonce.getVoiture().getModele();
         setMarque(m.getMarque().getNom());
         setModele(m.getNom());
+        setPrix(annonce.getPrix());
         setHistoriques(historiques);
     }
 
@@ -51,6 +53,14 @@ public class HistoriqueAnnonceDTO {
 
     public void setHistoriques(List<HistoriqueAnnonceMin> historiques) {
         this.historiques = historiques;
+    }
+
+    public double getPrix() {
+        return prix;
+    }
+
+    public void setPrix(double prix) {
+        this.prix = prix;
     }
 
 }

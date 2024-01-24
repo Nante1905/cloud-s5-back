@@ -36,6 +36,9 @@ public class HistoriqueAnnonceService extends GenericService<HistoriqueAnnonce> 
         if (h.getStatus() == config.getAnnonceVendu()) {
             return "Vendue";
         }
+        if (h.getStatus() == -10) {
+            return "Supprimée";
+        }
         throw new ValidationException("Status d'annonce inconnu");
     }
 }
