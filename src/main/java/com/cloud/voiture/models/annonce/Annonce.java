@@ -30,6 +30,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -79,6 +80,9 @@ public class Annonce extends GenericModel {
   @OneToMany(mappedBy = "annonce", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
   List<AnnoncePhoto> photos;
 
+  @Transient
+  boolean isFavori;
+
   public Annonce() {
   }
 
@@ -105,6 +109,7 @@ public class Annonce extends GenericModel {
         new Vitesse(a.getIdBoiteVitesse(), a.getNomVitesse()), new Energie(a.getIdEnergie(), a.getNomEnergie()));
     setVoiture(v);
     setPhotos(a.getPhotos());
+    setFavori(a.isFavori());
   }
 
   public int getId() {
@@ -221,5 +226,13 @@ public class Annonce extends GenericModel {
 
   public void setPhotos(List<AnnoncePhoto> photos) {
     this.photos = photos;
+  }
+
+  public boolean isFavori() {
+    return isFavori;
+  }
+
+  public void setFavori(boolean isFavori) {
+    this.isFavori = isFavori;
   }
 }

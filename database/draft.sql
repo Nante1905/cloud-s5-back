@@ -39,4 +39,11 @@ limit 2;
 select a.*,  
 v_annonve_gen_valide a 
 left join annonce_favori f 
-  on f.id_annonce = a.id and f.id_utilisateur = 1
+  on f.id_annonce = a.id and f.id_utilisateur = 1;
+
+select a.id id_annonce, null id_utilisateur, f.date_ajout from
+v_annonce_gen_valide a 
+left join annonce_favori f 
+  on f.id_annonce = a.id  and f.id_utilisateur = 1
+where id = 31;
+  

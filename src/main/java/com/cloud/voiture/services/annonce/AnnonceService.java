@@ -21,6 +21,7 @@ import com.cloud.voiture.models.annonce.HistoriqueAnnonceMin;
 import com.cloud.voiture.models.annonce.VueAnnonce;
 import com.cloud.voiture.models.annonce.DTO.AnnonceDTO;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
+import com.cloud.voiture.models.annonce.favori.Favori;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
 import com.cloud.voiture.search.RechercheAnnonce;
@@ -63,7 +64,37 @@ public class AnnonceService extends GenericService<Annonce> {
   @Autowired
   AnnonceGeneralService aGeneralService;
 
-  private static int TAILLE_PAGE = 10;
+  @Autowired
+  FavoriService favoriService;
+
+  public List<AnnonceDTO> findFavoriOfAuthenticatedUser(int page, int taille) throws AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    List<AnnonceEtFavori> res = favoriService.findFavoriOf(u.getId(), page, taille);
+    List<AnnonceDTO> a = new ArrayList<>();
+    for (AnnonceEtFavori annonce : res) {
+      AnnonceDTO dto = new AnnonceDTO(annonce);
+      dto.setPhotos(findPhotos(annonce.getId()));
+      a.add(dto);
+    }
+    return a;
+  }
+
+  @Transactional
+  public int toggleFavori(int idAnnonce) throws AuthException, NotFoundException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    Favori favori = favoriService.existOrLiked(u.getId(), idAnnonce);
+    System.out.println(favori.getDateAjout());
+    if (favori.getDateAjout() == null) {
+      // Favori f = new Favori();
+      // f.setId(new FavoriAnnonceID(u.getId(), idAnnonce));
+      favoriService.save(favori);
+      return 1;
+    } else {
+      System.out.println("delete ohhhh " + favori.getIdUtilisateur() + " a " + favori.getIdUtilisateur());
+      favoriService.delete(favori);
+      return -1;
+    }
+  }
 
   @Transactional
   public void deleteAnnonce(int idAnnonce) throws NotFoundException, ValidationException, AuthException {
