@@ -21,6 +21,7 @@ import com.cloud.voiture.models.annonce.HistoriqueAnnonceMin;
 import com.cloud.voiture.models.annonce.VueAnnonce;
 import com.cloud.voiture.models.annonce.DTO.AnnonceDTO;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
+import com.cloud.voiture.models.annonce.favori.Favori;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
 import com.cloud.voiture.search.RechercheAnnonce;
@@ -63,7 +64,69 @@ public class AnnonceService extends GenericService<Annonce> {
   @Autowired
   AnnonceGeneralService aGeneralService;
 
-  private static int TAILLE_PAGE = 10;
+  @Autowired
+  FavoriService favoriService;
+
+  public List<AnnonceDTO> findFavoriOfAuthenticatedUser(int page, int taille) throws AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    List<AnnonceEtFavori> res = favoriService.findFavoriOf(u.getId(), page, taille);
+    List<AnnonceDTO> a = new ArrayList<>();
+    for (AnnonceEtFavori annonce : res) {
+      AnnonceDTO dto = new AnnonceDTO(annonce);
+      dto.setPhotos(findPhotos(annonce.getId()));
+      a.add(dto);
+    }
+    return a;
+  }
+
+  @Transactional
+  public int toggleFavori(int idAnnonce) throws AuthException, NotFoundException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    Favori favori = favoriService.existOrLiked(u.getId(), idAnnonce);
+    System.out.println(favori.getDateAjout());
+    if (favori.getDateAjout() == null) {
+      // Favori f = new Favori();
+      // f.setId(new FavoriAnnonceID(u.getId(), idAnnonce));
+      favoriService.save(favori);
+      return 1;
+    } else {
+      System.out.println("delete ohhhh " + favori.getIdUtilisateur() + " a " + favori.getIdUtilisateur());
+      favoriService.delete(favori);
+      return -1;
+    }
+  }
+
+  @Transactional
+  public void deleteAnnonce(int idAnnonce) throws NotFoundException, ValidationException, AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    Annonce a = findById(idAnnonce);
+    if (a.getUtilisateur().getId() != u.getId()) {
+      throw new ValidationException("Erreur: vous n'avez aucune annonce avec cette identifiant.");
+    }
+    HistoriqueAnnonce histo = new HistoriqueAnnonce();
+    histo.setIdAnnonce(a.getId());
+    histo.setStatus(config.getAnnonceSupprime());
+    historiqueService.save(histo);
+    updateStatus(idAnnonce, config.getAnnonceSupprime());
+  }
+
+  @Transactional
+  public void updateStatusToSold(int idAnnonce) throws NotFoundException, ValidationException, AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    Annonce a = findById(idAnnonce);
+    if (a.getUtilisateur().getId() != u.getId()) {
+      throw new ValidationException("Erreur: vous n'avez aucune annonce avec cette identifiant.");
+    }
+    if (a.getStatus() != config.getAnnonceValide()) {
+      throw new ValidationException(
+          "Erreur: seules les annonces validées et non vendues peuvent être classées comme vendues");
+    }
+    HistoriqueAnnonce histo = new HistoriqueAnnonce();
+    histo.setIdAnnonce(a.getId());
+    histo.setStatus(config.getAnnonceVendu());
+    historiqueService.save(histo);
+    updateStatus(idAnnonce, config.getAnnonceVendu());
+  }
 
   public List<AnnoncePhoto> findPhotos(int idAnnonce) {
     return annonceRepository.getPhotos(idAnnonce);

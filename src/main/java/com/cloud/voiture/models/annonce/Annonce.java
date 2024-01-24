@@ -22,6 +22,7 @@ import com.cloud.voiture.models.voiture.Voiture;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,6 +30,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -62,12 +64,12 @@ public class Annonce extends GenericModel {
   @Column(name = "id_utilisateur")
   int idUtilisateur;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_utilisateur", insertable = false, updatable = false)
   @Fetch(FetchMode.JOIN)
   Utilisateur utilisateur;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_voiture", referencedColumnName = "id", insertable = false, updatable = false)
   @Fetch(FetchMode.JOIN)
   Voiture voiture;
@@ -75,8 +77,11 @@ public class Annonce extends GenericModel {
   @Column(name = "id_voiture")
   int idVoiture;
 
-  @OneToMany(mappedBy = "annonce", cascade = CascadeType.PERSIST)
+  @OneToMany(mappedBy = "annonce", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
   List<AnnoncePhoto> photos;
+
+  @Transient
+  boolean isFavori;
 
   public Annonce() {
   }
@@ -104,6 +109,7 @@ public class Annonce extends GenericModel {
         new Vitesse(a.getIdBoiteVitesse(), a.getNomVitesse()), new Energie(a.getIdEnergie(), a.getNomEnergie()));
     setVoiture(v);
     setPhotos(a.getPhotos());
+    setFavori(a.isFavori());
   }
 
   public int getId() {
@@ -220,5 +226,13 @@ public class Annonce extends GenericModel {
 
   public void setPhotos(List<AnnoncePhoto> photos) {
     this.photos = photos;
+  }
+
+  public boolean isFavori() {
+    return isFavori;
+  }
+
+  public void setFavori(boolean isFavori) {
+    this.isFavori = isFavori;
   }
 }

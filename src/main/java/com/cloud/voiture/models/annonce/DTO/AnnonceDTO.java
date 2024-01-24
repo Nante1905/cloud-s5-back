@@ -20,6 +20,7 @@ public class AnnonceDTO {
     LocalDateTime creation;
     int etat;
     boolean favori;
+    int status;
     List<AnnoncePhoto> photos;
 
     public AnnonceDTO() {
@@ -35,6 +36,7 @@ public class AnnonceDTO {
         setCreation(a.getDateCreation());
         setEtat(a.getEtat());
         setPrix(a.getPrix());
+        setStatus(a.getStatus());
     }
 
     public AnnonceDTO(AnnonceEtFavori a) {
@@ -48,6 +50,7 @@ public class AnnonceDTO {
         setEtat(a.getEtat());
         setPrix(a.getPrix());
         setFavori(a.isFavori());
+        setStatus(a.getStatus());
     }
 
     public static List<AnnonceDTO> convertAnnonceGeneral(List<AnnonceGeneral> annonces) {
@@ -144,6 +147,14 @@ public class AnnonceDTO {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
 }
