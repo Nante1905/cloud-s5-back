@@ -111,12 +111,30 @@ from annonce a
 create view v_annonce_gen_non_valide as 
 select * from v_annonce_general where status = 0;
 
+-- 24-01-2024 01:05
+create view v_max_historique_annonce as select h.* 
+from historique_annonce h 
+join (
+	select id_annonce, max(date_maj) max_date 
+	from historique_annonce
+	group by id_annonce
+) m on h.id_annonce = m.id_annonce and h.date_maj
+ = m.max_date
+ order by id_annonce ASC;
+
 create view v_annonce_gen_valide as 
 select a.*, h.date_maj 
 from v_annonce_general a 
-    join historique_annonce h 
+    join v_max_historique_annonce h 
     on a.id = h.id_annonce
 where h.status = 5;
+
+create view v_annonce_gen_vendu as 
+select a.*, h.date_maj 
+from v_annonce_general a 
+    join v_max_historique_annonce h 
+    on a.id = h.id_annonce
+where h.status = 10;
 
 -- 24/01/2024 08:22
 create view v_annonce_favori as
@@ -124,4 +142,5 @@ select h.*, f.id_utilisateur, f.date_ajout
 from v_max_historique_annonce h 
 join annonce_favori f 
 	on h.id_annonce = f.id_annonce; 
+
 
