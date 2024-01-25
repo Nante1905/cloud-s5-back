@@ -54,10 +54,8 @@ public class UtilisateurService extends GenericService<Utilisateur> {
     }
 
     public List<Discussion> getDiscussionsForUserWithUsers( int idutilisateur ) throws Exception{
-        // Utilisateur utilisateur = getAuthenticated();
 
-        // List<Discussion> discussions = discussionService.getDiscussionsForUser(utilisateur.getId());
-        List<Discussion> discussions = discussionService.getDiscussionsForUser(idutilisateur);
+        List<Discussion> discussions = discussionService.getDiscussionsWithLastMessagesForUser(idutilisateur);
 
         for (Discussion discussion : discussions) {
             int userId1 = discussion.getUserId1();
