@@ -28,4 +28,5 @@ public class AnnonceGeneralService extends GenericService<AnnonceGeneral> {
         }
         return aGeneralRepository.findNonValide(page, taille);
     }
+
 }

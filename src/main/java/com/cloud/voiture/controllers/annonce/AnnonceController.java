@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cloud.voiture.crud.controller.GenericController;
+import com.cloud.voiture.crud.pagination.Paginated;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
 import com.cloud.voiture.models.annonce.DTO.AnnonceDTO;
@@ -48,6 +49,25 @@ public class AnnonceController extends GenericController<Annonce> {
 
   @Autowired
   AnnonceGeneralService aGeneralService;
+
+  @Override
+  @GetMapping
+  public ResponseEntity<?> findAll(
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
+    try {
+      System.out.println("Ato =================");
+      if (page == 0 || taille == 0) {
+        List<AnnonceDTO> results = annonceService.findAllAnnonce();
+        return ResponseEntity.ok(new Response(results, ""));
+      }
+      Paginated<AnnonceDTO> result = annonceService.findAllAnnonces(page, taille);
+      return ResponseEntity.ok(new Response(result, ""));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(500).body(new Response(e.getMessage()));
+    }
+  }
 
   @Override
   @GetMapping("/{id}")
