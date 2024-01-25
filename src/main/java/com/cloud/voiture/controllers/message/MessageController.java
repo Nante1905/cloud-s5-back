@@ -34,6 +34,7 @@ public class MessageController {
     // private ChatEventHandler chatEventHandler;
     @Autowired
     private DiscussionService serviceDiscussion;
+
     // @Autowired
     // private SocketIOClient client;
     // @Autowired
@@ -42,6 +43,7 @@ public class MessageController {
     // private JoinChatHandler joinChatHandler;
     // @Autowired
     // private LeaveRoomHandler leaveRoomHandler;
+
 
     @PostMapping("/sendMessage")
     public ResponseEntity<Response> sendMessage(@RequestBody ChatMessageRequest messageRequest) {
@@ -84,7 +86,9 @@ public class MessageController {
             request.setUserId(iduser);
             List<Message> messages = service.findMessagesByidDiscussion(request.getChatId());
             List<Utilisateur> utilisateurs = serviceDiscussion.findUsersByIdDiscussion(request.getChatId());
+
             // joinChatHandler.onData(client, request, null);
+
             Discussion discussion = new Discussion(messages, utilisateurs.get(0), utilisateurs.get(1));
 
             return ResponseEntity.ok(new Response(discussion, ""));
