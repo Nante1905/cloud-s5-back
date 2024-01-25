@@ -143,9 +143,10 @@ public class AnnonceController extends GenericController<Annonce> {
   }
 
   @GetMapping("/yours")
-  public ResponseEntity<Response> getConnectedUserAnnonces() {
+  public ResponseEntity<Response> getConnectedUserAnnonces(@RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
     try {
-      List<AnnonceDTO> annonces = annonceService.findByUser();
+      List<AnnonceDTO> annonces = annonceService.findByUser(page, taille);
       System.out.println(annonces.size());
       return ResponseEntity.ok(new Response(annonces, ""));
     } catch (Exception e) {
@@ -300,6 +301,7 @@ public class AnnonceController extends GenericController<Annonce> {
     } catch (AuthException e) {
       return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Response(e.getMessage()));
     } catch (NotFoundException e) {
+      e.printStackTrace();
       return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
           .body(new Response("Annonce invalide: impossible de mettre en favori."));
     } catch (Exception e) {
