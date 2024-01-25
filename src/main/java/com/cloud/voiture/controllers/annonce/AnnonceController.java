@@ -59,6 +59,52 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
+  @GetMapping("/nonValide/moi")
+  public ResponseEntity<Response> getAnnonceNonValideOfConnectedUser(
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
+    try {
+      return ResponseEntity.ok()
+          .body(new Response(annonceService.findAnnonceNonValideOfConnectedUser(page, taille), null));
+    } catch (AuthException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Response("Accès refusé.Veuillez vous connecter."));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response("Une erreur s'est produite"));
+    }
+  }
+
+  @GetMapping("/valide/moi")
+  public ResponseEntity<Response> getAnnonceValideOfConnectedUser(
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
+    try {
+      return ResponseEntity.ok()
+          .body(new Response(annonceService.findAnnonceValideOfConnectedUser(page, taille), null));
+    } catch (AuthException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Response("Accès refusé.Veuillez vous connecter."));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response("Une erreur s'est produite"));
+    }
+  }
+
+  @GetMapping("/vendu/moi")
+  public ResponseEntity<Response> getAnnonceVenduOfConnectedUser(
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
+    try {
+      return ResponseEntity.ok()
+          .body(new Response(annonceService.findAnnonceVenduOfConnectedUser(page, taille), null));
+    } catch (AuthException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Response("Accès refusé.Veuillez vous connecter."));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response("Une erreur s'est produite"));
+    }
+  }
+
+  @GetMapping("/moi")
   @Override
   @DeleteMapping("/{id}")
   public ResponseEntity<Response> delete(@PathVariable(name = "id") int id) {
@@ -139,7 +185,7 @@ public class AnnonceController extends GenericController<Annonce> {
       Annonce nouvelAnnonce = annonceService.save(annonce);
       return ResponseEntity.status(HttpStatus.CREATED).body(new Response(nouvelAnnonce, "Annonce créée"));
     } catch (AuthException e) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Response("Aucun utilisateur connecté"));
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Response("Accès refusé.Veuillez vous connecter."));
     }
   }
 

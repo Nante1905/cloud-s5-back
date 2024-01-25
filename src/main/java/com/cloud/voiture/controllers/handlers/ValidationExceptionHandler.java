@@ -10,6 +10,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.services.utilities.Utilities;
@@ -77,6 +78,11 @@ public class ValidationExceptionHandler {
                 .body(new Response(exception.getMessage()));
     }
 
+    @ExceptionHandler(value = NoResourceFoundException.class)
+    public ResponseEntity<Response> handleCustomNoResourceFoundException(NoResourceFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new Response("Cette ressource n'existe pas."));
+}
     @ExceptionHandler(value = AuthException.class)
     public ResponseEntity<Response> handleAuthException(AuthException exception) {
         System.out.println("ATOOOOOOOOOOOOOOOO");

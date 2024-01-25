@@ -135,6 +135,42 @@ public class AnnonceService extends GenericService<Annonce> {
     updateStatus(idAnnonce, config.getAnnonceVendu());
   }
 
+  public List<AnnonceDTO> findAnnonceNonValideOfConnectedUser(int page, int taille) throws AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    List<AnnonceGeneral> aG = aGeneralService.findNonValideOf(u.getId(), page, taille);
+    List<AnnonceDTO> annonces = new ArrayList<>();
+    for (AnnonceGeneral a : aG) {
+      AnnonceDTO dto = new AnnonceDTO(a);
+      dto.setPhotos(findPhotos(a.getId()));
+      annonces.add(dto);
+    }
+    return annonces;
+  }
+
+  public List<AnnonceDTO> findAnnonceValideOfConnectedUser(int page, int taille) throws AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    List<AnnonceGeneral> aG = aGeneralService.findValideOf(u.getId(), page, taille);
+    List<AnnonceDTO> annonces = new ArrayList<>();
+    for (AnnonceGeneral a : aG) {
+      AnnonceDTO dto = new AnnonceDTO(a);
+      dto.setPhotos(findPhotos(a.getId()));
+      annonces.add(dto);
+    }
+    return annonces;
+  }
+
+  public List<AnnonceDTO> findAnnonceVenduOfConnectedUser(int page, int taille) throws AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    List<AnnonceGeneral> aG = aGeneralService.findVenduOf(u.getId(), page, taille);
+    List<AnnonceDTO> annonces = new ArrayList<>();
+    for (AnnonceGeneral a : aG) {
+      AnnonceDTO dto = new AnnonceDTO(a);
+      dto.setPhotos(findPhotos(a.getId()));
+      annonces.add(dto);
+    }
+    return annonces;
+  }
+
   public List<AnnoncePhoto> findPhotos(int idAnnonce) {
     return annonceRepository.getPhotos(idAnnonce);
   }
