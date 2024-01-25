@@ -99,3 +99,20 @@ on m.mois = extract(month from v.date_maj)
 group by m.mois  
 order by m.mois
 $$ language sql;
+
+-- 26/01/2024
+-- TODO: REMPLACE FONCTION
+create or replace function f_benefice_par_marque(mois INTEGER, annee INTEGER) RETURNS TABLE (id_marque INTEGER, nom_marque varchar, montant numeric) as 
+$$  
+    select id_marque, nom_marque, logo sum(montant) from 
+    (
+        (select a.id_marque, a.nom_marque, logo, sum(commission) montant
+            from v_annonce_gen_vendu a
+            where extract(month from a.date_maj) = $1 and extract(year from a.date_maj) = $2
+            group by id_marque, nom_marque, logo) 
+            union 
+                select id id_marque, nom nom_marque, logo 0 montant from marque 
+    ) vendu
+    group by vendu.id_marque, nom_marque, logo
+$$
+    LANGUAGE SQL;
