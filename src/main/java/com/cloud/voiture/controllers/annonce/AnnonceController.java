@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,6 +79,7 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
+  @Secured({ "USER" })
   @PutMapping("/{id}/vendu")
   public ResponseEntity<Response> updateAsSold(@PathVariable(name = "id") int id) {
     try {
@@ -96,6 +98,7 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
+  @Secured({ "USER" })
   @GetMapping("/yours")
   public ResponseEntity<Response> getConnectedUserAnnonces() {
     try {
@@ -163,6 +166,7 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
+  @Secured({ "ADMIN" })
   @PutMapping("{id}/valider")
   public ResponseEntity<Response> validerAnnonce(
       @PathVariable(name = "id") int id) {
@@ -187,6 +191,7 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
+  @Secured({ "ADMIN" })
   @PutMapping("{id}/refuser")
   public ResponseEntity<Response> refuserAnnonce(
       @PathVariable(name = "id") int id) {
@@ -211,6 +216,7 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
+  @Secured({ "ADMIN" })
   @GetMapping("/nonValide")
   public ResponseEntity<Response> findNonValide(@RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "0") int taille) {
@@ -235,12 +241,7 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
-  @GetMapping("/test")
-  public ResponseEntity<?> test(@RequestParam(required = false, defaultValue = "0") int page,
-      @RequestParam(required = false, defaultValue = "0") int pageSize) {
-    return ResponseEntity.ok(aGeneralService.findAll(page, pageSize));
-  }
-
+  @Secured({ "USER" })
   @PutMapping("/{id}/toggle_favoris")
   public ResponseEntity<Response> markAsFavori(@PathVariable(name = "id") int id) {
     try {

@@ -22,6 +22,8 @@ import com.cloud.voiture.services.message.DiscussionService;
 import com.cloud.voiture.services.message.MessageService;
 import com.cloud.voiture.types.response.Response;
 
+// TODO: uncomment this line
+// @Secured({"USER"})
 @RestController
 @RequestMapping("/messages")
 public class MessageController {

@@ -24,7 +24,18 @@ public class AuthController {
         try {
             String token = this.authenticationService.login(body.getEmail(), body.getPassword());
 
-            return ResponseEntity.ok(new Response(token, "Login successful"));
+            return ResponseEntity.ok(new Response(token, "Bienvenue!"));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(new Response(e.getMessage()));
+        }
+    }
+
+    @PostMapping("login-bo")
+    public ResponseEntity<?> loginBO(@RequestBody AuthModel body) throws Exception {
+        try {
+            String token = this.authenticationService.loginBackOffice(body.getEmail(), body.getPassword());
+
+            return ResponseEntity.ok(new Response(token, "Bienvenue!"));
         } catch (Exception e) {
             return ResponseEntity.status(401).body(new Response(e.getMessage()));
         }

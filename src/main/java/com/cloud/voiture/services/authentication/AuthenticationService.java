@@ -22,8 +22,27 @@ public class AuthenticationService {
 
         try {
             Utilisateur user = utilisateurService.findByEmailAndPassword(email, password);
-            // TODO : change new array list to fun getAuthorities
+            // TODO : Uncomment these lines and remove last
+            // if (user.getRole().getReference() == "ADMIN") {
+            // return jwtManager.generateToken(user,
+            // this.customUserDetailsService.getAuthorities(user));
+            // }
+            // throw new Exception("Identifiants incorrects. Réessayez.");
             return jwtManager.generateToken(user, this.customUserDetailsService.getAuthorities(user));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public String loginBackOffice(String email, String password) throws Exception {
+
+        try {
+            Utilisateur user = utilisateurService.findByEmailAndPassword(email, password);
+            if (user.getRole().getReference() == "ADMIN") {
+                return jwtManager.generateToken(user, this.customUserDetailsService.getAuthorities(user));
+            }
+            throw new Exception("Identifiants incorrects. Réessayez.");
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.message.Discussion;
-import com.cloud.voiture.models.message.Message;
 import com.cloud.voiture.repositories.auth.UtilisateurRepository;
 import com.cloud.voiture.services.message.DiscussionService;
 
@@ -32,7 +31,7 @@ public class UtilisateurService extends GenericService<Utilisateur> {
 
     public Utilisateur findByEmailAndPassword(String email, String password) throws Exception {
         return this.utilisateurRepository.findByEmailAndPassword(email, password)
-                .orElseThrow(() -> new Exception("Invalid credentials"));
+                .orElseThrow(() -> new Exception("Identifiants incorrects. Réessayez."));
     }
 
     public Utilisateur findByEmail(String email) throws NotFoundException {
@@ -53,10 +52,11 @@ public class UtilisateurService extends GenericService<Utilisateur> {
         return utilisateurs;
     }
 
-    public List<Discussion> getDiscussionsForUserWithUsers( int idutilisateur ) throws Exception{
+    public List<Discussion> getDiscussionsForUserWithUsers(int idutilisateur) throws Exception {
         // Utilisateur utilisateur = getAuthenticated();
 
-        // List<Discussion> discussions = discussionService.getDiscussionsForUser(utilisateur.getId());
+        // List<Discussion> discussions =
+        // discussionService.getDiscussionsForUser(utilisateur.getId());
         List<Discussion> discussions = discussionService.getDiscussionsForUser(idutilisateur);
 
         for (Discussion discussion : discussions) {
