@@ -30,6 +30,7 @@ public class UtilisateurService extends GenericService<Utilisateur> {
     private DiscussionService discussionService;
 
     public Utilisateur findByEmailAndPassword(String email, String password) throws Exception {
+        System.out.println("email " + email + " pwd " + password);
         return this.utilisateurRepository.findByEmailAndPassword(email, password)
                 .orElseThrow(() -> new Exception("Identifiants incorrects. Réessayez."));
     }

@@ -22,13 +22,12 @@ public class AuthenticationService {
 
         try {
             Utilisateur user = utilisateurService.findByEmailAndPassword(email, password);
-            // TODO : Uncomment these lines and remove last
-            // if (user.getRole().getReference() == "ADMIN") {
-            // return jwtManager.generateToken(user,
-            // this.customUserDetailsService.getAuthorities(user));
-            // }
-            // throw new Exception("Identifiants incorrects. Réessayez.");
-            return jwtManager.generateToken(user, this.customUserDetailsService.getAuthorities(user));
+            System.out.println("role " + user.getRole().getReference());
+            if (user.getRole().getReference().equals("USER")) {
+                return jwtManager.generateToken(user,
+                        this.customUserDetailsService.getAuthorities(user));
+            }
+            throw new Exception("Identifiants incorrects. Réessayez.");
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
@@ -39,7 +38,8 @@ public class AuthenticationService {
 
         try {
             Utilisateur user = utilisateurService.findByEmailAndPassword(email, password);
-            if (user.getRole().getReference() == "ADMIN") {
+            System.out.println("role " + user.getRole().getReference());
+            if (user.getRole().getReference().equals("ADMIN")) {
                 return jwtManager.generateToken(user, this.customUserDetailsService.getAuthorities(user));
             }
             throw new Exception("Identifiants incorrects. Réessayez.");
