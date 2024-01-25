@@ -11,11 +11,18 @@ import com.cloud.voiture.config.Constant;
 import com.cloud.voiture.crud.model.GenericModel;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 import com.cloud.voiture.models.auth.Utilisateur;
+import com.cloud.voiture.models.voiture.Categorie;
+import com.cloud.voiture.models.voiture.Couleur;
+import com.cloud.voiture.models.voiture.Energie;
+import com.cloud.voiture.models.voiture.Marque;
+import com.cloud.voiture.models.voiture.Modele;
+import com.cloud.voiture.models.voiture.Vitesse;
 import com.cloud.voiture.models.voiture.Voiture;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,6 +30,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -56,12 +64,12 @@ public class Annonce extends GenericModel {
   @Column(name = "id_utilisateur")
   int idUtilisateur;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_utilisateur", insertable = false, updatable = false)
   @Fetch(FetchMode.JOIN)
   Utilisateur utilisateur;
 
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "id_voiture", referencedColumnName = "id", insertable = false, updatable = false)
   @Fetch(FetchMode.JOIN)
   Voiture voiture;
@@ -69,8 +77,40 @@ public class Annonce extends GenericModel {
   @Column(name = "id_voiture")
   int idVoiture;
 
-  @OneToMany(mappedBy = "annonce", cascade = CascadeType.PERSIST)
+  @OneToMany(mappedBy = "annonce", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
   List<AnnoncePhoto> photos;
+
+  @Transient
+  boolean isFavori;
+
+  public Annonce() {
+  }
+
+  public Annonce(AnnonceEtFavori a) {
+    setId(a.getId());
+    setReference(a.getReference());
+    setDescription(a.getDescription());
+    setPrix(a.getPrix());
+    setStatus(a.getStatus());
+    if (a.status == 5) {
+      setDateCreation(a.getValidation());
+    } else {
+      setDateCreation(a.getDateCreation());
+    }
+    setCommission(a.getCommission());
+    setUtilisateur(new Utilisateur(a.getIdUtilisateur(), a.getUtilisateurNom(), a.getUtilisateurPrenom(),
+        a.getDateInscription(), a.getAdresse()));
+
+    Voiture v = new Voiture(a.getIdVoiture(), a.getIdUtilisateur(), a.getKilometrage(), a.getStatus(),
+        new Couleur(a.getIdCouleur(), a.getNomCouleur(), a.getHexa()),
+        new Modele(a.getIdModele(), a.getNomModele(), a.getNbPlace(), a.getNbPorte(), a.getAnneeSortie(),
+            new Categorie(a.getIdCategorie(), a.getNomCategorie()),
+            new Marque(a.getIdMarque(), a.getNomMarque(), a.getLogo())),
+        new Vitesse(a.getIdBoiteVitesse(), a.getNomVitesse()), new Energie(a.getIdEnergie(), a.getNomEnergie()));
+    setVoiture(v);
+    setPhotos(a.getPhotos());
+    setFavori(a.isFavori());
+  }
 
   public int getId() {
     return id;
@@ -186,5 +226,13 @@ public class Annonce extends GenericModel {
 
   public void setPhotos(List<AnnoncePhoto> photos) {
     this.photos = photos;
+  }
+
+  public boolean isFavori() {
+    return isFavori;
+  }
+
+  public void setFavori(boolean isFavori) {
+    this.isFavori = isFavori;
   }
 }

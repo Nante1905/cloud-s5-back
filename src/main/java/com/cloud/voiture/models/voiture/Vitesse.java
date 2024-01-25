@@ -21,6 +21,14 @@ public class Vitesse extends GenericModel {
     @NotNull(message = "")
     String nom;
 
+    public Vitesse(int id, String nom) {
+        setId(id);
+        setNom(nom);
+    }
+
+    public Vitesse() {
+    }
+
     public int getId() {
         return id;
     }

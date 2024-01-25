@@ -17,6 +17,7 @@ public class Message {
     private String messageId;
     private int expediteurId;
     private int destinataireId;
+    private String idDiscussion;
     private String contenu;
     private Date dateEnvoi;
     private int type;

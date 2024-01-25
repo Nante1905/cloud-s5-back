@@ -1,7 +1,5 @@
 package com.cloud.voiture.models.voiture;
 
-import org.hibernate.validator.constraints.UniqueElements;
-
 import com.cloud.voiture.crud.model.GenericModel;
 
 import jakarta.persistence.Entity;
@@ -20,6 +18,14 @@ public class Categorie extends GenericModel {
     @NotBlank(message = "")
     @NotNull(message = "")
     String nom;
+
+    public Categorie(int id, String nom) {
+        setId(id);
+        setNom(nom);
+    }
+
+    public Categorie() {
+    }
 
     public int getId() {
         return id;

@@ -1,12 +1,6 @@
 package com.cloud.voiture.models.voiture;
 
-import java.lang.reflect.Parameter;
-import java.sql.Date;
 import java.time.LocalDate;
-
-import org.springframework.core.MethodParameter;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.cloud.voiture.crud.model.GenericModel;
 import com.cloud.voiture.exceptions.ValidationException;
@@ -19,11 +13,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 
 @Entity
 public class Modele extends GenericModel {
@@ -66,6 +58,28 @@ public class Modele extends GenericModel {
     @ManyToOne
     @JoinColumn(name = "id_marque", insertable = false, updatable = false)
     Marque marque;
+
+    public Modele(int id, String nom) {
+        setId(id);
+        setNom(nom);
+    }
+
+    public Modele(int id, @NotBlank(message = "") @NotNull(message = "") String nom,
+            @NotNull(message = "") @Digits(fraction = 0, integer = 2, message = "Le nombre de place doit être numérique.") @Min(value = 2, message = "Le nombre de place doit être supérieur à 2.") int nbPlace,
+            @NotNull(message = "") @Digits(fraction = 0, integer = 2, message = "Le nombre de porte doit être numérique.") @Min(value = 2, message = "Le nombre de porte doit être supérieur à 2.") int nbPorte,
+            @Digits(fraction = 0, integer = 4, message = "L'année de sortie n'est pas valide") int anneeSortie,
+            Categorie categorie, Marque marque) {
+        this.id = id;
+        this.nom = nom;
+        this.nbPlace = nbPlace;
+        this.nbPorte = nbPorte;
+        this.anneeSortie = anneeSortie;
+        this.categorie = categorie;
+        this.marque = marque;
+    }
+
+    public Modele() {
+    }
 
     public int getId() {
         return id;

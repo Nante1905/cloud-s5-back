@@ -7,16 +7,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.services.utilities.Utilities;
 import com.cloud.voiture.types.response.Response;
 import com.fasterxml.jackson.databind.JsonMappingException;
+
+import jakarta.security.auth.message.AuthException;
 
 @RestControllerAdvice
 public class ValidationExceptionHandler {
@@ -73,8 +73,14 @@ public class ValidationExceptionHandler {
 
     @ExceptionHandler(value = ValidationException.class)
     public ResponseEntity<Response> handleCustomValidationException(ValidationException exception) {
-        System.out.println("ATOOOOOOOOOOOOOOOO");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new Response(exception.getMessage()));
+    }
+
+    @ExceptionHandler(value = AuthException.class)
+    public ResponseEntity<Response> handleAuthException(AuthException exception) {
+        System.out.println("ATOOOOOOOOOOOOOOOO");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new Response(exception.getMessage()));
     }
 }

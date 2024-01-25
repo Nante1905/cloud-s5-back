@@ -13,11 +13,15 @@ import com.cloud.voiture.config.Constant;
 import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
+import com.cloud.voiture.models.annonce.AnnonceEtFavori;
+import com.cloud.voiture.models.annonce.AnnonceGeneral;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonce;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceDTO;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceMin;
 import com.cloud.voiture.models.annonce.VueAnnonce;
+import com.cloud.voiture.models.annonce.DTO.AnnonceDTO;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
+import com.cloud.voiture.models.annonce.favori.Favori;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
 import com.cloud.voiture.search.RechercheAnnonce;
@@ -25,6 +29,7 @@ import com.cloud.voiture.services.UtilisateurService;
 import com.cloud.voiture.services.voiture.VoitureService;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.security.auth.message.AuthException;
 import jakarta.transaction.Transactional;
@@ -56,6 +61,98 @@ public class AnnonceService extends GenericService<Annonce> {
   @Autowired
   Constant config;
 
+  @Autowired
+  AnnonceGeneralService aGeneralService;
+
+  @Autowired
+  FavoriService favoriService;
+
+  public List<AnnonceDTO> findFavoriOfAuthenticatedUser(int page, int taille) throws AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    List<AnnonceEtFavori> res = favoriService.findFavoriOf(u.getId(), page, taille);
+    List<AnnonceDTO> a = new ArrayList<>();
+    for (AnnonceEtFavori annonce : res) {
+      AnnonceDTO dto = new AnnonceDTO(annonce);
+      dto.setPhotos(findPhotos(annonce.getId()));
+      a.add(dto);
+    }
+    return a;
+  }
+
+  @Transactional
+  public int toggleFavori(int idAnnonce) throws AuthException, NotFoundException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    Favori favori = favoriService.existOrLiked(u.getId(), idAnnonce);
+    System.out.println(favori.getDateAjout());
+    if (favori.getDateAjout() == null) {
+      // Favori f = new Favori();
+      // f.setId(new FavoriAnnonceID(u.getId(), idAnnonce));
+      favoriService.save(favori);
+      return 1;
+    } else {
+      System.out.println("delete ohhhh " + favori.getIdUtilisateur() + " a " + favori.getIdUtilisateur());
+      favoriService.delete(favori);
+      return -1;
+    }
+  }
+
+  @Transactional
+  public void deleteAnnonce(int idAnnonce) throws NotFoundException, ValidationException, AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    Annonce a = findById(idAnnonce);
+    if (a.getUtilisateur().getId() != u.getId()) {
+      throw new ValidationException("Erreur: vous n'avez aucune annonce avec cette identifiant.");
+    }
+    HistoriqueAnnonce histo = new HistoriqueAnnonce();
+    histo.setIdAnnonce(a.getId());
+    histo.setStatus(config.getAnnonceSupprime());
+    historiqueService.save(histo);
+    updateStatus(idAnnonce, config.getAnnonceSupprime());
+  }
+
+  @Transactional
+  public void updateStatusToSold(int idAnnonce) throws NotFoundException, ValidationException, AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    Annonce a = findById(idAnnonce);
+    if (a.getUtilisateur().getId() != u.getId()) {
+      throw new ValidationException("Erreur: vous n'avez aucune annonce avec cette identifiant.");
+    }
+    if (a.getStatus() != config.getAnnonceValide()) {
+      throw new ValidationException(
+          "Erreur: seules les annonces validées et non vendues peuvent être classées comme vendues");
+    }
+    HistoriqueAnnonce histo = new HistoriqueAnnonce();
+    histo.setIdAnnonce(a.getId());
+    histo.setStatus(config.getAnnonceVendu());
+    historiqueService.save(histo);
+    updateStatus(idAnnonce, config.getAnnonceVendu());
+  }
+
+  public List<AnnoncePhoto> findPhotos(int idAnnonce) {
+    return annonceRepository.getPhotos(idAnnonce);
+  }
+
+  public Annonce findById(int idAnnonce) throws NotFoundException {
+
+    Utilisateur u = new Utilisateur();
+    u.setId(0);
+    try {
+      u = utilisateurService.getAuthenticated();
+    } catch (AuthException e) {
+      System.out.println("details sans connexion");
+    }
+    try {
+      AnnonceEtFavori a = (AnnonceEtFavori) entityManager.createNativeQuery(
+          "select a.*, null as date_maj, f.date_ajout from v_annonce_general a left outer join annonce_favori f on a.id = f.id_annonce and f.id_utilisateur = :user where a.id = :id",
+          AnnonceEtFavori.class).setParameter("user", u.getId()).setParameter("id", idAnnonce).getSingleResult();
+      a.setPhotos(findPhotos(a.getId()));
+      return new Annonce(a);
+    } catch (NoResultException e) {
+      e.printStackTrace();
+      throw new NotFoundException();
+    }
+  }
+
   @Transactional
   public void getByIdAndView(int idAnnonce, int iduser) throws Exception {
     VueAnnonce vueAnnonce = new VueAnnonce();
@@ -84,9 +181,16 @@ public class AnnonceService extends GenericService<Annonce> {
     return new HistoriqueAnnonceDTO(annonce, historiqueMin);
   }
 
-  public List<Annonce> findByUser(int idUser) {
-    System.out.println(idUser);
-    return annonceRepository.findByUser(idUser);
+  public List<AnnonceDTO> findByUser() throws AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    List<AnnonceGeneral> aG = aGeneralService.findByIdUtilisateur(u.getId());
+    List<AnnonceDTO> annonces = new ArrayList<>();
+    for (AnnonceGeneral a : aG) {
+      AnnonceDTO dto = new AnnonceDTO(a);
+      dto.setPhotos(findPhotos(a.getId()));
+      annonces.add(dto);
+    }
+    return annonces;
   }
 
   @Transactional(rollbackOn = Exception.class)
@@ -169,18 +273,53 @@ public class AnnonceService extends GenericService<Annonce> {
     return model;
   }
 
+  public List<AnnonceDTO> getAllNonValide(int page, int taille) {
+    List<AnnonceGeneral> aGenerals = aGeneralService.findNonValide(page, taille);
+    List<AnnonceDTO> a = new ArrayList<>();
+    for (AnnonceGeneral annonce : aGenerals) {
+      AnnonceDTO dto = new AnnonceDTO(annonce);
+      dto.setPhotos(findPhotos(annonce.getId()));
+      a.add(dto);
+    }
+    return a;
+  }
+
   public List<Annonce> getAllNonValide() {
     return annonceRepository.getAllNonValide();
   }
 
-  public List<Annonce> findComplex(RechercheAnnonce rechercheAnnonce) {
-    return (List<Annonce>) entityManager
+  // SYSOUT QUERY
+  public List<AnnonceDTO> findComplex(RechercheAnnonce rechercheAnnonce, int page, int taille) {
+    System.out.println("RECHERCHE COMPLEXE");
+    int idUtilisateur = 0;
+
+    try {
+      Utilisateur u = utilisateurService.getAuthenticated();
+      idUtilisateur = u.getId();
+    } catch (AuthException e) {
+      System.out.println("Recherche sans connexion");
+    }
+
+    String query = rechercheAnnonce.generateSql();
+
+    query = query.replace("%id%", String.valueOf(idUtilisateur));
+    if (taille != 0) {
+      query += " order by a.date_maj desc limit " + taille + " offset(" + page + " - 1)*" + taille;
+    }
+
+    System.out.println(query + "==========================");
+    List<AnnonceEtFavori> annonces = (List<AnnonceEtFavori>) entityManager
         .createNativeQuery(
-            "select * from annonce where id in (" +
-                rechercheAnnonce.generateSql() +
-                ")",
-            Annonce.class)
+            query,
+            AnnonceEtFavori.class)
         .getResultList();
+    List<AnnonceDTO> a = new ArrayList<>();
+    for (AnnonceEtFavori annonce : annonces) {
+      AnnonceDTO dto = new AnnonceDTO(annonce);
+      dto.setPhotos(findPhotos(annonce.getId()));
+      a.add(dto);
+    }
+    return a;
   }
 
   @Override

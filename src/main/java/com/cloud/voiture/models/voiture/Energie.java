@@ -19,6 +19,14 @@ public class Energie extends GenericModel {
     @NotNull(message = "")
     String nom;
 
+    public Energie(int id, String nom) {
+        setId(id);
+        setNom(nom);
+    }
+
+    public Energie() {
+    }
+
     public int getId() {
         return id;
     }

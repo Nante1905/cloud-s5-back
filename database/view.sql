@@ -76,3 +76,71 @@ create or replace  view v_annonce_vendu as (
         on historique_annonce.id_annonce = annonce.id
     where historique_annonce.status = 10 
 );
+
+-- 19/01/2024 16:06
+create view v_modele_marque as (
+    select mo.*, ma.nom nom_marque
+    from modele mo 
+    join marque ma 
+        on mo.id_marque = ma.id
+);
+
+
+-- 22/01/2024 10:00
+create view v_annonce_general as
+select a.*,
+v.consommation, v.kilometrage, v.etat, v.id_couleur, v.id_modele, v.id_boite_vitesse, v.id_energie,
+c.nom nom_couleur, c.hexa,
+m.nom nom_modele, nb_place, nb_porte, annee_sortie, m.id_categorie, m.id_marque,
+b.nom nom_vitesse,
+e.nom nom_energie,
+ca.nom nom_categorie,
+ma.nom nom_marque, ma.logo,
+u.nom utilisateur_nom, u.prenom utilisateur_prenom, u.date_inscription, u.adresse   
+from annonce a
+  join voiture v on a.id_voiture = v.id
+  join couleur c on v.id_couleur = c.id
+  join modele m on v.id_modele = m.id
+  join boite_vitesse b on v.id_boite_vitesse = b.id
+  join energie e on v.id_energie = e.id
+  join categorie ca on m.id_categorie = ca.id
+  join marque ma on m.id_marque = ma.id
+  join utilisateur u on a.id_utilisateur = u.id;
+
+
+create view v_annonce_gen_non_valide as 
+select * from v_annonce_general where status = 0;
+
+-- 24-01-2024 01:05
+create view v_max_historique_annonce as select h.* 
+from historique_annonce h 
+join (
+	select id_annonce, max(date_maj) max_date 
+	from historique_annonce
+	group by id_annonce
+) m on h.id_annonce = m.id_annonce and h.date_maj
+ = m.max_date
+ order by id_annonce ASC;
+
+create view v_annonce_gen_valide as 
+select a.*, h.date_maj 
+from v_annonce_general a 
+    join v_max_historique_annonce h 
+    on a.id = h.id_annonce
+where h.status = 5;
+
+create view v_annonce_gen_vendu as 
+select a.*, h.date_maj 
+from v_annonce_general a 
+    join v_max_historique_annonce h 
+    on a.id = h.id_annonce
+where h.status = 10;
+
+-- 24/01/2024 08:22
+create view v_annonce_favori as
+select h.*, f.id_utilisateur, f.date_ajout
+from v_max_historique_annonce h 
+join annonce_favori f 
+	on h.id_annonce = f.id_annonce; 
+
+

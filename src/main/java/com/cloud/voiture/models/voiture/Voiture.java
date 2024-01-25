@@ -4,7 +4,6 @@ import com.cloud.voiture.crud.model.GenericModel;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -60,6 +59,24 @@ public class Voiture extends GenericModel {
     @ManyToOne
     @JoinColumn(name = "id_energie", insertable = false, updatable = false)
     Energie energie;
+
+    public Voiture(int id,
+            float consommation,
+            int kilometrage,
+            int etat,
+            Couleur couleur, Modele modele, Vitesse vitesse, Energie energie) {
+        setId(id);
+        setConsommation(consommation);
+        setKilometrage(kilometrage);
+        setEtat(etat);
+        setCouleur(couleur);
+        setModele(modele);
+        setVitesse(vitesse);
+        setEnergie(energie);
+    }
+
+    public Voiture() {
+    }
 
     public int getId() {
         return id;
