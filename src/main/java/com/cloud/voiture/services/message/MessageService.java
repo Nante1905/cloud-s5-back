@@ -1,16 +1,19 @@
 package com.cloud.voiture.services.message;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.cloud.voiture.chat.exceptions.UnauthorizedChatting;
+import com.cloud.voiture.chat.requests.ChatMessageRequest;
 import com.cloud.voiture.models.message.Message;
 import com.cloud.voiture.repositories.message.MessageRepository;
-
-import java.util.List;
-import java.util.UUID;
+import com.cloud.voiture.services.UtilisateurService;
 
 @Service
 public class MessageService {
@@ -18,10 +21,23 @@ public class MessageService {
     private MessageRepository repository;
     @Autowired
     private MongoTemplate mongoTemplate;
-
+    @Autowired
+    private UtilisateurService utilisateurService;
+    @Autowired
+    private DiscussionService discussionService;
     
-    public Message addMessage(Message message) {
+    public Message addMessage(ChatMessageRequest request) throws Exception{
+        int iduser = 1;
+        //TODO : remove this line
+        // int iduser = utilisateurService.getAuthenticated().getId();
+        if(discussionService.allowed(request.getDiscussionId(), iduser)==false){
+            throw new UnauthorizedChatting();
+        }
+        Message message = new Message();
         message.setMessageId(UUID.randomUUID().toString().split("-")[0]);
+        message.setContenu(request.getMessage());
+        message.setExpediteurId(iduser);
+        message.setIdDiscussion(request.getDiscussionId());
         return repository.save(message);
     }
 

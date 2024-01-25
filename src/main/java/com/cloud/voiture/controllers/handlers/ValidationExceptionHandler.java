@@ -17,6 +17,8 @@ import com.cloud.voiture.services.utilities.Utilities;
 import com.cloud.voiture.types.response.Response;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import jakarta.security.auth.message.AuthException;
+
 @RestControllerAdvice
 public class ValidationExceptionHandler {
     private static HashMap<String, String> ERROR_MESSAGE = new HashMap<String, String>() {
@@ -80,5 +82,11 @@ public class ValidationExceptionHandler {
     public ResponseEntity<Response> handleCustomNoResourceFoundException(NoResourceFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new Response("Cette ressource n'existe pas."));
+}
+    @ExceptionHandler(value = AuthException.class)
+    public ResponseEntity<Response> handleAuthException(AuthException exception) {
+        System.out.println("ATOOOOOOOOOOOOOOOO");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new Response(exception.getMessage()));
     }
 }

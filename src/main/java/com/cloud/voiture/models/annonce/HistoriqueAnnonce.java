@@ -25,7 +25,7 @@ public class HistoriqueAnnonce extends GenericModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
-    @Column(name = "date_maj")
+    @Column(name = "date_maj", insertable = false)
     @Basic
     @Temporal(TemporalType.TIMESTAMP)
     LocalDateTime dateMaj;
