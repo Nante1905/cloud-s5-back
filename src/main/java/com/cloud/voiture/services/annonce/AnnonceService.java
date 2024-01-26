@@ -28,11 +28,8 @@ import com.cloud.voiture.models.annonce.DTO.AnnonceDTO;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 import com.cloud.voiture.models.annonce.favori.Favori;
 import com.cloud.voiture.models.auth.Utilisateur;
-
-import com.cloud.voiture.repositories.annonce.AnnonceGeneralRepository;
-
 import com.cloud.voiture.models.notification.NotificationPush;
-
+import com.cloud.voiture.repositories.annonce.AnnonceGeneralRepository;
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
 import com.cloud.voiture.search.RechercheAnnonce;
 import com.cloud.voiture.services.UtilisateurService;

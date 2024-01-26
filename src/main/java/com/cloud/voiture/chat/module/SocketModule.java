@@ -1,7 +1,5 @@
 package com.cloud.voiture.chat.module;
 
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +10,6 @@ import com.cloud.voiture.chat.service.SocketService;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
-import com.corundumstudio.socketio.listener.DisconnectListener;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

@@ -147,7 +147,6 @@ public class GenericController<T extends GenericModel> {
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     new Response("Contrainte de donnée violée"));
-            // TODO: handle exception
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new Response("Il n'existe aucun " + type.getSimpleName() + " avec l'identifiant " + id));
