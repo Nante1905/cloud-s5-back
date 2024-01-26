@@ -1,0 +1,72 @@
+db.createView("v_discussion_messages", "discussions", [
+    {
+      $lookup: {
+        from: "messages",
+        localField: "_id",
+        foreignField: "idDiscussion",
+        as: "messages"
+      }
+    }
+  ]);
+
+db.v_discussion_messages.find()
+
+
+db.createView("v_latest_messages", "discussions", [
+    {
+      $lookup: {
+        from: "messages",
+        localField: "_id",
+        foreignField: "idDiscussion",
+        as: "messages"
+      }
+    },
+    {
+      $unwind: "$messages" // Décompacte les tableaux de messages
+    },
+    {
+      $sort: { "messages.dateEnvoi": -1 } // Trie les messages par date d'envoi décroissante
+    },
+    {
+      $group: {
+        _id: "$_id",
+        lastMessage: { $first: "$messages" } // Sélectionne le premier message de chaque discussion (le plus récent)
+      }
+    },
+    {
+      $sort: { "lastMessage.dateEnvoi": -1 } // Trie les discussions par date d'envoi du dernier message décroissante
+    }
+  ]);
+  
+
+
+db.v_latest_messages.find()
+
+db.createView("v_latest_messages", "discussions", [
+    {
+      $lookup: {
+        from: "messages",
+        localField: "_id",
+        foreignField: "idDiscussion",
+        as: "messages"
+      }
+    },
+    {
+      $unwind: "$messages" // Décompacte les tableaux de messages
+    },
+    {
+      $sort: { "messages.dateEnvoi": -1 } // Trie les messages par date d'envoi décroissante
+    },
+    {
+      $group: {
+        _id: "$_id",
+        userId1: { $first: "$userId1" }, 
+        userId2: { $first: "$userId2" }, 
+        lastMessage: { $first: "$messages" } // Sélectionne le premier message de chaque discussion (le plus récent)
+      }
+    },
+    {
+      $sort: { "lastMessage.dateEnvoi": -1 } // Trie les discussions par date d'envoi du dernier message décroissante
+    }
+  ]);
+  
