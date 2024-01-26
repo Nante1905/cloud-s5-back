@@ -2,15 +2,16 @@ package com.cloud.voiture.models.message;
 
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.cloud.voiture.models.auth.Utilisateur;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Document(collection = "discussions")
 @Data
@@ -30,6 +31,10 @@ public class Discussion {
     Utilisateur gauche;
     @Transient
     Utilisateur droite;
+
+    @Transient
+    private Message lastMessage;
+
 
     
     public Discussion(List<Message> messages, Utilisateur gauche, Utilisateur droite) {

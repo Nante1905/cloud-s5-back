@@ -8,14 +8,13 @@ import java.util.List;
 import com.cloud.voiture.crud.model.GenericModel;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "v_annonce_general")
@@ -85,7 +84,8 @@ public class AnnonceGeneral extends GenericModel {
     LocalDateTime dateInscription;
     String adresse;
 
-    @OneToMany(mappedBy = "annonceGeneral", cascade = CascadeType.PERSIST)
+    // @OneToMany(mappedBy = "annonceGeneral", cascade = CascadeType.PERSIST)
+    @Transient
     List<AnnoncePhoto> photos;
 
     public AnnonceGeneral(int id, String reference, String description, int status, LocalDateTime dateCreation,

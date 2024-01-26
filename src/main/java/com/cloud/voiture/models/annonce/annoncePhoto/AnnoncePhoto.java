@@ -1,7 +1,6 @@
 package com.cloud.voiture.models.annonce.annoncePhoto;
 
 import com.cloud.voiture.models.annonce.Annonce;
-import com.cloud.voiture.models.annonce.AnnonceGeneral;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -26,11 +25,11 @@ public class AnnoncePhoto {
     @MapsId("idAnnonce")
     Annonce annonce;
 
-    @JsonIgnore
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "id_annonce")
-    @MapsId("idAnnonce")
-    AnnonceGeneral annonceGeneral;
+    // @JsonIgnore
+    // @ManyToOne(cascade = CascadeType.PERSIST)
+    // @JoinColumn(name = "id_annonce")
+    // @MapsId("idAnnonce")
+    // AnnonceGeneral annonceGeneral;
 
     @Transient
     String url;
