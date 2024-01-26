@@ -10,9 +10,10 @@ import org.springframework.stereotype.Service;
 import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.message.Discussion;
-import com.cloud.voiture.models.message.Message;
+import com.cloud.voiture.models.message.LastMessage;
 import com.cloud.voiture.repositories.auth.UtilisateurRepository;
 import com.cloud.voiture.services.message.DiscussionService;
+import com.cloud.voiture.services.message.LastMessageService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -30,9 +31,13 @@ public class UtilisateurService extends GenericService<Utilisateur> {
     @Autowired
     private DiscussionService discussionService;
 
+    @Autowired
+    private LastMessageService lastMessageService;
+
     public Utilisateur findByEmailAndPassword(String email, String password) throws Exception {
+        System.out.println("email " + email + " pwd " + password);
         return this.utilisateurRepository.findByEmailAndPassword(email, password)
-                .orElseThrow(() -> new Exception("Invalid credentials"));
+                .orElseThrow(() -> new Exception("Identifiants incorrects. Réessayez."));
     }
 
     public Utilisateur findByEmail(String email) throws NotFoundException {
@@ -53,13 +58,10 @@ public class UtilisateurService extends GenericService<Utilisateur> {
         return utilisateurs;
     }
 
-    public List<Discussion> getDiscussionsForUserWithUsers( int idutilisateur ) throws Exception{
-        // Utilisateur utilisateur = getAuthenticated();
-
-        // List<Discussion> discussions = discussionService.getDiscussionsForUser(utilisateur.getId());
-        List<Discussion> discussions = discussionService.getDiscussionsForUser(idutilisateur);
-
-        for (Discussion discussion : discussions) {
+    public List<LastMessage> getDiscussionsForUserWithUsers( int idutilisateur ) throws Exception{
+        // List<Discussion> discussions = discussionService.getDiscussionsWithLastMessagesForUser(idutilisateur);
+        List<LastMessage> discussions = lastMessageService.getDiscussionLastMessageById(idutilisateur);
+        for (LastMessage discussion : discussions) {
             int userId1 = discussion.getUserId1();
             int userId2 = discussion.getUserId2();
 
@@ -69,7 +71,6 @@ public class UtilisateurService extends GenericService<Utilisateur> {
             discussion.setGauche(user1);
             discussion.setDroite(user2);
         }
-
         return discussions;
     }
 
@@ -83,7 +84,7 @@ public class UtilisateurService extends GenericService<Utilisateur> {
             u = this.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
             return u;
         } catch (NotFoundException e) {
-            throw new AuthException("Aucun utilisateur connecté.");
+            throw new AuthException("Accès refusé.Veuillez vous connecter..");
         }
     }
 }

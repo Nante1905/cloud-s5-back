@@ -99,3 +99,89 @@ on m.mois = extract(month from v.date_maj)
 group by m.mois  
 order by m.mois
 $$ language sql;
+
+-- 26/01/2024
+-- TODO: REMPLACE FONCTION
+create or replace function f_benefice_par_marque(mois INTEGER, annee INTEGER) RETURNS TABLE (id_marque INTEGER, nom_marque varchar, logo varchar, montant numeric) as 
+$$  
+    select id_marque, nom_marque, logo, sum(montant) from 
+    (
+        (select a.id_marque, a.nom_marque, logo, sum(commission) montant
+            from v_annonce_gen_vendu a
+            where extract(month from a.date_maj) = $1 and extract(year from a.date_maj) = $2
+            group by id_marque, nom_marque, logo) 
+            union 
+                select id id_marque, nom nom_marque, logo, 0 montant from marque 
+    ) vendu
+    group by vendu.id_marque, nom_marque, logo
+$$
+    LANGUAGE SQL;
+
+-- TODO replace this function
+-- 26/01/2024
+create or replace function f_benefice_par_mois(mois int, annee int) returns table (mois int, commission numeric) as $$
+
+  select m.mois, coalesce(sum(v.commission), 0) commission  
+from v_mois m  
+left outer join   
+(select *   
+  from v_annonce_gen_vendu   
+  where extract(month from date_maj) = mois and extract(year from date_maj) = annee) v   
+on m.mois = extract(month from v.date_maj)  
+group by m.mois  
+order by m.mois
+$$ language sql;
+
+create or replace function f_nbr_valide(mois character varying) returns table (id_utilisateur int, valide bigint) as $$
+BEGIN
+    RETURN QUERY
+    select v.id_utilisateur, count(*) valide
+    from v_annonce_valide v
+    where TO_CHAR(v.date_maj::date, 'YYYYMM') = mois
+    group by v.id_utilisateur;
+    RETURN;
+END;
+$$ LANGUAGE plpgsql;
+
+create or replace function f_nbr_vendu(mois character varying) returns table (id_utilisateur int, vendu bigint, commission numeric) as $$
+BEGIN
+    RETURN QUERY
+    select v.id_utilisateur, count(*) vendu, sum(v.commission) commission
+    from v_annonce_vendu v
+    where TO_CHAR(v.date_maj::date, 'YYYYMM') = mois
+    group by v.id_utilisateur;
+    RETURN;
+END;
+$$ LANGUAGE plpgsql;
+
+-- replace fonction 
+CREATE OR REPLACE FUNCTION f_topSellers(dateYYYYMM character varying, limit_value integer)
+RETURNS TABLE (
+    id integer,
+    nom character varying,
+    prenom character varying,
+    valide bigint,
+    vendu bigint,
+    commission numeric,
+    pourcentage numeric
+) AS $$
+
+BEGIN
+    RETURN QUERY
+    select u.id id, u.nom, u.prenom, 
+    COALESCE(valide.valide, 0) valide,
+    COALESCE(vendu.vendu, 0) vendu, COALESCE(vendu.commission, 0) commission,
+    CASE
+        when vendu.vendu is null then 0.0
+        when valide.valide is null then 0.0
+        ELSE  round((vendu.vendu::numeric / valide.valide::numeric) * 100, 2)
+        END AS pourcentage
+    from
+    	utilisateur u 
+    	left join f_nbr_vendu(dateYYYYMM) vendu on vendu.id_utilisateur = u.id 
+    	left join f_nbr_valide(dateYYYYMM) valide on valide.id_utilisateur = u.id
+    order by pourcentage desc, vendu desc, valide desc
+    limit limit_value;
+    RETURN;
+END;
+$$ LANGUAGE plpgsql;

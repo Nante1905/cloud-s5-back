@@ -1,11 +1,13 @@
 package com.cloud.voiture.controllers.annonce;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,9 +19,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cloud.voiture.crud.controller.GenericController;
+import com.cloud.voiture.crud.pagination.Paginated;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
 import com.cloud.voiture.models.annonce.DTO.AnnonceDTO;
+import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.voiture.EstimationPrix;
 import com.cloud.voiture.models.voiture.Voiture;
@@ -27,6 +31,7 @@ import com.cloud.voiture.search.RechercheAnnonce;
 import com.cloud.voiture.services.UtilisateurService;
 import com.cloud.voiture.services.annonce.AnnonceGeneralService;
 import com.cloud.voiture.services.annonce.AnnonceService;
+import com.cloud.voiture.services.media.MediaService;
 import com.cloud.voiture.services.voiture.VoitureService;
 import com.cloud.voiture.types.response.Response;
 
@@ -49,6 +54,9 @@ public class AnnonceController extends GenericController<Annonce> {
   @Autowired
   AnnonceGeneralService aGeneralService;
 
+  @Autowired
+  private MediaService mediaService;
+
   @Override
   @GetMapping("/{id}")
   public ResponseEntity<Response> find(@PathVariable(name = "id") int id) {
@@ -59,6 +67,77 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
+  @Override
+  @GetMapping
+  public ResponseEntity<?> findAll(
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
+    try {
+      System.out.println("Ato =================");
+      if (page == 0 || taille == 0) {
+        List<AnnonceDTO> results = annonceService.findAllAnnonce();
+        return ResponseEntity.ok(new Response(results, ""));
+      }
+      Paginated<AnnonceDTO> result = annonceService.findAllAnnonces(page, taille);
+      return ResponseEntity.ok(new Response(result, ""));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(500).body(new Response(e.getMessage()));
+    }
+  }
+
+  @GetMapping("/nonValide/moi")
+  public ResponseEntity<Response> getAnnonceNonValideOfConnectedUser(
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
+    try {
+      return ResponseEntity.ok()
+          .body(new Response(annonceService.findAnnonceNonValideOfConnectedUser(page, taille), null));
+    } catch (AuthException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .body(new Response("Accès refusé.Veuillez vous connecter."));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new Response("Une erreur s'est produite"));
+    }
+  }
+
+  @GetMapping("/valide/moi")
+  public ResponseEntity<Response> getAnnonceValideOfConnectedUser(
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
+    try {
+      return ResponseEntity.ok()
+          .body(new Response(annonceService.findAnnonceValideOfConnectedUser(page, taille), null));
+    } catch (AuthException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .body(new Response("Accès refusé.Veuillez vous connecter."));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new Response("Une erreur s'est produite"));
+    }
+  }
+
+  @GetMapping("/vendu/moi")
+  public ResponseEntity<Response> getAnnonceVenduOfConnectedUser(
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
+    try {
+      return ResponseEntity.ok()
+          .body(new Response(annonceService.findAnnonceVenduOfConnectedUser(page, taille), null));
+    } catch (AuthException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .body(new Response("Accès refusé.Veuillez vous connecter."));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new Response("Une erreur s'est produite"));
+    }
+  }
+
+  @GetMapping("/moi")
   @Override
   @DeleteMapping("/{id}")
   public ResponseEntity<Response> delete(@PathVariable(name = "id") int id) {
@@ -74,10 +153,12 @@ public class AnnonceController extends GenericController<Annonce> {
       return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(new Response(e.getMessage()));
     } catch (Exception e) {
       e.printStackTrace();
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response("Une erreur s'est produite."));
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new Response("Une erreur s'est produite."));
     }
   }
 
+  @Secured({ "USER" })
   @PutMapping("/{id}/vendu")
   public ResponseEntity<Response> updateAsSold(@PathVariable(name = "id") int id) {
     try {
@@ -96,10 +177,12 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
+  @Secured({ "USER" })
   @GetMapping("/yours")
-  public ResponseEntity<Response> getConnectedUserAnnonces() {
+  public ResponseEntity<Response> getConnectedUserAnnonces(@RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
     try {
-      List<AnnonceDTO> annonces = annonceService.findByUser();
+      List<AnnonceDTO> annonces = annonceService.findByUser(page, taille);
       System.out.println(annonces.size());
       return ResponseEntity.ok(new Response(annonces, ""));
     } catch (Exception e) {
@@ -136,10 +219,34 @@ public class AnnonceController extends GenericController<Annonce> {
     try {
       Utilisateur u = utilisateurService.getAuthenticated();
       annonce.setIdUtilisateur(u.getId());
+
+      List<AnnoncePhoto> photos = new ArrayList<>();
+      if (annonce.getMedias() != null) {
+        List<String> urls = mediaService.uploadMultipleFile(annonce.getMedias());
+        for (String url : urls) {
+          AnnoncePhoto photo = new AnnoncePhoto();
+          photo.setUrl(url);
+          photos.add(photo);
+        }
+      }
+      annonce.setPhotos(photos);
+
       Annonce nouvelAnnonce = annonceService.save(annonce);
       return ResponseEntity.status(HttpStatus.CREATED).body(new Response(nouvelAnnonce, "Annonce créée"));
     } catch (AuthException e) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Response("Aucun utilisateur connecté"));
+      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+          .body(new Response("Accès refusé.Veuillez vous connecter."));
+    } catch (Exception e) {
+      e.printStackTrace();
+      try {
+        this.mediaService.deleteMediaFiles(annonce.getMedias());
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(new Response(ex.getMessage()));
+      }
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new Response(e.getMessage()));
     }
   }
 
@@ -163,6 +270,7 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
+  @Secured({ "ADMIN" })
   @PutMapping("{id}/valider")
   public ResponseEntity<Response> validerAnnonce(
       @PathVariable(name = "id") int id) {
@@ -187,6 +295,7 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
+  @Secured({ "ADMIN" })
   @PutMapping("{id}/refuser")
   public ResponseEntity<Response> refuserAnnonce(
       @PathVariable(name = "id") int id) {
@@ -208,9 +317,11 @@ public class AnnonceController extends GenericController<Annonce> {
       return ResponseEntity
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body(new Response("Une erreur s'est produite"));
+
     }
   }
 
+  @Secured({ "ADMIN" })
   @GetMapping("/nonValide")
   public ResponseEntity<Response> findNonValide(@RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "0") int taille) {
@@ -219,12 +330,14 @@ public class AnnonceController extends GenericController<Annonce> {
       return ResponseEntity.ok(new Response(results, ""));
     } catch (Exception e) {
       return ResponseEntity.status(500).body(new Response(e.getMessage()));
+
     }
   }
 
   @PostMapping("/find")
   public ResponseEntity<Response> findComplex(
-      @RequestBody RechercheAnnonce rechercheAnnonce, @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestBody RechercheAnnonce rechercheAnnonce,
+      @RequestParam(required = false, defaultValue = "0") int page,
       @RequestParam(required = false, defaultValue = "0") int taille) {
     try {
       List<AnnonceDTO> results = annonceService.findComplex(rechercheAnnonce, page, taille);
@@ -235,12 +348,7 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
-  @GetMapping("/test")
-  public ResponseEntity<?> test(@RequestParam(required = false, defaultValue = "0") int page,
-      @RequestParam(required = false, defaultValue = "0") int pageSize) {
-    return ResponseEntity.ok(aGeneralService.findAll(page, pageSize));
-  }
-
+  @Secured({ "USER" })
   @PutMapping("/{id}/toggle_favoris")
   public ResponseEntity<Response> markAsFavori(@PathVariable(name = "id") int id) {
     try {
@@ -254,6 +362,7 @@ public class AnnonceController extends GenericController<Annonce> {
     } catch (AuthException e) {
       return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Response(e.getMessage()));
     } catch (NotFoundException e) {
+      e.printStackTrace();
       return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
           .body(new Response("Annonce invalide: impossible de mettre en favori."));
     } catch (Exception e) {

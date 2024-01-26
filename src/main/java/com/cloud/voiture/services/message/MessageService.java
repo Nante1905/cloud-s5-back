@@ -27,9 +27,7 @@ public class MessageService {
     private DiscussionService discussionService;
     
     public Message addMessage(ChatMessageRequest request) throws Exception{
-        int iduser = 1;
-        //TODO : remove this line
-        // int iduser = utilisateurService.getAuthenticated().getId();
+        int iduser = utilisateurService.getAuthenticated().getId();
         if(discussionService.allowed(request.getDiscussionId(), iduser)==false){
             throw new UnauthorizedChatting();
         }

@@ -18,6 +18,7 @@ import com.cloud.voiture.models.voiture.Marque;
 import com.cloud.voiture.models.voiture.Modele;
 import com.cloud.voiture.models.voiture.Vitesse;
 import com.cloud.voiture.models.voiture.Voiture;
+import com.cloud.voiture.types.media.Media;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -82,6 +83,9 @@ public class Annonce extends GenericModel {
 
   @Transient
   boolean isFavori;
+
+  @Transient
+  Media[] medias;
 
   public Annonce() {
   }
@@ -234,5 +238,13 @@ public class Annonce extends GenericModel {
 
   public void setFavori(boolean isFavori) {
     this.isFavori = isFavori;
+  }
+
+  public Media[] getMedias() {
+    return medias;
+  }
+
+  public void setMedias(Media[] medias) {
+    this.medias = medias;
   }
 }
