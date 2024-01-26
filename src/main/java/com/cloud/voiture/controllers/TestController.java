@@ -6,7 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cloud.voiture.services.UtilisateurService;
+import com.cloud.voiture.services.annonce.AnnonceService;
 import com.cloud.voiture.services.authentication.AuthenticationService;
+import com.cloud.voiture.services.media.MediaService;
 import com.cloud.voiture.services.stats.StatistiqueService;
 import com.cloud.voiture.types.response.Response;
 
@@ -20,6 +23,14 @@ public class TestController {
     @Autowired
     private AuthenticationService authenticationService;
 
+    @Autowired
+    private MediaService mediaService;
+
+    @Autowired
+    private UtilisateurService utilisateurService;
+
+    private AnnonceService annonceService;
+
     @GetMapping("")
     public ResponseEntity<?> test() throws Exception {
         String token = this.authenticationService.login("nante@nante.com", "nante");
@@ -30,4 +41,12 @@ public class TestController {
     public ResponseEntity<?> stat() {
         return ResponseEntity.ok().body(new Response(statistiqueService.getNbVendu(2, 2023), "stat works"));
     }
+
+    // @PostMapping("/upload")
+    // public ResponseEntity<?> upload(@RequestBody HashMap<String, Object> body)
+    // throws IOException {
+    // String url = mediaService.uploadFile(body.get("blob"), body.get("filename"));
+    // return ResponseEntity.ok().body(new Response(url, "upload works"));
+    // }
+
 }
