@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cloud.voiture.crud.controller.GenericController;
+import com.cloud.voiture.crud.pagination.Paginated;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
 import com.cloud.voiture.models.annonce.DTO.AnnonceDTO;
@@ -52,6 +54,7 @@ public class AnnonceController extends GenericController<Annonce> {
     @Autowired
     AnnonceGeneralService aGeneralService;
 
+
     @Autowired
     private MediaService mediaService;
 
@@ -63,6 +66,35 @@ public class AnnonceController extends GenericController<Annonce> {
         } catch (NotFoundException e) {
             return ResponseEntity.status(404).body(new Response("Cette identifiant n'existe pas."));
         }
+    }
+
+  @Override
+  @GetMapping
+  public ResponseEntity<?> findAll(
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
+    try {
+      System.out.println("Ato =================");
+      if (page == 0 || taille == 0) {
+        List<AnnonceDTO> results = annonceService.findAllAnnonce();
+        return ResponseEntity.ok(new Response(results, ""));
+      }
+      Paginated<AnnonceDTO> result = annonceService.findAllAnnonces(page, taille);
+      return ResponseEntity.ok(new Response(result, ""));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(500).body(new Response(e.getMessage()));
+    }
+  }
+
+  @Override
+  @GetMapping("/{id}")
+  public ResponseEntity<Response> find(@PathVariable(name = "id") int id) {
+    try {
+      return ResponseEntity.ok(new Response(annonceService.findById(id), ""));
+    } catch (NotFoundException e) {
+      return ResponseEntity.status(404).body(new Response("Cette identifiant n'existe pas."));
+
     }
 
     @GetMapping("/nonValide/moi")
@@ -137,37 +169,36 @@ public class AnnonceController extends GenericController<Annonce> {
         }
     }
 
-    @PutMapping("/{id}/vendu")
-    public ResponseEntity<Response> updateAsSold(@PathVariable(name = "id") int id) {
-        try {
-            annonceService.updateStatusToSold(id);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(new Response(null, "Bravo, vous avez vendue une voiture."));
-        } catch (AuthException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response(e.getMessage()));
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new Response("Vous n'avez aucune annonce avec cette identifiant"));
-        } catch (ValidationException e) {
-            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(new Response(e.getMessage()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new Response("Une erreur s'est produite."));
-        }
+
+  @Secured({ "USER" })
+  @PutMapping("/{id}/vendu")
+  public ResponseEntity<Response> updateAsSold(@PathVariable(name = "id") int id) {
+    try {
+      annonceService.updateStatusToSold(id);
+      return ResponseEntity.status(HttpStatus.OK).body(new Response(null, "Bravo, vous avez vendue une voiture."));
+    } catch (AuthException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response(e.getMessage()));
+    } catch (NotFoundException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+          .body(new Response("Vous n'avez aucune annonce avec cette identifiant"));
+    } catch (ValidationException e) {
+      return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(new Response(e.getMessage()));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response("Une erreur s'est produite."));
     }
 
-    @GetMapping("/yours")
-    public ResponseEntity<Response> getConnectedUserAnnonces(
-            @RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "0") int taille) {
-        try {
-            List<AnnonceDTO> annonces = annonceService.findByUser(page, taille);
-            System.out.println(annonces.size());
-            return ResponseEntity.ok(new Response(annonces, ""));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new Response(e.getMessage()));
-        }
+
+  @Secured({ "USER" })
+  @GetMapping("/yours")
+  public ResponseEntity<Response> getConnectedUserAnnonces(@RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
+    try {
+      List<AnnonceDTO> annonces = annonceService.findByUser(page, taille);
+      System.out.println(annonces.size());
+      return ResponseEntity.ok(new Response(annonces, ""));
+    } catch (Exception e) {
+      return ResponseEntity.status(500).body(new Response(e.getMessage()));
     }
 
     @GetMapping("{id}/historiques")
@@ -250,63 +281,67 @@ public class AnnonceController extends GenericController<Annonce> {
         }
     }
 
-    @PutMapping("{id}/valider")
-    public ResponseEntity<Response> validerAnnonce(
-            @PathVariable(name = "id") int id) {
-        try {
-            annonceService.valider(id);
-            return ResponseEntity.ok().body(new Response(null, "Annonce validée"));
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(new Response(e.getMessage()));
-        } catch (ValidationException e) {
-            e.printStackTrace();
-            return ResponseEntity
-                    .status(HttpStatus.FORBIDDEN)
-                    .body(new Response(e.getMessage()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new Response("Une erreur s'est produite"));
-        }
+  @Secured({ "ADMIN" })
+  @PutMapping("{id}/valider")
+  public ResponseEntity<Response> validerAnnonce(
+      @PathVariable(name = "id") int id) {
+    try {
+      annonceService.valider(id);
+      return ResponseEntity.ok().body(new Response(null, "Annonce validée"));
+    } catch (NotFoundException e) {
+      e.printStackTrace();
+      return ResponseEntity
+          .status(HttpStatus.NOT_FOUND)
+          .body(new Response(e.getMessage()));
+    } catch (ValidationException e) {
+      e.printStackTrace();
+      return ResponseEntity
+          .status(HttpStatus.FORBIDDEN)
+          .body(new Response(e.getMessage()));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new Response("Une erreur s'est produite"));
     }
 
-    @PutMapping("{id}/refuser")
-    public ResponseEntity<Response> refuserAnnonce(
-            @PathVariable(name = "id") int id) {
-        try {
-            annonceService.refuser(id);
-            return ResponseEntity.ok().body(new Response(null, "Annonce refusée"));
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(new Response(e.getMessage()));
-        } catch (ValidationException e) {
-            e.printStackTrace();
-            return ResponseEntity
-                    .status(HttpStatus.FORBIDDEN)
-                    .body(new Response(e.getMessage()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new Response("Une erreur s'est produite"));
-        }
+
+  @Secured({ "ADMIN" })
+  @PutMapping("{id}/refuser")
+  public ResponseEntity<Response> refuserAnnonce(
+      @PathVariable(name = "id") int id) {
+    try {
+      annonceService.refuser(id);
+      return ResponseEntity.ok().body(new Response(null, "Annonce refusée"));
+    } catch (NotFoundException e) {
+      e.printStackTrace();
+      return ResponseEntity
+          .status(HttpStatus.NOT_FOUND)
+          .body(new Response(e.getMessage()));
+    } catch (ValidationException e) {
+      e.printStackTrace();
+      return ResponseEntity
+          .status(HttpStatus.FORBIDDEN)
+          .body(new Response(e.getMessage()));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity
+          .status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new Response("Une erreur s'est produite"));
+
     }
 
-    @GetMapping("/nonValide")
-    public ResponseEntity<Response> findNonValide(@RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "0") int taille) {
-        try {
-            List<AnnonceDTO> results = annonceService.getAllNonValide(page, taille);
-            return ResponseEntity.ok(new Response(results, ""));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(new Response(e.getMessage()));
-        }
+
+  @Secured({ "ADMIN" })
+  @GetMapping("/nonValide")
+  public ResponseEntity<Response> findNonValide(@RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
+    try {
+      List<AnnonceDTO> results = annonceService.getAllNonValide(page, taille);
+      return ResponseEntity.ok(new Response(results, ""));
+    } catch (Exception e) {
+      return ResponseEntity.status(500).body(new Response(e.getMessage()));
+
     }
 
     @PostMapping("/find")
@@ -323,20 +358,16 @@ public class AnnonceController extends GenericController<Annonce> {
         }
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<?> test(@RequestParam(required = false, defaultValue = "0") int page,
-            @RequestParam(required = false, defaultValue = "0") int pageSize) {
-        return ResponseEntity.ok(aGeneralService.findAll(page, pageSize));
-    }
 
-    @PutMapping("/{id}/toggle_favoris")
-    public ResponseEntity<Response> markAsFavori(@PathVariable(name = "id") int id) {
-        try {
-            int status = annonceService.toggleFavori(id);
-            String message = "Annonce ajoutée aux favoris.";
-            if (status == -1) {
-                message = "Annonce supprimée des favoris";
-            }
+  @Secured({ "USER" })
+  @PutMapping("/{id}/toggle_favoris")
+  public ResponseEntity<Response> markAsFavori(@PathVariable(name = "id") int id) {
+    try {
+      int status = annonceService.toggleFavori(id);
+      String message = "Annonce ajoutée aux favoris.";
+      if (status == -1) {
+        message = "Annonce supprimée des favoris";
+      }
 
             return ResponseEntity.ok(new Response(null, message));
         } catch (AuthException e) {

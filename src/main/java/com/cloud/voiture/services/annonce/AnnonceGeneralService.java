@@ -39,6 +39,7 @@ public class AnnonceGeneralService extends GenericService<AnnonceGeneral> {
         return aGeneralRepository.findNonValide(page, taille);
     }
 
+
     public List<AnnonceGeneral> findNonValideOf(int idUtilisateur, int page, int taille) {
         if (page == 0) {
             return aGeneralRepository.findNonValide(idUtilisateur);

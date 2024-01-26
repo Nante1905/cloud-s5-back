@@ -225,8 +225,8 @@ create table annonce_photo (
 );
 
 -- 2024-01-15 17:58
-alter table commission alter column prourcentage type numeric;
-alter table commission alter column date_debut default now();
+alter table commission alter column pourcentage type numeric;
+alter table commission alter column date_debut set default now();
 
 -- 2024-01-18 18:18
 drop table annonce_vendu
