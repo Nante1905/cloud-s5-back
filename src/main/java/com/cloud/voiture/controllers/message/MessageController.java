@@ -15,12 +15,11 @@ import com.cloud.voiture.services.message.DiscussionService;
 import com.cloud.voiture.services.message.MessageService;
 import com.cloud.voiture.types.response.Response;
 
-
 @RestController
 @RequestMapping("/message")
 public class MessageController {
 
-    @Autowired
+  @Autowired
     private MessageService messageService;
     @Autowired
     private DiscussionService discussionService;
@@ -29,11 +28,7 @@ public class MessageController {
 
     @PostMapping 
     public ResponseEntity<Response> getMessages(@RequestBody JoinPrivateChatRequest request) {
-        try {
-            int iduser = 1;
-            // TODO remove this line 
-            // int iduser = utilisateurService.getAuthenticated().getId();
-            if(discussionService.allowed(request.getChatId(), iduser)){
+      if(discussionService.allowed(request.getChatId(), iduser)){
                 return ResponseEntity.ok(new Response(messageService.findMessagesByidDiscussion(request.getChatId()), ""));
             }
             else{
@@ -41,28 +36,37 @@ public class MessageController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-      return ResponseEntity
+          return ResponseEntity
           .status(500)
           .body(new Response("Oups, une erreur s'est produite."));
         }
     }
-    @PostMapping("/send")
-    public ResponseEntity<Response> sendMessage(@RequestBody ChatMessageRequest request) {
+
+    @PostMapping("/sendMessage")
+    public ResponseEntity<Response> sendMessage(@RequestBody ChatMessageRequest messageRequest) {
+        try {
+
+            Message message = service.addMessage(messageRequest);
+            return ResponseEntity.ok(new Response(message, ""));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(500)
+                    .body(new Response(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/contact")
+    public ResponseEntity<Response> contact(@RequestBody CreatePrivateChatRequest request) {
         try {
             int iduser = 1;
-            // TODO remove this line 
+            // TODO: remove this line
             // int iduser = utilisateurService.getAuthenticated().getId();
-            if(discussionService.allowed(request.getDiscussionId(), iduser)){
-                return ResponseEntity.ok(new Response(messageService.addMessage(request), ""));
-            }
-            else{
-                throw new UnauthorizedChatting();
-            }
+            Discussion discussion = serviceDiscussion.save(request, iduser);
+            return ResponseEntity.ok(new Response(discussion, ""));
         } catch (Exception e) {
-            e.printStackTrace();
-      return ResponseEntity
-          .status(500)
-          .body(new Response("Oups, une erreur s'est produite."));
+            return ResponseEntity
+                    .status(500)
+                    .body(new Response(e.getMessage()));
         }
     }
 }

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.message.Discussion;
-import com.cloud.voiture.models.message.Message;
 import com.cloud.voiture.repositories.auth.UtilisateurRepository;
 import com.cloud.voiture.services.message.DiscussionService;
 
@@ -54,9 +53,7 @@ public class UtilisateurService extends GenericService<Utilisateur> {
     }
 
     public List<Discussion> getDiscussionsForUserWithUsers( int idutilisateur ) throws Exception{
-
         List<Discussion> discussions = discussionService.getDiscussionsWithLastMessagesForUser(idutilisateur);
-
         for (Discussion discussion : discussions) {
             int userId1 = discussion.getUserId1();
             int userId2 = discussion.getUserId2();
@@ -67,7 +64,6 @@ public class UtilisateurService extends GenericService<Utilisateur> {
             discussion.setGauche(user1);
             discussion.setDroite(user2);
         }
-
         return discussions;
     }
 
@@ -81,7 +77,7 @@ public class UtilisateurService extends GenericService<Utilisateur> {
             u = this.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
             return u;
         } catch (NotFoundException e) {
-            throw new AuthException("Aucun utilisateur connecté.");
+            throw new AuthException("Accès refusé.Veuillez vous connecter..");
         }
     }
 }
