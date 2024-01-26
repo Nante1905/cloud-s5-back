@@ -45,6 +45,7 @@ public class JWTInterceptor extends OncePerRequestFilter {
                 // authToken.setDetails(new
                 // WebAuthenticationDetailsSource().buildDetails(request));
                 // authToken.setAuthenticated(true);
+                System.out.println("Role " + userDetails.getAuthorities());
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } catch (Exception e) {
@@ -64,6 +65,7 @@ public class JWTInterceptor extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (Exception e) {
+            System.out.println("Tsy nipasse filtre");
             e.printStackTrace();
             throw e;
         }

@@ -1,15 +1,15 @@
 package com.cloud.voiture.models.statistique;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
 import java.math.BigDecimal;
+
+import jakarta.persistence.Column;
 
 public class StatTopSeller {
   @Column(name = "id")
   int idUtilisateur;
   @Column(name = "nom")
   String nom;
-  @Column(name="prenom")
+  @Column(name = "prenom")
   String prenom;
 
   double valide;
@@ -18,14 +18,13 @@ public class StatTopSeller {
   double pourcentage;
 
   public StatTopSeller(
-    Integer id,
-    String nom,
-    String prenom,
-    Long valide,
-    Long vendu,
-    BigDecimal commission,
-    BigDecimal pourcentage
-  ) {
+      Integer id,
+      String nom,
+      String prenom,
+      Long valide,
+      Long vendu,
+      BigDecimal commission,
+      BigDecimal pourcentage) {
     setIdUtilisateur(id);
     setNom(nom);
     setPrenom(prenom);
@@ -34,19 +33,22 @@ public class StatTopSeller {
     setVendu(vendu);
     setPourcentage(pourcentage);
   }
-  public void setValide(Long valide){
+
+  public void setValide(Long valide) {
     setValide(Double.valueOf(valide));
   }
-  public void setVendu(Long vendu){
+
+  public void setVendu(Long vendu) {
     setVendu(Double.valueOf(vendu));
   }
-  public void setPourcentage(BigDecimal pourcentage){
-    setVendu(Double.valueOf(String.valueOf(pourcentage)));
-  }
-  public void setCommission(BigDecimal c){
-    setCommission(Double.valueOf(String.valueOf(c)));
+
+  public void setPourcentage(BigDecimal pourcentage) {
+    setPourcentage(Double.valueOf(String.valueOf(pourcentage)));
   }
 
+  public void setCommission(BigDecimal c) {
+    setCommission(Double.valueOf(String.valueOf(c)));
+  }
 
   public double getValide() {
     return valide;
@@ -95,9 +97,11 @@ public class StatTopSeller {
   public void setNom(String nomUtilisateur) {
     this.nom = nomUtilisateur;
   }
+
   public String getPrenom() {
     return prenom;
   }
+
   public void setPrenom(String prenom) {
     this.prenom = prenom;
   }

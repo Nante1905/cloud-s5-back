@@ -35,8 +35,9 @@ public class UtilisateurService extends GenericService<Utilisateur> {
     private LastMessageService lastMessageService;
 
     public Utilisateur findByEmailAndPassword(String email, String password) throws Exception {
+        System.out.println("email " + email + " pwd " + password);
         return this.utilisateurRepository.findByEmailAndPassword(email, password)
-                .orElseThrow(() -> new Exception("Invalid credentials"));
+                .orElseThrow(() -> new Exception("Identifiants incorrects. Réessayez."));
     }
 
     public Utilisateur findByEmail(String email) throws NotFoundException {

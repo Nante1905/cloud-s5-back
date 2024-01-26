@@ -3,6 +3,7 @@ package com.cloud.voiture.controllers.annonce;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +14,7 @@ import com.cloud.voiture.types.response.Response;
 
 import jakarta.security.auth.message.AuthException;
 
+@Secured({ "USER" })
 @RestController
 @RequestMapping("/favoris")
 public class FavoriController {

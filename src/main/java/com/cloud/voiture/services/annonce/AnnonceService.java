@@ -8,9 +8,13 @@ import java.util.concurrent.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.cloud.voiture.config.Constant;
+import com.cloud.voiture.crud.pagination.Paginated;
 import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
@@ -25,6 +29,7 @@ import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 import com.cloud.voiture.models.annonce.favori.Favori;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.notification.NotificationPush;
+import com.cloud.voiture.repositories.annonce.AnnonceGeneralRepository;
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
 import com.cloud.voiture.search.RechercheAnnonce;
 import com.cloud.voiture.services.UtilisateurService;
@@ -67,12 +72,42 @@ public class AnnonceService extends GenericService<Annonce> {
 
   @Autowired
   AnnonceGeneralService aGeneralService;
+  @Autowired
+  AnnonceGeneralRepository aGeneralRepository;
 
   @Autowired
   FavoriService favoriService;
-
   @Autowired
   NotificationPushService notifPushService;
+
+
+  public Paginated<AnnonceDTO> findAllAnnonces(int page, int taille) {
+    Pageable pageable = PageRequest.of(page - 1, taille);
+    Page<AnnonceGeneral> pagination = aGeneralRepository.findAll(pageable);
+    List<AnnonceDTO> annonces = new ArrayList<>();
+    for (AnnonceGeneral a : pagination.getContent()) {
+      AnnonceDTO dto = new AnnonceDTO(a);
+      dto.setPhotos(findPhotos(a.getId()));
+      annonces.add(dto);
+    }
+    return new Paginated<AnnonceDTO>(
+        annonces,
+        pagination.getTotalPages(),
+        pagination.getNumber() + 1);
+  }
+
+  public List<AnnonceDTO> findAllAnnonce() {
+    List<AnnonceGeneral> aG = aGeneralService.findAll();
+    List<AnnonceDTO> annonces = new ArrayList<>();
+    for (AnnonceGeneral a : aG) {
+      AnnonceDTO dto = new AnnonceDTO(a);
+      dto.setPhotos(findPhotos(a.getId()));
+      annonces.add(dto);
+    }
+    return annonces;
+  }
+  
+
 
   public List<AnnonceDTO> findFavoriOfAuthenticatedUser(int page, int taille) throws AuthException {
     Utilisateur u = utilisateurService.getAuthenticated();
@@ -257,7 +292,9 @@ public class AnnonceService extends GenericService<Annonce> {
             + a.getReference(),
         tokens);
     try {
-      notifPushService.sendNotif(notif);
+      if (tokens.size() > 0) {
+        notifPushService.sendNotif(notif);
+      }
       System.out.println("notif envoyé");
     } catch (FirebaseMessagingException | InterruptedException | ExecutionException e) {
       e.printStackTrace();

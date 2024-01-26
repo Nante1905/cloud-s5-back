@@ -86,7 +86,8 @@ public class ValidationExceptionHandler {
     @ExceptionHandler(value = AuthException.class)
     public ResponseEntity<Response> handleAuthException(AuthException exception) {
         System.out.println("ATOOOOOOOOOOOOOOOO");
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new Response(exception.getMessage()));
     }
+
 }

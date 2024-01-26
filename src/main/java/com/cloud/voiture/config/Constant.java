@@ -22,6 +22,8 @@ public class Constant {
     @Value("${app.annonceStatus.supprime}")
     private int annonceSupprime;
 
+    public static String BUCKET_NAME = "cloud-photo-cab19.appspot.com";
+
     public int getDefaultPageSize() {
         return defaultPageSize;
     }

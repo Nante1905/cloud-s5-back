@@ -2,6 +2,7 @@ package com.cloud.voiture.controllers.message;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import com.cloud.voiture.services.message.DiscussionService;
 import com.cloud.voiture.services.message.MessageService;
 import com.cloud.voiture.types.response.Response;
 
+@Secured({"USER"})
 @RestController
 @RequestMapping("/message")
 public class MessageController {
@@ -32,9 +34,8 @@ public class MessageController {
     @PostMapping
     public ResponseEntity<Response> getMessages(@RequestBody JoinPrivateChatRequest request) {
         try {
-            int iduser = 1;
-            // TODO REMOVE THIS LINE
-            // int iduser = utilisateurService.getAuthenticated().getId();
+            // int iduser = 1;
+            int iduser = utilisateurService.getAuthenticated().getId();
             if (discussionService.allowed(request.getChatId(), iduser)) {
                 return ResponseEntity
                         .ok(new Response(messageService.findMessagesByidDiscussion(request.getChatId()), ""));
@@ -65,9 +66,8 @@ public class MessageController {
     @PostMapping("/contact")
     public ResponseEntity<Response> contact(@RequestBody CreatePrivateChatRequest request) {
         try {
-            int iduser = 1;
-            // TODO: remove this line
-            // int iduser = utilisateurService.getAuthenticated().getId();
+            // int iduser = 1;
+            int iduser = utilisateurService.getAuthenticated().getId();
             Discussion discussion = discussionService.save(request, iduser);
             return ResponseEntity.ok(new Response(discussion, ""));
         } catch (Exception e) {
