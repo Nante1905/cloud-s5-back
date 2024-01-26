@@ -257,7 +257,9 @@ public class AnnonceService extends GenericService<Annonce> {
             + a.getReference(),
         tokens);
     try {
-      notifPushService.sendNotif(notif);
+      if (tokens.size() > 0) {
+        notifPushService.sendNotif(notif);
+      }
       System.out.println("notif envoyé");
     } catch (FirebaseMessagingException | InterruptedException | ExecutionException e) {
       e.printStackTrace();
