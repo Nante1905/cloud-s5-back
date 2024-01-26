@@ -3,13 +3,18 @@ package com.cloud.voiture.services.annonce;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.cloud.voiture.config.Constant;
+import com.cloud.voiture.crud.pagination.Paginated;
 import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
@@ -23,10 +28,17 @@ import com.cloud.voiture.models.annonce.DTO.AnnonceDTO;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 import com.cloud.voiture.models.annonce.favori.Favori;
 import com.cloud.voiture.models.auth.Utilisateur;
+
+import com.cloud.voiture.repositories.annonce.AnnonceGeneralRepository;
+
+import com.cloud.voiture.models.notification.NotificationPush;
+
 import com.cloud.voiture.repositories.annonce.AnnonceRepository;
 import com.cloud.voiture.search.RechercheAnnonce;
 import com.cloud.voiture.services.UtilisateurService;
+import com.cloud.voiture.services.notification.NotificationPushService;
 import com.cloud.voiture.services.voiture.VoitureService;
+import com.google.firebase.messaging.FirebaseMessagingException;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -63,9 +75,42 @@ public class AnnonceService extends GenericService<Annonce> {
 
   @Autowired
   AnnonceGeneralService aGeneralService;
+  @Autowired
+  AnnonceGeneralRepository aGeneralRepository;
 
   @Autowired
   FavoriService favoriService;
+  @Autowired
+  NotificationPushService notifPushService;
+
+
+  public Paginated<AnnonceDTO> findAllAnnonces(int page, int taille) {
+    Pageable pageable = PageRequest.of(page - 1, taille);
+    Page<AnnonceGeneral> pagination = aGeneralRepository.findAll(pageable);
+    List<AnnonceDTO> annonces = new ArrayList<>();
+    for (AnnonceGeneral a : pagination.getContent()) {
+      AnnonceDTO dto = new AnnonceDTO(a);
+      dto.setPhotos(findPhotos(a.getId()));
+      annonces.add(dto);
+    }
+    return new Paginated<AnnonceDTO>(
+        annonces,
+        pagination.getTotalPages(),
+        pagination.getNumber() + 1);
+  }
+
+  public List<AnnonceDTO> findAllAnnonce() {
+    List<AnnonceGeneral> aG = aGeneralService.findAll();
+    List<AnnonceDTO> annonces = new ArrayList<>();
+    for (AnnonceGeneral a : aG) {
+      AnnonceDTO dto = new AnnonceDTO(a);
+      dto.setPhotos(findPhotos(a.getId()));
+      annonces.add(dto);
+    }
+    return annonces;
+  }
+  
+
 
   public List<AnnonceDTO> findFavoriOfAuthenticatedUser(int page, int taille) throws AuthException {
     Utilisateur u = utilisateurService.getAuthenticated();
@@ -128,6 +173,42 @@ public class AnnonceService extends GenericService<Annonce> {
     updateStatus(idAnnonce, config.getAnnonceVendu());
   }
 
+  public List<AnnonceDTO> findAnnonceNonValideOfConnectedUser(int page, int taille) throws AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    List<AnnonceGeneral> aG = aGeneralService.findNonValideOf(u.getId(), page, taille);
+    List<AnnonceDTO> annonces = new ArrayList<>();
+    for (AnnonceGeneral a : aG) {
+      AnnonceDTO dto = new AnnonceDTO(a);
+      dto.setPhotos(findPhotos(a.getId()));
+      annonces.add(dto);
+    }
+    return annonces;
+  }
+
+  public List<AnnonceDTO> findAnnonceValideOfConnectedUser(int page, int taille) throws AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    List<AnnonceGeneral> aG = aGeneralService.findValideOf(u.getId(), page, taille);
+    List<AnnonceDTO> annonces = new ArrayList<>();
+    for (AnnonceGeneral a : aG) {
+      AnnonceDTO dto = new AnnonceDTO(a);
+      dto.setPhotos(findPhotos(a.getId()));
+      annonces.add(dto);
+    }
+    return annonces;
+  }
+
+  public List<AnnonceDTO> findAnnonceVenduOfConnectedUser(int page, int taille) throws AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    List<AnnonceGeneral> aG = aGeneralService.findVenduOf(u.getId(), page, taille);
+    List<AnnonceDTO> annonces = new ArrayList<>();
+    for (AnnonceGeneral a : aG) {
+      AnnonceDTO dto = new AnnonceDTO(a);
+      dto.setPhotos(findPhotos(a.getId()));
+      annonces.add(dto);
+    }
+    return annonces;
+  }
+
   public List<AnnoncePhoto> findPhotos(int idAnnonce) {
     return annonceRepository.getPhotos(idAnnonce);
   }
@@ -181,9 +262,9 @@ public class AnnonceService extends GenericService<Annonce> {
     return new HistoriqueAnnonceDTO(annonce, historiqueMin);
   }
 
-  public List<AnnonceDTO> findByUser() throws AuthException {
+  public List<AnnonceDTO> findByUser(int page, int taille) throws AuthException {
     Utilisateur u = utilisateurService.getAuthenticated();
-    List<AnnonceGeneral> aG = aGeneralService.findByIdUtilisateur(u.getId());
+    List<AnnonceGeneral> aG = aGeneralService.findByIdUtilisateur(u.getId(), page, taille);
     List<AnnonceDTO> annonces = new ArrayList<>();
     for (AnnonceGeneral a : aG) {
       AnnonceDTO dto = new AnnonceDTO(a);
@@ -196,7 +277,7 @@ public class AnnonceService extends GenericService<Annonce> {
   @Transactional(rollbackOn = Exception.class)
   public void valider(int idAnnonce)
       throws NotFoundException, ValidationException {
-    Annonce a = this.find(idAnnonce);
+    AnnonceGeneral a = this.aGeneralService.find(idAnnonce);
     checkValidation(a);
 
     HistoriqueAnnonce historique = new HistoriqueAnnonce();
@@ -206,12 +287,29 @@ public class AnnonceService extends GenericService<Annonce> {
 
     updateStatus(idAnnonce, params.getAnnonceValide());
     historiqueService.save(historique);
+
+    // sending notification
+    List<String> tokens = notifPushService.getTokenOf(a.getIdUtilisateur());
+    NotificationPush notif = new NotificationPush("Annonce validée",
+        "L'admin a validé votre annonce sur " + a.getNomMarque() + " - " + a.getNomModele() + ". Ref: "
+            + a.getReference(),
+        tokens);
+    try {
+      notifPushService.sendNotif(notif);
+      System.out.println("notif envoyé");
+    } catch (FirebaseMessagingException | InterruptedException | ExecutionException e) {
+      e.printStackTrace();
+      System.out.println("==========================================");
+      System.out.println("Erreur lors de l'envoi de notification après validation de l'annonce " + a.getReference()
+          + " " + e.getMessage());
+      System.out.println("==============================================");
+    }
   }
 
   @Transactional
   public void refuser(int idAnnonce)
       throws NotFoundException, ValidationException {
-    Annonce a = this.find(idAnnonce);
+    AnnonceGeneral a = aGeneralService.find(idAnnonce);
     checkValidation(a);
 
     HistoriqueAnnonce historique = new HistoriqueAnnonce();
@@ -221,9 +319,24 @@ public class AnnonceService extends GenericService<Annonce> {
 
     updateStatus(idAnnonce, params.getAnnonceRefuse());
     historiqueService.save(historique);
+
+    // sending notification
+    List<String> tokens = notifPushService.getTokenOf(a.getIdUtilisateur());
+    NotificationPush notif = new NotificationPush("Annonce validée",
+        "L'admin a refusé votre annonce sur " + a.getNomMarque() + " - " + a.getNomModele(), tokens);
+    try {
+      notifPushService.sendNotif(notif);
+      System.out.println("notif envoyé");
+    } catch (FirebaseMessagingException | InterruptedException | ExecutionException e) {
+      e.printStackTrace();
+      System.out.println("==========================================");
+      System.out.println("Erreur lors de l'envoi de notification après refus de l'annonce  " + a.getReference() + " "
+          + e.getMessage());
+      System.out.println("==============================================");
+    }
   }
 
-  public void checkValidation(Annonce a) throws ValidationException {
+  public void checkValidation(AnnonceGeneral a) throws ValidationException {
     if (a.getStatus() != params.getAnnonceCree()) {
       if (a.getStatus() == params.getAnnonceValide()) {
         throw new ValidationException(

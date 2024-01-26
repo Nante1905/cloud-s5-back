@@ -53,12 +53,9 @@ public class UtilisateurService extends GenericService<Utilisateur> {
         return utilisateurs;
     }
 
-    public List<Discussion> getDiscussionsForUserWithUsers(int idutilisateur) throws Exception {
-        // Utilisateur utilisateur = getAuthenticated();
 
-        // List<Discussion> discussions =
-        // discussionService.getDiscussionsForUser(utilisateur.getId());
-        List<Discussion> discussions = discussionService.getDiscussionsForUser(idutilisateur);
+    public List<Discussion> getDiscussionsForUserWithUsers( int idutilisateur ) throws Exception{
+        List<Discussion> discussions = discussionService.getDiscussionsWithLastMessagesForUser(idutilisateur);
 
         for (Discussion discussion : discussions) {
             int userId1 = discussion.getUserId1();
@@ -70,7 +67,6 @@ public class UtilisateurService extends GenericService<Utilisateur> {
             discussion.setGauche(user1);
             discussion.setDroite(user2);
         }
-
         return discussions;
     }
 
@@ -84,7 +80,7 @@ public class UtilisateurService extends GenericService<Utilisateur> {
             u = this.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
             return u;
         } catch (NotFoundException e) {
-            throw new AuthException("Aucun utilisateur connecté.");
+            throw new AuthException("Accès refusé.Veuillez vous connecter..");
         }
     }
 }
