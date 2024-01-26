@@ -87,16 +87,6 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
-  @Override
-  @GetMapping("/{id}")
-  public ResponseEntity<Response> find(@PathVariable(name = "id") int id) {
-    try {
-      return ResponseEntity.ok(new Response(annonceService.findById(id), ""));
-    } catch (NotFoundException e) {
-      return ResponseEntity.status(404).body(new Response("Cette identifiant n'existe pas."));
-
-    }
-
     @GetMapping("/nonValide/moi")
     public ResponseEntity<Response> getAnnonceNonValideOfConnectedUser(
             @RequestParam(required = false, defaultValue = "0") int page,
@@ -187,7 +177,7 @@ public class AnnonceController extends GenericController<Annonce> {
       e.printStackTrace();
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response("Une erreur s'est produite."));
     }
-
+  }
 
   @Secured({ "USER" })
   @GetMapping("/yours")
@@ -200,6 +190,7 @@ public class AnnonceController extends GenericController<Annonce> {
     } catch (Exception e) {
       return ResponseEntity.status(500).body(new Response(e.getMessage()));
     }
+  }
 
     @GetMapping("{id}/historiques")
     public ResponseEntity<Response> getHistorique(@PathVariable(name = "id") int id) {
@@ -304,7 +295,7 @@ public class AnnonceController extends GenericController<Annonce> {
           .status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body(new Response("Une erreur s'est produite"));
     }
-
+  }
 
   @Secured({ "ADMIN" })
   @PutMapping("{id}/refuser")
@@ -330,7 +321,7 @@ public class AnnonceController extends GenericController<Annonce> {
           .body(new Response("Une erreur s'est produite"));
 
     }
-
+  }
 
   @Secured({ "ADMIN" })
   @GetMapping("/nonValide")
@@ -342,6 +333,7 @@ public class AnnonceController extends GenericController<Annonce> {
     } catch (Exception e) {
       return ResponseEntity.status(500).body(new Response(e.getMessage()));
 
+    }
     }
 
     @PostMapping("/find")

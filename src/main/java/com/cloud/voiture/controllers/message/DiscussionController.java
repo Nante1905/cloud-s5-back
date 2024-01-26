@@ -25,10 +25,7 @@ public class DiscussionController {
     @GetMapping
     public ResponseEntity<Response> getAllDiscussionAndLastMessages() {
         try {
-            int iduser = 1;
-            // TODO remove this line 
-            
-            // int iduser = utilisateurService.getAuthenticated().getId();
+            int iduser = utilisateurService.getAuthenticated().getId();
             return ResponseEntity.ok(new Response(utilisateurService.getDiscussionsForUserWithUsers(iduser),""));
         } catch (Exception e) {
             e.printStackTrace();
@@ -40,9 +37,7 @@ public class DiscussionController {
     @PostMapping
     public ResponseEntity<Response> createDiscussion(@RequestBody CreatePrivateChatRequest request) {
         try {
-            int iduser = 1;
-            // TODO remove this line 
-            // int iduser = utilisateurService.getAuthenticated().getId();
+            int iduser = utilisateurService.getAuthenticated().getId();
             return ResponseEntity.ok(new Response(discussionService.save(request, iduser),""));
         } catch (Exception e) {
             e.printStackTrace();
