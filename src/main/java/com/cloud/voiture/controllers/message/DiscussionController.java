@@ -26,6 +26,7 @@ public class DiscussionController {
         try {
             int iduser = 1;
             // TODO remove this line 
+            
             // int iduser = utilisateurService.getAuthenticated().getId();
             return ResponseEntity.ok(new Response(utilisateurService.getDiscussionsForUserWithUsers(iduser),""));
         } catch (Exception e) {
