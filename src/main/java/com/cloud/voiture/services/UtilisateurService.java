@@ -30,8 +30,9 @@ public class UtilisateurService extends GenericService<Utilisateur> {
     private DiscussionService discussionService;
 
     public Utilisateur findByEmailAndPassword(String email, String password) throws Exception {
+        System.out.println("email " + email + " pwd " + password);
         return this.utilisateurRepository.findByEmailAndPassword(email, password)
-                .orElseThrow(() -> new Exception("Invalid credentials"));
+                .orElseThrow(() -> new Exception("Identifiants incorrects. Réessayez."));
     }
 
     public Utilisateur findByEmail(String email) throws NotFoundException {
@@ -52,8 +53,10 @@ public class UtilisateurService extends GenericService<Utilisateur> {
         return utilisateurs;
     }
 
+
     public List<Discussion> getDiscussionsForUserWithUsers( int idutilisateur ) throws Exception{
         List<Discussion> discussions = discussionService.getDiscussionsWithLastMessagesForUser(idutilisateur);
+
         for (Discussion discussion : discussions) {
             int userId1 = discussion.getUserId1();
             int userId2 = discussion.getUserId2();

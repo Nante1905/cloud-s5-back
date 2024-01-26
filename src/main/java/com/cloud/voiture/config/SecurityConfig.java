@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -11,11 +12,16 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.cloud.voiture.controllers.handlers.AccessDeniedExceptionHandler;
+import com.cloud.voiture.controllers.handlers.AuthentificationExceptionHandler;
 
 @Configuration
 @EnableWebSecurity()
@@ -35,14 +41,47 @@ public class SecurityConfig {
                     req
                             .requestMatchers("/auth/**").permitAll()
                             .requestMatchers("/error/**").permitAll()
-                            .requestMatchers("/test/**").permitAll()
-                            // .anyRequest().authenticated();
-                            // TODO : remove this line
-                            .anyRequest().permitAll();
+                            .requestMatchers("/annonces/{id}").permitAll()
+                            .requestMatchers("/annonces/find").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/notif-token").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/categories").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/categories").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/categories").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/categories").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/etats").permitAll()
+                            .requestMatchers(HttpMethod.PUT, "/etats").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/etats").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/marques").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/marques").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/marques").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/marques").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/modeles").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/modeles").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/modeles").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/modeles").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/couleurs").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/couleurs").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.PUT, "/couleurs").hasAuthority("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/couleurs").hasAuthority("ADMIN")
+                            .requestMatchers("/annonces/estimate").permitAll()
+                            .anyRequest().authenticated();
+
                 })
                 .addFilterBefore(this.interceptor(), UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(Customizer.withDefaults())
+                .exceptionHandling((c) -> c.authenticationEntryPoint(authenticationExceptionHanlder()))
+                .exceptionHandling((c) -> c.accessDeniedHandler(accessDeniedException()))
                 .build();
+    }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationExceptionHanlder() {
+        return new AuthentificationExceptionHandler();
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedException() {
+        return new AccessDeniedExceptionHandler();
     }
 
     @Bean
