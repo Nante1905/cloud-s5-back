@@ -83,7 +83,7 @@ public class StatistiqueService {
   public List<MarqueBenefice> findBeneficeParMarque(
       StatRequest params,
       EntityManager entityManager) {
-    String req = "select id_marque, m.nom nom_marque, m.logo, montant from f_benefice_par_marque(:mois, :annee) f join marque m on f.id_marque = m.id order by montant desc, nom_marque asc limit :taille offset(:numero - 1)*:taille";
+    String req = "select id_marque, nom_marque, logo, montant from f_benefice_par_marque(:mois, :annee) f order by montant desc, nom_marque asc";
 
     if (params.getPagination() == null) {
       System.out.println("Nuull ny pagination");
@@ -96,8 +96,6 @@ public class StatistiqueService {
         .createNativeQuery(req, MarqueBenefice.class)
         .setParameter("mois", params.getMois())
         .setParameter("annee", params.getAnnee())
-        .setParameter("numero", params.getPagination().getNumero())
-        .setParameter("taille", params.getPagination().getTaillePage())
         .getResultList();
   }
 

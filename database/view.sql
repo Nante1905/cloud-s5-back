@@ -60,6 +60,7 @@ create view v_annonce_valide as
         on historique_annonce.id_annonce = annonce.id
     where historique_annonce.status = 5
 );
+
 create view v_voiture as (
     select 
     voiture.id as id_voiture, modele.id_modele,  id_categorie, id_marque, annee_sortie
@@ -143,4 +144,26 @@ from v_max_historique_annonce h
 join annonce_favori f 
 	on h.id_annonce = f.id_annonce; 
 
+-- 26/01/2024 10:43
+create or replace view v_annonce_vendu as
+select a.*, h.date_maj 
+from annonce a 
+    join v_max_historique_annonce h 
+    on a.id = h.id_annonce
+where h.status = 10;
 
+-- create or replace view v_annonce_valide as
+-- select a.*, h.date_maj 
+-- from annonce a 
+--     join v_max_historique_annonce h 
+--     on a.id = h.id_annonce
+-- where h.status =5;
+
+select id_utilisateur, count(*) nbr
+from v_annonce_valide v
+where TO_CHAR(v.date_maj::date, 'YYYYMM') <= '202401'
+group by id_utilisateur;
+
+-- select id_utilisateur, count(*) nbr, sum(commission) commission
+-- from v_annonce_vendu
+-- group by id_utilisateur;

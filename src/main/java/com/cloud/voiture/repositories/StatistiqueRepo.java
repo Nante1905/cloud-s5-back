@@ -17,12 +17,12 @@ public interface StatistiqueRepo extends JpaRepository<Couleur, Integer> {
     @Query(value = "select count(*) from v_annonce_valide where extract(month from date_maj) = ?1 and extract(year from date_maj) = ?2", nativeQuery = true)
     public int getNbAnnonceValide(int mois, int annee);
 
-    @Query(value = "select coalesce(avg(EXTRACT('days' FROM (av.date_creation - av.date_maj))), 0)\r\n" + //
+    @Query(value = "select coalesce(avg(EXTRACT('days' FROM (av.date_maj - av.date_creation))), 0)\r\n" + //
             "from v_annonce_vendu av\r\n" + //
             "where extract(month from date_maj) = ?1 and extract(year from date_maj) = ?2", nativeQuery = true)
     public int getAvgCreationVente(int mois, int annee);
 
-    @Query(value = "select coalesce(sum(commission), 0) commission from v_annonce_vendu av where extract(month from av.date_maj) = ?1 and extract(year from av.date_maj) = ?2", nativeQuery = true)
+    @Query(value = "select coalesce(sum(commission), 0) commission from v_annonce_gen_vendu av where extract(month from av.date_maj) = ?1 and extract(year from av.date_maj) = ?2", nativeQuery = true)
     public double getTotalBenefice(int mois, int annee);
 
 }
