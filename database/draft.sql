@@ -47,3 +47,25 @@ left join annonce_favori f
   on f.id_annonce = a.id  and f.id_utilisateur = 1
 where id = 31;
   
+SELECT
+        utilisateur.id,
+        utilisateur.nom,
+        utilisateur.prenom, 
+        COALESCE(COUNT(v_annonce_valide.id), 0) AS valide,
+        COALESCE(COUNT(v_annonce_vendu.id), 0) AS vendu,
+        COALESCE(SUM(v_annonce_valide.commission), 0) AS commission,
+        CASE
+            WHEN COUNT(v_annonce_valide.id) = 0 THEN 0.0
+            ELSE (COUNT(v_annonce_gen_vendu.id) / COUNT(v_annonce_valide.id)) * 100
+        END AS pourcentage
+    FROM
+        utilisateur
+    LEFT JOIN v_annonce_valide ON v_annonce_valide.id_utilisateur = utilisateur.id AND TO_CHAR(v_annonce_valide.date_maj::date, 'YYYYMM') <= '202401'
+    LEFT JOIN v_annonce_gen_vendu ON v_annonce_vendu.id_utilisateur = utilisateur.id AND TO_CHAR(v_annonce_vendu.date_maj::date, 'YYYYMM') <= '202401'
+    GROUP BY
+        utilisateur.id,
+        utilisateur.nom
+    ORDER BY
+        valide desc
+    LIMIT
+        limit_value;
