@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.message.Discussion;
+import com.cloud.voiture.models.message.LastMessage;
 import com.cloud.voiture.repositories.auth.UtilisateurRepository;
 import com.cloud.voiture.services.message.DiscussionService;
+import com.cloud.voiture.services.message.LastMessageService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -28,6 +30,9 @@ public class UtilisateurService extends GenericService<Utilisateur> {
 
     @Autowired
     private DiscussionService discussionService;
+
+    @Autowired
+    private LastMessageService lastMessageService;
 
     public Utilisateur findByEmailAndPassword(String email, String password) throws Exception {
         return this.utilisateurRepository.findByEmailAndPassword(email, password)
@@ -52,9 +57,10 @@ public class UtilisateurService extends GenericService<Utilisateur> {
         return utilisateurs;
     }
 
-    public List<Discussion> getDiscussionsForUserWithUsers( int idutilisateur ) throws Exception{
-        List<Discussion> discussions = discussionService.getDiscussionsWithLastMessagesForUser(idutilisateur);
-        for (Discussion discussion : discussions) {
+    public List<LastMessage> getDiscussionsForUserWithUsers( int idutilisateur ) throws Exception{
+        // List<Discussion> discussions = discussionService.getDiscussionsWithLastMessagesForUser(idutilisateur);
+        List<LastMessage> discussions = lastMessageService.getDiscussionLastMessageById(idutilisateur);
+        for (LastMessage discussion : discussions) {
             int userId1 = discussion.getUserId1();
             int userId2 = discussion.getUserId2();
 
