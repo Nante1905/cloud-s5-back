@@ -3,8 +3,6 @@ package com.cloud.voiture.services.utilities;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.cloud.voiture.crud.model.GenericModel;
-
 import jakarta.persistence.Table;
 
 public class Utilities {
@@ -18,6 +16,7 @@ public class Utilities {
 
     public static String extractColumnName(Class<?> T, String errorMessage) {
         String tableName = T.getSimpleName();
+        String columnName = "entité de table étrangère";
         Table table = T.getAnnotation(Table.class);
         if (table != null) {
             tableName = table.name();
@@ -29,9 +28,17 @@ public class Utilities {
 
         if (matcher.find()) {
             System.out.println("column name " + matcher.group(1));
-            return matcher.group(1);
+            columnName = matcher.group(1);
         }
 
-        return "entité";
+        pattern = Pattern.compile("\\bKey \\((.*?)\\)");
+        matcher = pattern.matcher(errorMessage);
+
+        if (matcher.find()) {
+            System.out.println("column name " + matcher.group(1));
+            columnName = matcher.group(1);
+        }
+
+        return columnName.replace("id", "").replace("_", " ");
     }
 }

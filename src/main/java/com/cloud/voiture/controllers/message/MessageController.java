@@ -38,7 +38,7 @@ public class MessageController {
             int iduser = utilisateurService.getAuthenticated().getId();
             if (discussionService.allowed(request.getChatId(), iduser)) {
                 return ResponseEntity
-                        .ok(new Response(messageService.findMessagesByidDiscussion(request.getChatId()), ""));
+                        .ok(new Response(messageService.findMessagesByidDiscussion(request.getChatId(), request.getPagination().getNumero() , request.getPagination().getTaillePage() ), ""));
             } else {
                 throw new UnauthorizedChatting();
             }

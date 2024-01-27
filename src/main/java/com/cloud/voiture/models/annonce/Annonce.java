@@ -19,6 +19,7 @@ import com.cloud.voiture.models.voiture.Modele;
 import com.cloud.voiture.models.voiture.Vitesse;
 import com.cloud.voiture.models.voiture.Voiture;
 import com.cloud.voiture.types.media.Media;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -84,6 +85,7 @@ public class Annonce extends GenericModel {
   @Transient
   boolean isFavori;
 
+  @JsonIgnore
   @Transient
   Media[] medias;
 
@@ -105,7 +107,7 @@ public class Annonce extends GenericModel {
     setUtilisateur(new Utilisateur(a.getIdUtilisateur(), a.getUtilisateurNom(), a.getUtilisateurPrenom(),
         a.getDateInscription(), a.getAdresse()));
 
-    Voiture v = new Voiture(a.getIdVoiture(), a.getIdUtilisateur(), a.getKilometrage(), a.getStatus(),
+    Voiture v = new Voiture(a.getIdVoiture(), a.getIdUtilisateur(), a.getKilometrage(), a.getEtat(),
         new Couleur(a.getIdCouleur(), a.getNomCouleur(), a.getHexa()),
         new Modele(a.getIdModele(), a.getNomModele(), a.getNbPlace(), a.getNbPorte(), a.getAnneeSortie(),
             new Categorie(a.getIdCategorie(), a.getNomCategorie()),

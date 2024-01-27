@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import com.cloud.voiture.crud.model.GenericModel;
 import com.cloud.voiture.crud.pagination.Paginated;
 import com.cloud.voiture.crud.repository.GenericRepository;
+import com.cloud.voiture.exceptions.ValidationException;
 
 public class GenericService<T extends GenericModel> {
 
@@ -29,7 +30,8 @@ public class GenericService<T extends GenericModel> {
     return repository.save(model);
   }
 
-  public T update(T model, int id) {
+  public T update(T model, int id) throws NotFoundException, ValidationException {
+    find(id);
     model.setId(id);
     return repository.save(model);
   }

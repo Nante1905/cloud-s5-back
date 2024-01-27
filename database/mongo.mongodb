@@ -69,4 +69,283 @@ db.createView("v_latest_messages", "discussions", [
       $sort: { "lastMessage.dateEnvoi": -1 } // Trie les discussions par date d'envoi du dernier message décroissante
     }
   ]);
+
+  db.messages.insertMany([
+    {
+      _id: "1",
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 1',
+      dateEnvoi: new Date('2024-01-26T09:28:28.563Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: "2",
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 2',
+      dateEnvoi: new Date('2024-01-26T21:30:23.565Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: "3",
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 3',
+      dateEnvoi: new Date('2024-01-26T09:28:28.563Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: "4",
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 4',
+      dateEnvoi: new Date('2024-01-26T21:30:23.565Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: "5",
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 5',
+      dateEnvoi: new Date('2024-01-26T09:28:28.563Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: "6",
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 6',
+      dateEnvoi: new Date('2024-01-26T21:30:23.565Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: "7",
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 7',
+      dateEnvoi: new Date('2024-01-26T09:28:28.563Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: "8",
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 8',
+      dateEnvoi: new Date('2024-01-26T21:30:23.565Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: "9",
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 9',
+      dateEnvoi: new Date('2024-01-26T09:28:28.563Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: "10",
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 10',
+      dateEnvoi: new Date('2024-01-26T21:30:23.565Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    }
+  ]);
   
+
+// -------------------------------------
+
+  [
+    // {
+    //   _id: '669db12b',
+    //   expediteurId: 1,
+    //   destinataireId: 0,
+    //   idDiscussion: 'cbf2add0',
+    //   contenu: 'GutenTag',
+    //   dateEnvoi: ISODate('2024-01-25T08:46:14.917Z'),
+    //   type: 0,
+    //   _class: 'com.cloud.voiture.models.message.Message'
+    // // },
+    // {
+    //   _id: '56084bb4',
+    //   expediteurId: 1,
+    //   destinataireId: 0,
+    //   idDiscussion: 'cbf2add0',
+    //   contenu: 'Hallo',
+    //   dateEnvoi: ISODate('2024-01-25T08:46:30.127Z'),
+    //   type: 0,
+    //   _class: 'com.cloud.voiture.models.message.Message'
+    // },
+    // {
+    //   _id: '24dc7ccb',
+    //   expediteurId: 1,
+    //   destinataireId: 0,
+    //   idDiscussion: 'cbf2add0',
+    //   contenu: 'message farany',
+    //   dateEnvoi: ISODate('2024-01-26T15:00:03.237Z'),
+    //   type: 0,
+    //   _class: 'com.cloud.voiture.models.message.Message'
+    // },
+    // {
+    //   _id: 'fe8d666a',
+    //   expediteurId: 1,
+    //   destinataireId: 0,
+    //   idDiscussion: 'cbf2add0',
+    //   contenu: 'Ceci est le dernier message',
+    //   dateEnvoi: ISODate('2024-01-26T09:28:28.563Z'),
+    //   type: 0,
+    //   _class: 'com.cloud.voiture.models.message.Message'
+    // },
+    // {
+    //   _id: '0e8b8b57',
+    //   expediteurId: 1,
+    //   destinataireId: 0,
+    //   idDiscussion: 'cbf2add0',
+    //   contenu: 'Ceci est le dernier message',
+    //   dateEnvoi: ISODate('2024-01-26T21:30:23.565Z'),
+    //   type: 0,
+    //   _class: 'com.cloud.voiture.models.message.Message'
+    // },
+    {
+      _id: '6a722b38',
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message ou pas',
+      dateEnvoi: ISODate('2024-01-26T21:50:59.153Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: '056faf53',
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message ou pas',
+      dateEnvoi: ISODate('2024-01-26T21:51:14.766Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: '1',
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 1',
+      dateEnvoi: ISODate('2024-01-26T09:28:28.563Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: '2',
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 2',
+      dateEnvoi: ISODate('2024-01-26T21:30:23.565Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: '3',
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 3',
+      dateEnvoi: ISODate('2024-01-26T09:28:28.563Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: '4',
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 4',
+      dateEnvoi: ISODate('2024-01-26T21:30:23.565Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    // 
+    {
+      _id: '5',
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 5',
+      dateEnvoi: ISODate('2024-01-26T09:28:28.563Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: '6',
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 6',
+      dateEnvoi: ISODate('2024-01-26T21:30:23.565Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: '7',
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 7',
+      dateEnvoi: ISODate('2024-01-26T09:28:28.563Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: '8',
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 8',
+      dateEnvoi: ISODate('2024-01-26T21:30:23.565Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: '9',
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 9',
+      dateEnvoi: ISODate('2024-01-26T09:28:28.563Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    },
+    {
+      _id: '10',
+      expediteurId: 1,
+      destinataireId: 0,
+      idDiscussion: 'cbf2add0',
+      contenu: 'Ceci est le dernier message 10',
+      dateEnvoi: ISODate('2024-01-26T21:30:23.565Z'),
+      type: 0,
+      _class: 'com.cloud.voiture.models.message.Message'
+    }
+  ]

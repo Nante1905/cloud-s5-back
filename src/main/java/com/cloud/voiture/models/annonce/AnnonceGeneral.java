@@ -188,6 +188,7 @@ public class AnnonceGeneral extends GenericModel {
 
     private void setDateCreation(Timestamp d) {
         if (d == null) {
+            System.out.println("null lay date de création");
             dateCreation = null;
         } else {
             setDateCreation(d.toLocalDateTime());

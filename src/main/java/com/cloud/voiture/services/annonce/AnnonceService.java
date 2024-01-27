@@ -80,7 +80,6 @@ public class AnnonceService extends GenericService<Annonce> {
   @Autowired
   NotificationPushService notifPushService;
 
-
   public Paginated<AnnonceDTO> findAllAnnonces(int page, int taille) {
     Pageable pageable = PageRequest.of(page - 1, taille);
     Page<AnnonceGeneral> pagination = aGeneralRepository.findAll(pageable);
@@ -106,8 +105,6 @@ public class AnnonceService extends GenericService<Annonce> {
     }
     return annonces;
   }
-  
-
 
   public List<AnnonceDTO> findFavoriOfAuthenticatedUser(int page, int taille) throws AuthException {
     Utilisateur u = utilisateurService.getAuthenticated();
@@ -211,7 +208,7 @@ public class AnnonceService extends GenericService<Annonce> {
   }
 
   public Annonce findById(int idAnnonce) throws NotFoundException {
-
+    System.out.println("maka détails annonce");
     Utilisateur u = new Utilisateur();
     u.setId(0);
     try {
@@ -436,7 +433,13 @@ public class AnnonceService extends GenericService<Annonce> {
 
   @Override
   @Transactional(rollbackOn = Exception.class)
-  public Annonce update(Annonce model, int id) {
+  public Annonce update(Annonce model, int id) throws NotFoundException, ValidationException {
+    System.out.println("update annonce");
+    Annonce a = findById(id);
+    System.out.println(a.getStatus() + " ============= status");
+    if (a.getStatus() != 0) {
+      throw new ValidationException("Seule les annonces non valides peuvent être modifiées.");
+    }
     if (model.getVoiture() != null) {
       model.setVoiture(voitureService.save(model.getVoiture()));
     }

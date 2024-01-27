@@ -3,6 +3,7 @@ package com.cloud.voiture.controllers.message;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -44,7 +45,9 @@ public class SuggestionMessageController {
             List<SuggestionMessage> body = service.findAllSuggestionMessages();
             return ResponseEntity.ok().body(new Response(body, ""));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response(e.getMessage()));
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("Erreur lors du chargement des messages."));
         }
     }
 
@@ -54,7 +57,8 @@ public class SuggestionMessageController {
             SuggestionMessage body = service.getSuggestionMessageById(id);
             return ResponseEntity.ok().body(new Response(body, ""));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response(e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("Erreur lors de la récupération du message"));
         }
     }
 
@@ -65,8 +69,12 @@ public class SuggestionMessageController {
             suggestionMessage.setId(id);
             SuggestionMessage message = service.updateSuggestionMessage(suggestionMessage);
             return ResponseEntity.ok().body(new Response(message, "Modifier avec succes"));
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("Aucune suggestion messaget cet id."));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response(e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("Erreur lors de la modification"));
         }
     }
 
@@ -74,7 +82,7 @@ public class SuggestionMessageController {
     public ResponseEntity<?> deleteSuggestionMessage(@PathVariable String id) {
         try {
             String data = service.deleteSuggestionMessage(id);
-            return ResponseEntity.ok().body(new Response(data, "Supprimer avec succes"));
+            return ResponseEntity.ok().body(new Response(data, "Supprimée avec succès"));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response(e.getMessage()));
         }
