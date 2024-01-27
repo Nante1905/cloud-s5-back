@@ -370,4 +370,39 @@ public class AnnonceController extends GenericController<Annonce> {
       return ResponseEntity.status(500).body(new Response("Une erreur s'est produite"));
     }
   }
+
+  // @PutMapping("/{id}")
+  // public ResponseEntity<?> update(
+  // @RequestBody @Valid Annonce model,
+  // @PathVariable(name = "id") int id) {
+  // try {
+  // Annonce results = annonceService.update(model, id);
+  // return ResponseEntity.ok(new Response(results, "Modifié avec succes"));
+
+  // } catch (DataIntegrityViolationException e) {
+  // // e.printStackTrace();
+  // System.out.println(e.getMessage());
+  // if (e.getCause() instanceof ConstraintViolationException) {
+  // ConstraintViolationException sqlException = (ConstraintViolationException)
+  // e.getCause();
+  // String sqlState = sqlException.getSQLState();
+  // String columnName = Utilities.extractColumnName(
+  // Annonce.class,
+  // sqlException.getMessage());
+  // System.out.println(sqlException.getMessage());
+  // System.out.println(columnName + "==================");
+  // return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+  // .body(new Response(
+  // SqlErrorMessage.getMessage(sqlState, columnName,
+  // "Annonce")));
+  // }
+  // return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+  // new Response("Contrainte de donnée violée"));
+
+  // } catch (Exception e) {
+  // e.printStackTrace();
+  // return ResponseEntity.status(500).body(new Response("Erreur interne du
+  // serveur"));
+  // }
+  // }
 }

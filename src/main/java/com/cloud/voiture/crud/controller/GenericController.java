@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.cloud.voiture.crud.model.GenericModel;
 import com.cloud.voiture.crud.pagination.Paginated;
 import com.cloud.voiture.crud.service.GenericService;
+import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.services.utilities.Utilities;
 import com.cloud.voiture.types.response.Response;
 
@@ -105,6 +106,8 @@ public class GenericController<T extends GenericModel> {
             T results = service.update(model, id);
             return ResponseEntity.ok(new Response(results, "Modifié avec succes"));
 
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(404).body(new Response("Aucune entité avec l'id " + id));
         } catch (DataIntegrityViolationException e) {
             // e.printStackTrace();
             System.out.println(e.getMessage());
@@ -125,6 +128,9 @@ public class GenericController<T extends GenericModel> {
                     new Response("Contrainte de donnée violée"));
 
         } catch (Exception e) {
+            if (e instanceof ValidationException) {
+                return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(new Response(e.getMessage()));
+            }
             e.printStackTrace();
             return ResponseEntity.status(500).body(new Response("Erreur interne du serveur"));
         }

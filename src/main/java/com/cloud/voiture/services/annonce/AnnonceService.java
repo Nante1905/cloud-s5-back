@@ -433,7 +433,13 @@ public class AnnonceService extends GenericService<Annonce> {
 
   @Override
   @Transactional(rollbackOn = Exception.class)
-  public Annonce update(Annonce model, int id) {
+  public Annonce update(Annonce model, int id) throws NotFoundException, ValidationException {
+    System.out.println("update annonce");
+    Annonce a = findById(id);
+    System.out.println(a.getStatus() + " ============= status");
+    if (a.getStatus() != 0) {
+      throw new ValidationException("Seule les annonces non valides peuvent être modifiées.");
+    }
     if (model.getVoiture() != null) {
       model.setVoiture(voitureService.save(model.getVoiture()));
     }
