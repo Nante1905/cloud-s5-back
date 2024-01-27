@@ -14,6 +14,7 @@ import com.cloud.voiture.chat.requests.ChatMessageRequest;
 import com.cloud.voiture.models.message.Message;
 import com.cloud.voiture.repositories.message.MessageRepository;
 import com.cloud.voiture.services.UtilisateurService;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class MessageService {
@@ -43,9 +44,18 @@ public class MessageService {
         return repository.findAll();
     }
 
-    public List<Message> findMessagesByidDiscussion(String idDiscussion) {
+    public List<Message> findMessagesByidDiscussion(String idDiscussion , int page , int size) {
         Criteria criteria = Criteria.where("idDiscussion").is(idDiscussion);
         Query query = new Query(criteria);
+
+        int skip = (page - 1) * size;
+        query.skip(skip);
+
+        query.limit(size);
+
+        query.with(Sort.by(Sort.Direction.ASC, "dateEnvoi"));
+
+
         return mongoTemplate.find(query, Message.class);
     }
 
