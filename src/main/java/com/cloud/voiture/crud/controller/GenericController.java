@@ -140,7 +140,7 @@ public class GenericController<T extends GenericModel> {
                 ConstraintViolationException sqlException = (ConstraintViolationException) e.getCause();
                 String sqlState = sqlException.getSQLState();
                 if (sqlState.equals("23503")) {
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
                             .body(new Response("Cette entité ne peut être supprimée car elle est déjà utilisée."));
                 }
             }

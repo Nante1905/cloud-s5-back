@@ -30,6 +30,7 @@ public class AnnonceEtFavori extends AnnonceValide {
         utilisateurNom, utilisateurPrenom, dateInscription, adresse, validation);
 
     setDateAjout(dateAjout);
+    System.out.println("================= etat" + etat);
     // TODO Auto-generated constructor stub
   }
 
