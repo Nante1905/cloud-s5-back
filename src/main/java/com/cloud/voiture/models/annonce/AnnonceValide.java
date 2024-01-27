@@ -29,6 +29,7 @@ public class AnnonceValide extends AnnonceGeneral {
                 nomModele, nbPlace, nbPorte, anneeSortie, idCategorie, idMarque, nomVitesse, nomEnergie, nomCategorie,
                 nomMarque, logo, utilisateurNom, utilisateurPrenom, dateInscription, adresse);
         setValidation(validation);
+
     }
 
     private void setValidation(Timestamp v) {
@@ -41,7 +42,10 @@ public class AnnonceValide extends AnnonceGeneral {
 
     @Override
     public LocalDateTime getDateCreation() {
-        return validation;
+        if (validation != null) {
+            return validation;
+        }
+        return dateCreation;
     }
 
     public LocalDateTime getValidation() {
