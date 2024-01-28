@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.cloud.voiture.chat.requests.CreatePrivateChatRequest;
+import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.message.Discussion;
 import com.cloud.voiture.repositories.message.DiscussionRepository;
@@ -33,8 +34,8 @@ public class DiscussionService {
 
     public boolean allowed(String idDiscussion, int userId) {
         Discussion discussion = repository.findByIdDiscussion(idDiscussion);
-        System.out.println( userId + "  "+ discussion.getUserId1() + "  "+ discussion.getUserId2() );
-        System.out.println( discussion.getUserId1() == userId || discussion.getUserId2() == userId );
+        System.out.println(userId + "  " + discussion.getUserId1() + "  " + discussion.getUserId2());
+        System.out.println(discussion.getUserId1() == userId || discussion.getUserId2() == userId);
         return discussion.getUserId1() == userId || discussion.getUserId2() == userId;
     }
 
@@ -43,14 +44,14 @@ public class DiscussionService {
                 .is(request.getTargetUserId());
         Criteria criteria2 = Criteria.where("userId1").is(request.getTargetUserId()).and("userId2")
                 .is(contacter);
-        System.out.println( criteria1 );
-        System.out.println( criteria2 );
+        System.out.println(criteria1);
+        System.out.println(criteria2);
         Query query = new Query(new Criteria().orOperator(criteria1, criteria2));
-        System.out.println( query );
+        System.out.println(query);
         List<Discussion> discussions_exist = mongoTemplate.find(query, Discussion.class);
-        System.out.println( discussions_exist );
+        System.out.println(discussions_exist);
         if (discussions_exist.size() != 0) {
-            throw new Exception("cette discusson existe déjà");
+            throw new ValidationException("Cette discusson existe déjà");
         }
         Discussion discussion = new Discussion();
         discussion.setUserId1(contacter);

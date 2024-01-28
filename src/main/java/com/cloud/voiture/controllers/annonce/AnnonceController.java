@@ -216,15 +216,19 @@ public class AnnonceController extends GenericController<Annonce> {
   @Override
   @PostMapping
   public ResponseEntity<Response> save(@Valid @RequestBody Annonce annonce) {
+    System.out.println("save annonce ");
     try {
       Utilisateur u = utilisateurService.getAuthenticated();
       annonce.setIdUtilisateur(u.getId());
 
       List<AnnoncePhoto> photos = new ArrayList<>();
+      System.out.println(annonce.getMedias() + " =======================");
       if (annonce.getMedias() != null) {
         List<String> urls = mediaService.uploadMultipleFile(annonce.getMedias());
         for (String url : urls) {
+          System.out.println(url);
           AnnoncePhoto photo = new AnnoncePhoto();
+          photo.setAnnonce(annonce);
           photo.setUrl(url);
           photos.add(photo);
         }
