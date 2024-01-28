@@ -51,6 +51,7 @@ public class AuthenticationService {
 
     public void register(Utilisateur utilisateur) throws Exception {
         try {
+            utilisateur.setIdRole(2);
             this.utilisateurService.save(utilisateur);
         } catch (Exception e) {
             e.printStackTrace();

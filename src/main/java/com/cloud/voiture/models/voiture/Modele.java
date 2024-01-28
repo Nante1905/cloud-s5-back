@@ -2,6 +2,9 @@ package com.cloud.voiture.models.voiture;
 
 import java.time.LocalDate;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import com.cloud.voiture.crud.model.GenericModel;
 import com.cloud.voiture.exceptions.ValidationException;
 
@@ -47,6 +50,7 @@ public class Modele extends GenericModel {
 
     @ManyToOne
     @JoinColumn(name = "id_categorie", insertable = false, updatable = false)
+    @Fetch(FetchMode.JOIN)
     Categorie categorie;
 
     @NotNull(message = "La marque est obligatoire")
@@ -57,6 +61,7 @@ public class Modele extends GenericModel {
 
     @ManyToOne
     @JoinColumn(name = "id_marque", insertable = false, updatable = false)
+    @Fetch(FetchMode.JOIN)
     Marque marque;
 
     public Modele(int id, String nom) {

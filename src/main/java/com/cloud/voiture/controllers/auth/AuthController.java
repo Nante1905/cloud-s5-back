@@ -45,9 +45,9 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody Utilisateur newUser) throws Exception {
         try {
             this.authenticationService.register(newUser);
-            return ResponseEntity.ok(new Response("", "Register successful"));
+            return ResponseEntity.ok(new Response("", "Inscription réussie."));
         } catch (Exception e) {
-            return ResponseEntity.status(401).body(new Response(e.getMessage()));
+            return ResponseEntity.status(401).body(new Response("Une erreur s'est produite."));
         }
     }
 }

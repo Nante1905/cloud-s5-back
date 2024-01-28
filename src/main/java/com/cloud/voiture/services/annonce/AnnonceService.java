@@ -321,8 +321,10 @@ public class AnnonceService extends GenericService<Annonce> {
     NotificationPush notif = new NotificationPush("Annonce validée",
         "L'admin a refusé votre annonce sur " + a.getNomMarque() + " - " + a.getNomModele(), tokens);
     try {
-      notifPushService.sendNotif(notif);
-      System.out.println("notif envoyé");
+      if (tokens.size() > 0) {
+        notifPushService.sendNotif(notif);
+        System.out.println("notif envoyé");
+      }
     } catch (FirebaseMessagingException | InterruptedException | ExecutionException e) {
       e.printStackTrace();
       System.out.println("==========================================");
