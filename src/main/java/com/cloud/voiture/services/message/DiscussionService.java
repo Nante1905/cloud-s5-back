@@ -38,20 +38,23 @@ public class DiscussionService {
         return discussion.getUserId1() == userId || discussion.getUserId2() == userId;
     }
 
-    public Discussion save(CreatePrivateChatRequest request, int contacter) throws Exception {
-        Criteria criteria1 = Criteria.where("userId1").is(contacter).and("userId2")
-                .is(request.getTargetUserId());
-        Criteria criteria2 = Criteria.where("userId1").is(request.getTargetUserId()).and("userId2")
-                .is(contacter);
-        System.out.println( criteria1 );
-        System.out.println( criteria2 );
+    public boolean exist( int id1 , int id2 ){
+        Criteria criteria1 = Criteria.where("userId1").is(id1).and("userId2")
+                .is(id2);
+        Criteria criteria2 = Criteria.where("userId1").is(id2).and("userId2")
+                .is(id1);
         Query query = new Query(new Criteria().orOperator(criteria1, criteria2));
         System.out.println( query );
         List<Discussion> discussions_exist = mongoTemplate.find(query, Discussion.class);
-        System.out.println( discussions_exist );
-        if (discussions_exist.size() != 0) {
+        if (discussions_exist.size() != 0) return true;
+        return false;
+    }
+
+    public Discussion save(CreatePrivateChatRequest request, int contacter) throws Exception {
+        if (exist( contacter , request.getTargetUserId() )) {
             throw new Exception("cette discusson existe déjà");
         }
+        if( request.getTargetUserId() == contacter ) throw new Exception("vous ne pouvez pas créer de discussion avec vous meme");
         Discussion discussion = new Discussion();
         discussion.setUserId1(contacter);
         discussion.setUserId2(request.getTargetUserId());
