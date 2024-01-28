@@ -7,6 +7,7 @@ import java.util.List;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import com.cloud.voiture.config.ApplicationTimeZone;
 import com.cloud.voiture.config.Constant;
 import com.cloud.voiture.crud.model.GenericModel;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
@@ -52,7 +53,7 @@ public class Annonce extends GenericModel {
   int status = 0;
 
   @Column(name = "date_creation")
-  LocalDateTime dateCreation = LocalDateTime.now();
+  LocalDateTime dateCreation = LocalDateTime.now(ApplicationTimeZone.ZONE_ID);
 
   @NotNull(message = "")
   @Min(value = 0, message = "Le prix doit être strictement positif.")

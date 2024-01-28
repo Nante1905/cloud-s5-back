@@ -1,13 +1,16 @@
 package com.cloud.voiture.models.annonce;
 
+import java.time.LocalDateTime;
+
+import com.cloud.voiture.config.ApplicationTimeZone;
 import com.cloud.voiture.crud.model.GenericModel;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "commission")
@@ -20,7 +23,7 @@ public class Commission extends GenericModel {
   double pourcentage;
 
   @Column(name = "date_debut")
-  LocalDateTime dateAjout = LocalDateTime.now();
+  LocalDateTime dateAjout = LocalDateTime.now(ApplicationTimeZone.ZONE_ID);
 
   public int getId() {
     return id;

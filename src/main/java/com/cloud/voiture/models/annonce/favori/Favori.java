@@ -2,6 +2,7 @@ package com.cloud.voiture.models.annonce.favori;
 
 import java.time.LocalDateTime;
 
+import com.cloud.voiture.config.ApplicationTimeZone;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.EmbeddedId;
@@ -16,7 +17,7 @@ public class Favori {
   @EmbeddedId
   FavoriAnnonceID id = new FavoriAnnonceID();
 
-  LocalDateTime dateAjout = LocalDateTime.now();
+  LocalDateTime dateAjout = LocalDateTime.now(ApplicationTimeZone.ZONE_ID);
 
   public int getIdAnnonce() {
     return getId().getIdAnnonce();
