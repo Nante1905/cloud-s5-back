@@ -154,6 +154,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- 28/01/2024 18:33
 -- replace fonction 
 CREATE OR REPLACE FUNCTION f_topSellers(dateYYYYMM character varying, limit_value integer)
 RETURNS TABLE (
@@ -180,6 +181,7 @@ BEGIN
     	utilisateur u 
     	left join f_nbr_vendu(dateYYYYMM) vendu on vendu.id_utilisateur = u.id 
     	left join f_nbr_valide(dateYYYYMM) valide on valide.id_utilisateur = u.id
+    where u.id_role != 1
     order by pourcentage desc, vendu desc, valide desc
     limit limit_value;
     RETURN;

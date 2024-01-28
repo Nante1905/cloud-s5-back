@@ -19,7 +19,7 @@ import com.cloud.voiture.models.voiture.Modele;
 import com.cloud.voiture.models.voiture.Vitesse;
 import com.cloud.voiture.models.voiture.Voiture;
 import com.cloud.voiture.types.media.Media;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -85,7 +85,7 @@ public class Annonce extends GenericModel {
   @Transient
   boolean isFavori;
 
-  @JsonIgnore
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   @Transient
   Media[] medias;
 
