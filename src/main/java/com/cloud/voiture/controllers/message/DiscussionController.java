@@ -43,7 +43,7 @@ public class DiscussionController {
             e.printStackTrace();
         return ResponseEntity
             .status(500)
-            .body(new Response("Oups, une erreur s'est produite."));
+            .body(new Response("Oups, une erreur s'est produite." + e.getMessage()));
             }
     }
 }
