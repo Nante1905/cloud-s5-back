@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.cloud.voiture.config.ApplicationTimeZone;
 import com.cloud.voiture.config.Constant;
 import com.cloud.voiture.crud.pagination.Paginated;
 import com.cloud.voiture.crud.service.GenericService;
@@ -276,7 +277,7 @@ public class AnnonceService extends GenericService<Annonce> {
 
     HistoriqueAnnonce historique = new HistoriqueAnnonce();
     historique.setIdAnnonce(idAnnonce);
-    historique.setDateMaj(LocalDateTime.now());
+    historique.setDateMaj(LocalDateTime.now(ApplicationTimeZone.ZONE_ID));
     historique.setStatus(params.getAnnonceValide());
 
     updateStatus(idAnnonce, params.getAnnonceValide());
@@ -310,7 +311,7 @@ public class AnnonceService extends GenericService<Annonce> {
 
     HistoriqueAnnonce historique = new HistoriqueAnnonce();
     historique.setIdAnnonce(idAnnonce);
-    historique.setDateMaj(LocalDateTime.now());
+    historique.setDateMaj(LocalDateTime.now(ApplicationTimeZone.ZONE_ID));
     historique.setStatus(params.getAnnonceRefuse());
 
     updateStatus(idAnnonce, params.getAnnonceRefuse());
@@ -321,8 +322,10 @@ public class AnnonceService extends GenericService<Annonce> {
     NotificationPush notif = new NotificationPush("Annonce validée",
         "L'admin a refusé votre annonce sur " + a.getNomMarque() + " - " + a.getNomModele(), tokens);
     try {
-      notifPushService.sendNotif(notif);
-      System.out.println("notif envoyé");
+      if (tokens.size() > 0) {
+        notifPushService.sendNotif(notif);
+        System.out.println("notif envoyé");
+      }
     } catch (FirebaseMessagingException | InterruptedException | ExecutionException e) {
       e.printStackTrace();
       System.out.println("==========================================");
@@ -375,7 +378,7 @@ public class AnnonceService extends GenericService<Annonce> {
     model = super.save(model);
     HistoriqueAnnonce historiqueAnnonce = new HistoriqueAnnonce();
     historiqueAnnonce.setIdAnnonce(model.getId());
-    historiqueAnnonce.setDateMaj(LocalDateTime.now());
+    historiqueAnnonce.setDateMaj(LocalDateTime.now(ApplicationTimeZone.ZONE_ID));
     historiqueAnnonce.setStatus(params.getAnnonceCree());
     historiqueService.save(historiqueAnnonce);
 

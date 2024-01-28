@@ -41,7 +41,7 @@ public class SecurityConfig {
                     req
                             .requestMatchers("/auth/**").permitAll()
                             .requestMatchers("/error/**").permitAll()
-                            .requestMatchers("/annonces/{id}").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/annonces/{id}").permitAll()
                             .requestMatchers("/annonces/find").permitAll()
                             .requestMatchers(HttpMethod.POST, "/notif-token").permitAll()
                             .requestMatchers(HttpMethod.GET, "/categories").permitAll()

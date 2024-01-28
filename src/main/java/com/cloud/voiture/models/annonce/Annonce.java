@@ -7,6 +7,7 @@ import java.util.List;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import com.cloud.voiture.config.ApplicationTimeZone;
 import com.cloud.voiture.config.Constant;
 import com.cloud.voiture.crud.model.GenericModel;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
@@ -19,7 +20,7 @@ import com.cloud.voiture.models.voiture.Modele;
 import com.cloud.voiture.models.voiture.Vitesse;
 import com.cloud.voiture.models.voiture.Voiture;
 import com.cloud.voiture.types.media.Media;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -52,7 +53,7 @@ public class Annonce extends GenericModel {
   int status = 0;
 
   @Column(name = "date_creation")
-  LocalDateTime dateCreation = LocalDateTime.now();
+  LocalDateTime dateCreation = LocalDateTime.now(ApplicationTimeZone.ZONE_ID);
 
   @NotNull(message = "")
   @Min(value = 0, message = "Le prix doit être strictement positif.")
@@ -85,7 +86,7 @@ public class Annonce extends GenericModel {
   @Transient
   boolean isFavori;
 
-  @JsonIgnore
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   @Transient
   Media[] medias;
 

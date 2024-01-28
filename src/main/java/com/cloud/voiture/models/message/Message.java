@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.cloud.voiture.config.ApplicationTimeZone;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +22,6 @@ public class Message {
     private int destinataireId;
     private String idDiscussion;
     private String contenu;
-    private LocalDateTime dateEnvoi = LocalDateTime.now();
+    private LocalDateTime dateEnvoi = LocalDateTime.now(ApplicationTimeZone.ZONE_ID);
     private int type;
 }

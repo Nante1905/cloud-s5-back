@@ -60,7 +60,7 @@ public class StatistiqueService {
   public List<StatTopSeller> getTopSellers(StatTopSellerRequest request) {
     return entityManager
         .createNativeQuery(
-            "select  * from topSellers(:dateMax, :limitation)",
+            "select  * from f_topSellers(:dateMax, :limitation)",
             StatTopSeller.class)
         .setParameter("dateMax", request.getYYYYMM())
         .setParameter("limitation", request.getToShow())

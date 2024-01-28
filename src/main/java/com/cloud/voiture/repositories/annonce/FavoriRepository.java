@@ -17,6 +17,6 @@ public interface FavoriRepository extends JpaRepository<Favori, FavoriAnnonceID>
 
     public Optional<Favori> findById(FavoriAnnonceID id);
 
-    @Query(value = "select a.id id_annonce, ?1 id_utilisateur, f.date_ajout from v_annonce_gen_valide a left join annonce_favori f on f.id_annonce = a.id  and f.id_utilisateur = ?1 where id = ?2", nativeQuery = true)
+    @Query(value = "select a.id id_annonce, ?1 id_utilisateur, f.date_ajout from v_annonce_gen_valide a left join annonce_favori f on f.id_annonce = a.id  and f.id_utilisateur = ?1 where a.id = ?2", nativeQuery = true)
     public Optional<Favori> existsOrLiked(int user, int annonce);
 }
