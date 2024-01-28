@@ -108,7 +108,7 @@ public class Annonce extends GenericModel {
     setUtilisateur(new Utilisateur(a.getIdUtilisateur(), a.getUtilisateurNom(), a.getUtilisateurPrenom(),
         a.getDateInscription(), a.getAdresse()));
 
-    Voiture v = new Voiture(a.getIdVoiture(), a.getIdUtilisateur(), a.getKilometrage(), a.getEtat(),
+    Voiture v = new Voiture(a.getIdVoiture(), a.getConsommation(), a.getKilometrage(), a.getEtat(),
         new Couleur(a.getIdCouleur(), a.getNomCouleur(), a.getHexa()),
         new Modele(a.getIdModele(), a.getNomModele(), a.getNbPlace(), a.getNbPorte(), a.getAnneeSortie(),
             new Categorie(a.getIdCategorie(), a.getNomCategorie()),

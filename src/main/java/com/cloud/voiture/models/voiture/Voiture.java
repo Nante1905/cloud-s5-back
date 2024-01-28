@@ -61,12 +61,12 @@ public class Voiture extends GenericModel {
     Energie energie;
 
     public Voiture(int id,
-            float consommation,
+            double consommation,
             int kilometrage,
             int etat,
             Couleur couleur, Modele modele, Vitesse vitesse, Energie energie) {
         setId(id);
-        setConsommation(consommation);
+        setConsommation(Float.parseFloat(String.valueOf(consommation)));
         setKilometrage(kilometrage);
         setEtat(etat);
         setCouleur(couleur);
