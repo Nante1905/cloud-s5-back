@@ -242,8 +242,14 @@ public class AnnonceService extends GenericService<Annonce> {
     }
   }
 
-  public HistoriqueAnnonceDTO findHistorique(int idAnnonce) throws NotFoundException, ValidationException {
+  public HistoriqueAnnonceDTO findHistorique(int idAnnonce)
+      throws NotFoundException, ValidationException, AuthException {
     Annonce annonce = find(idAnnonce);
+
+    Utilisateur u = utilisateurService.getAuthenticated();
+    if (annonce.getIdUtilisateur() != u.getId() && u.getIdRole() != 1) {
+      throw new ValidationException("Accès interdit. Ceci n'est pas votre annonce");
+    }
     List<HistoriqueAnnonce> historiques = historiqueService.findByIdAnnonce(idAnnonce);
 
     List<HistoriqueAnnonceMin> historiqueMin = new ArrayList<HistoriqueAnnonceMin>();

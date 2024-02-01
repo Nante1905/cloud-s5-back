@@ -116,6 +116,7 @@ public class Annonce extends GenericModel {
         new Vitesse(a.getIdBoiteVitesse(), a.getNomVitesse()), new Energie(a.getIdEnergie(), a.getNomEnergie()));
     setVoiture(v);
     setPhotos(a.getPhotos());
+    System.out.println("annonce favori " + a.isFavori());
     setFavori(a.isFavori());
   }
 

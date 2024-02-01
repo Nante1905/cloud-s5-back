@@ -9,6 +9,7 @@ public class HistoriqueAnnonceDTO {
     String marque;
     String modele;
     double prix;
+    String reference;
     List<HistoriqueAnnonceMin> historiques;
 
     public HistoriqueAnnonceDTO() {
@@ -21,6 +22,7 @@ public class HistoriqueAnnonceDTO {
         setModele(m.getNom());
         setPrix(annonce.getPrix());
         setHistoriques(historiques);
+        setReference(annonce.getReference());
     }
 
     public int getId() {
@@ -61,6 +63,14 @@ public class HistoriqueAnnonceDTO {
 
     public void setPrix(double prix) {
         this.prix = prix;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
 }
