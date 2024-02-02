@@ -241,3 +241,6 @@ alter table annonce_favori alter column date_ajout set default now();
 -- 2024-01-24 00:40
 alter table historique_annonce alter column date_maj set default now();
 
+-- 02/02/2024
+alter table vue_annonce alter column id_utilisateur drop not null;
+

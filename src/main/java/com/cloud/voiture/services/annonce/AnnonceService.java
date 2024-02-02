@@ -217,6 +217,9 @@ public class AnnonceService extends GenericService<Annonce> {
     return annonceRepository.getPhotos(idAnnonce);
   }
 
+  // TODO
+  // Na tsy connecté ary ve lay user d comptabilisena hoe vues?
+  @Transactional(rollbackOn = { Exception.class })
   public Annonce findById(int idAnnonce) throws NotFoundException {
     System.out.println("maka détails annonce");
     Utilisateur u = new Utilisateur();
@@ -227,6 +230,13 @@ public class AnnonceService extends GenericService<Annonce> {
       System.out.println("details sans connexion");
     }
     try {
+      if (u.getRole() == null || u.getRole().getReference().equals("ADMIN") == false) {
+        if (u.getId() == 0) {
+          getByIdAndView(idAnnonce, null);
+        } else {
+          getByIdAndView(idAnnonce, u.getId());
+        }
+      }
       AnnonceEtFavori a = (AnnonceEtFavori) entityManager.createNativeQuery(
           """
                 select a.*, f.date_ajout
@@ -242,8 +252,7 @@ public class AnnonceService extends GenericService<Annonce> {
     }
   }
 
-  @Transactional
-  public void getByIdAndView(int idAnnonce, int iduser) throws Exception {
+  public void getByIdAndView(int idAnnonce, Integer iduser) {
     VueAnnonce vueAnnonce = new VueAnnonce();
     vueAnnonce.setIdUtilisateur(iduser);
     vueAnnonce.setIdAnnonce(idAnnonce);
@@ -251,6 +260,7 @@ public class AnnonceService extends GenericService<Annonce> {
       vueAnnonceService.save(vueAnnonce);
       annonceRepository.addView(idAnnonce);
     } catch (DataIntegrityViolationException e) {
+      e.printStackTrace();
       System.out.println("deja vu");
     }
   }

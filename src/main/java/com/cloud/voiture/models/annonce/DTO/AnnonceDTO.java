@@ -21,6 +21,7 @@ public class AnnonceDTO {
     int etat;
     boolean favori;
     int status;
+    int vues;
     List<AnnoncePhoto> photos;
 
     public AnnonceDTO() {
@@ -37,6 +38,7 @@ public class AnnonceDTO {
         setEtat(a.getEtat());
         setPrix(a.getPrix());
         setStatus(a.getStatus());
+        setVues(a.getNbVues());
     }
 
     public AnnonceDTO(AnnonceEtFavori a) {
@@ -159,6 +161,14 @@ public class AnnonceDTO {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getVues() {
+        return vues;
+    }
+
+    public void setVues(int vues) {
+        this.vues = vues;
     }
 
 }
