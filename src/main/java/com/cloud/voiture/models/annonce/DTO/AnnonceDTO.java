@@ -46,7 +46,11 @@ public class AnnonceDTO {
         setModele(new ModeleDTO(a.getIdModele(), a.getNomModele()));
         setUtilisateur(new UtilisateurDTO(a.getIdUtilisateur(), a.getUtilisateurNom(), a.getUtilisateurPrenom(),
                 a.getAdresse(), a.getDateInscription()));
-        setCreation(a.getDateCreation());
+        if (a.getValidation() != null) {
+            setCreation(a.getValidation());
+        } else {
+            setCreation(a.getDateCreation());
+        }
         setEtat(a.getEtat());
         setPrix(a.getPrix());
         setFavori(a.isFavori());

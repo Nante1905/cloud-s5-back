@@ -28,6 +28,7 @@ import com.cloud.voiture.models.annonce.VueAnnonce;
 import com.cloud.voiture.models.annonce.DTO.AnnonceDTO;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 import com.cloud.voiture.models.annonce.favori.Favori;
+import com.cloud.voiture.models.annonce.favori.FavoriAnnonceID;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.notification.NotificationPush;
 import com.cloud.voiture.repositories.annonce.AnnonceGeneralRepository;
@@ -120,18 +121,26 @@ public class AnnonceService extends GenericService<Annonce> {
   }
 
   @Transactional
-  public int toggleFavori(int idAnnonce) throws AuthException, NotFoundException {
+  public int toggleFavori(int idAnnonce) throws AuthException, NotFoundException, ValidationException {
     Utilisateur u = utilisateurService.getAuthenticated();
-    Favori favori = favoriService.existOrLiked(u.getId(), idAnnonce);
-    System.out.println(favori.getDateAjout());
+    AnnonceEtFavori favori = favoriService.existOrLiked(u.getId(), idAnnonce);
+    Favori f = new Favori();
+    f.setId(new FavoriAnnonceID(u.getId(), idAnnonce));
+
+    if (favori.getIdUtilisateur() == u.getId()) {
+      throw new ValidationException("Vous ne pouvez pas mettre votre propre annonce en favori.");
+    }
     if (favori.getDateAjout() == null) {
-      // Favori f = new Favori();
-      // f.setId(new FavoriAnnonceID(u.getId(), idAnnonce));
-      favoriService.save(favori);
+      if (favori.getStatus() != 5) {
+        throw new ValidationException("Seule les annonces disponibles peuvent être mises en favori.");
+      } else {
+        favoriService.save(f);
+      }
       return 1;
     } else {
-      System.out.println("delete ohhhh " + favori.getIdUtilisateur() + " a " + favori.getIdUtilisateur());
-      favoriService.delete(favori);
+      System.out.println("delete ohhhh " + favori.getIdUtilisateur() + " a " +
+          favori.getIdUtilisateur());
+      favoriService.delete(f);
       return -1;
     }
   }
@@ -219,7 +228,11 @@ public class AnnonceService extends GenericService<Annonce> {
     }
     try {
       AnnonceEtFavori a = (AnnonceEtFavori) entityManager.createNativeQuery(
-          "select a.*, null as date_maj, f.date_ajout from v_annonce_general a left outer join annonce_favori f on a.id = f.id_annonce and f.id_utilisateur = :user where a.id = :id",
+          """
+                select a.*, f.date_ajout
+                from v_annonce_gen_a_jour a
+                left outer join annonce_favori f on a.id = f.id_annonce and f.id_utilisateur = :user where a.id = :id
+              """,
           AnnonceEtFavori.class).setParameter("user", u.getId()).setParameter("id", idAnnonce).getSingleResult();
       a.setPhotos(findPhotos(a.getId()));
       return new Annonce(a);

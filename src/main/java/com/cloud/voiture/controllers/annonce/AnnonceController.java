@@ -376,6 +376,9 @@ public class AnnonceController extends GenericController<Annonce> {
       e.printStackTrace();
       return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
           .body(new Response("Annonce invalide: impossible de mettre en favori."));
+    } catch (ValidationException e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(new Response(e.getMessage()));
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseEntity.status(500).body(new Response("Une erreur s'est produite"));

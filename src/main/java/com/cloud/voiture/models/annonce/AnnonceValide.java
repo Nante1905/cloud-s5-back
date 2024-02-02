@@ -32,7 +32,11 @@ public class AnnonceValide extends AnnonceGeneral {
 
     }
 
-    private void setValidation(Timestamp v) {
+    public AnnonceValide() {
+        // TODO Auto-generated constructor stub
+    }
+
+    public void setValidation(Timestamp v) {
         if (v == null) {
             this.validation = null;
         } else {
@@ -42,9 +46,6 @@ public class AnnonceValide extends AnnonceGeneral {
 
     @Override
     public LocalDateTime getDateCreation() {
-        if (validation != null) {
-            return validation;
-        }
         return dateCreation;
     }
 
