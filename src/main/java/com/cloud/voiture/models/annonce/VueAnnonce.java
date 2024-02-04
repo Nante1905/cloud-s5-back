@@ -15,13 +15,12 @@ import jakarta.persistence.Table;
 @Table(name = "vue_annonce")
 @Entity
 public class VueAnnonce extends GenericModel {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
     @Column(name = "id_utilisateur")
-    Integer idUtilisateur;
+    int idUtilisateur;
     @ManyToOne
     @JoinColumn(name = "id_utilisateur", insertable = false, updatable = false)
     Utilisateur utilisateur;
@@ -39,11 +38,11 @@ public class VueAnnonce extends GenericModel {
         this.id = id;
     }
 
-    public Integer getIdUtilisateur() {
+    public int getIdUtilisateur() {
         return idUtilisateur;
     }
 
-    public void setIdUtilisateur(Integer idUtilisateur) {
+    public void setIdUtilisateur(int idUtilisateur) {
         this.idUtilisateur = idUtilisateur;
     }
 

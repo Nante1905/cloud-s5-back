@@ -21,6 +21,7 @@ import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
 import com.cloud.voiture.models.annonce.AnnonceEtFavori;
 import com.cloud.voiture.models.annonce.AnnonceGeneral;
+import com.cloud.voiture.models.annonce.AnnonceValide;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonce;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceDTO;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceMin;
@@ -177,6 +178,19 @@ public class AnnonceService extends GenericService<Annonce> {
     updateStatus(idAnnonce, config.getAnnonceVendu());
   }
 
+  public List<AnnonceDTO> findDeletedAnnonceOfConnectedUser(int page, int taille) throws AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    List<AnnonceValide> aG = aGeneralService.findDeletedOf(u.getId(), page, taille);
+    List<AnnonceDTO> annonces = new ArrayList<>();
+    for (AnnonceValide a : aG) {
+      AnnonceDTO dto = new AnnonceDTO(a);
+      dto.setPhotos(findPhotos(a.getId()));
+      dto.setDateMaj(a.getValidation());
+      annonces.add(dto);
+    }
+    return annonces;
+  }
+
   public List<AnnonceDTO> findAnnonceNonValideOfConnectedUser(int page, int taille) throws AuthException {
     Utilisateur u = utilisateurService.getAuthenticated();
     List<AnnonceGeneral> aG = aGeneralService.findNonValideOf(u.getId(), page, taille);
@@ -230,12 +244,8 @@ public class AnnonceService extends GenericService<Annonce> {
       System.out.println("details sans connexion");
     }
     try {
-      if (u.getRole() == null || u.getRole().getReference().equals("ADMIN") == false) {
-        if (u.getId() == 0) {
-          getByIdAndView(idAnnonce, null);
-        } else {
-          getByIdAndView(idAnnonce, u.getId());
-        }
+      if (u.getId() != 0 && u.getRole().getReference().equals("ADMIN") == false) {
+        getByIdAndView(idAnnonce, u.getId());
       }
       AnnonceEtFavori a = (AnnonceEtFavori) entityManager.createNativeQuery(
           """

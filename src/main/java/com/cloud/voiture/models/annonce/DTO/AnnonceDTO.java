@@ -23,6 +23,7 @@ public class AnnonceDTO {
     int status;
     int vues;
     List<AnnoncePhoto> photos;
+    LocalDateTime dateMaj;
 
     public AnnonceDTO() {
     }
@@ -169,6 +170,14 @@ public class AnnonceDTO {
 
     public void setVues(int vues) {
         this.vues = vues;
+    }
+
+    public LocalDateTime getDateMaj() {
+        return dateMaj;
+    }
+
+    public void setDateMaj(LocalDateTime dateMaj) {
+        this.dateMaj = dateMaj;
     }
 
 }

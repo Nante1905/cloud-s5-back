@@ -86,6 +86,24 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
+  @Secured({ "USER" })
+  @GetMapping("/supprime/moi")
+  public ResponseEntity<Response> getAnnonceSupprimeOfConnectedUser(
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
+    try {
+      return ResponseEntity.ok()
+          .body(new Response(annonceService.findDeletedAnnonceOfConnectedUser(page, taille), null));
+    } catch (AuthException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .body(new Response("Accès refusé.Veuillez vous connecter."));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new Response("Une erreur s'est produite"));
+    }
+  }
+
   @GetMapping("/nonValide/moi")
   public ResponseEntity<Response> getAnnonceNonValideOfConnectedUser(
       @RequestParam(required = false, defaultValue = "0") int page,
