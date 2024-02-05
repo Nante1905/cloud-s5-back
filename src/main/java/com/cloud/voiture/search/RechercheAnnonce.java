@@ -30,7 +30,7 @@ public class RechercheAnnonce {
         prixMax != null ||
         prixMin != null) {
       System.out.println("misy filtre motClé" + motCle + "min " + prixMin);
-      sql = sql + " where ";
+      sql = sql + " and ";
     } else {
       System.out.println("tsisy filtre " + sql);
       return sql;
