@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.models.auth.Utilisateur;
-import com.cloud.voiture.models.message.Discussion;
 import com.cloud.voiture.models.message.LastMessage;
 import com.cloud.voiture.repositories.auth.UtilisateurRepository;
 import com.cloud.voiture.services.message.DiscussionService;
@@ -58,18 +57,25 @@ public class UtilisateurService extends GenericService<Utilisateur> {
         return utilisateurs;
     }
 
-    public List<LastMessage> getDiscussionsForUserWithUsers( int idutilisateur ) throws Exception{
-        // List<Discussion> discussions = discussionService.getDiscussionsWithLastMessagesForUser(idutilisateur);
+    public List<LastMessage> getDiscussionsForUserWithUsers(int idutilisateur) throws Exception {
+        // List<Discussion> discussions =
+        // discussionService.getDiscussionsWithLastMessagesForUser(idutilisateur);
         List<LastMessage> discussions = lastMessageService.getDiscussionLastMessageById(idutilisateur);
         for (LastMessage discussion : discussions) {
             int userId1 = discussion.getUserId1();
             int userId2 = discussion.getUserId2();
+            Utilisateur connected = this.getAuthenticated();
 
-            Utilisateur user1 = findUtilisateurById(userId1);
-            Utilisateur user2 = findUtilisateurById(userId2);
+            Utilisateur user1;
+
+            if (userId1 != connected.getId())
+                user1 = findUtilisateurById(userId1);
+            else
+                user1 = findUtilisateurById(userId2);
+            // Utilisateur user2 = findUtilisateurById(userId2);
 
             discussion.setGauche(user1);
-            discussion.setDroite(user2);
+            discussion.setDroite(connected);
         }
         return discussions;
     }

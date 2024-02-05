@@ -4,6 +4,7 @@ public class ChatMessageRequest {
 
     private String message;
     private String discussionId;
+    private int idExpedit;
 
     public ChatMessageRequest() {
     }
@@ -27,6 +28,7 @@ public class ChatMessageRequest {
         return "ChatMessage{" +
                 "userName='" + discussionId + '\'' +
                 ", message='" + message + '\'' +
+                ", idExpedit='" + idExpedit + '\'' +
                 '}';
     }
 
@@ -38,5 +40,12 @@ public class ChatMessageRequest {
         this.discussionId = discussionId;
     }
 
-   
+    public int getIdExpedit() {
+        return idExpedit;
+    }
+
+    public void setIdExpedit(int idExpedit) {
+        this.idExpedit = idExpedit;
+    }
+
 }
