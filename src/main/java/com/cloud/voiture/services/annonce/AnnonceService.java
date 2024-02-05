@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -231,8 +230,19 @@ public class AnnonceService extends GenericService<Annonce> {
     return annonceRepository.getPhotos(idAnnonce);
   }
 
-  // TODO
-  // Na tsy connecté ary ve lay user d comptabilisena hoe vues?
+  public Annonce findByIdAndAddView(int idAnnonce) throws NotFoundException {
+    Annonce a = findById(idAnnonce);
+    try {
+      Utilisateur u = utilisateurService.getAuthenticated();
+      if (u.getRole().getReference().equals("ADMIN") == false) {
+        getByIdAndView(idAnnonce, u.getId());
+      }
+    } catch (AuthException e) {
+      System.out.println("Détails sans connexion");
+    }
+    return a;
+  }
+
   @Transactional(rollbackOn = { Exception.class })
   public Annonce findById(int idAnnonce) throws NotFoundException {
     System.out.println("maka détails annonce");
@@ -244,9 +254,6 @@ public class AnnonceService extends GenericService<Annonce> {
       System.out.println("details sans connexion");
     }
     try {
-      if (u.getId() != 0 && u.getRole().getReference().equals("ADMIN") == false) {
-        getByIdAndView(idAnnonce, u.getId());
-      }
       AnnonceEtFavori a = (AnnonceEtFavori) entityManager.createNativeQuery(
           """
                 select a.*, f.date_ajout
@@ -263,15 +270,17 @@ public class AnnonceService extends GenericService<Annonce> {
   }
 
   public void getByIdAndView(int idAnnonce, Integer iduser) {
-    VueAnnonce vueAnnonce = new VueAnnonce();
-    vueAnnonce.setIdUtilisateur(iduser);
-    vueAnnonce.setIdAnnonce(idAnnonce);
-    try {
+    List<VueAnnonce> v = vueAnnonceService.findByIdUtilisateurAndIdAnnonce(iduser, idAnnonce);
+    if (v.size() == 0) {
+      VueAnnonce vueAnnonce = new VueAnnonce();
+      vueAnnonce.setIdUtilisateur(iduser);
+      vueAnnonce.setIdAnnonce(idAnnonce);
+
       vueAnnonceService.save(vueAnnonce);
       annonceRepository.addView(idAnnonce);
-    } catch (DataIntegrityViolationException e) {
-      e.printStackTrace();
-      System.out.println("deja vu");
+
+    } else {
+      System.out.println("=========== annonce déjà vue ========");
     }
   }
 

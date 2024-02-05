@@ -61,7 +61,7 @@ public class AnnonceController extends GenericController<Annonce> {
   @GetMapping("/{id}")
   public ResponseEntity<Response> find(@PathVariable(name = "id") int id) {
     try {
-      return ResponseEntity.ok(new Response(annonceService.findById(id), ""));
+      return ResponseEntity.ok(new Response(annonceService.findByIdAndAddView(id), ""));
     } catch (NotFoundException e) {
       return ResponseEntity.status(404).body(new Response("Cette identifiant n'existe pas."));
     }
