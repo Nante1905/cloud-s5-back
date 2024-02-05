@@ -20,7 +20,7 @@ public class RechercheAnnonce {
   public String generateSql() {
     // String sql = "select id_annonce from v_annonce ";
 
-    String sql = "select a.*, f.date_ajout from v_annonce_gen_valide a left outer join annonce_favori f on a.id = f.id_annonce and f.id_utilisateur = %id% ";
+    String sql = "select a.*, f.date_ajout from v_annonce_gen_valide a left outer join annonce_favori f on a.id = f.id_annonce and f.id_utilisateur = %id% where a.id_utilisateur != %id%";
 
     if (motCle != null ||
         categorie != null ||
@@ -30,7 +30,7 @@ public class RechercheAnnonce {
         prixMax != null ||
         prixMin != null) {
       System.out.println("misy filtre motClé" + motCle + "min " + prixMin);
-      sql = sql + " where ";
+      sql = sql + " and ";
     } else {
       System.out.println("tsisy filtre " + sql);
       return sql;

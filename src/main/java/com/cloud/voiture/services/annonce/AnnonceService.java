@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +20,7 @@ import com.cloud.voiture.exceptions.ValidationException;
 import com.cloud.voiture.models.annonce.Annonce;
 import com.cloud.voiture.models.annonce.AnnonceEtFavori;
 import com.cloud.voiture.models.annonce.AnnonceGeneral;
+import com.cloud.voiture.models.annonce.AnnonceValide;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonce;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceDTO;
 import com.cloud.voiture.models.annonce.HistoriqueAnnonceMin;
@@ -28,6 +28,7 @@ import com.cloud.voiture.models.annonce.VueAnnonce;
 import com.cloud.voiture.models.annonce.DTO.AnnonceDTO;
 import com.cloud.voiture.models.annonce.annoncePhoto.AnnoncePhoto;
 import com.cloud.voiture.models.annonce.favori.Favori;
+import com.cloud.voiture.models.annonce.favori.FavoriAnnonceID;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.notification.NotificationPush;
 import com.cloud.voiture.repositories.annonce.AnnonceGeneralRepository;
@@ -120,18 +121,26 @@ public class AnnonceService extends GenericService<Annonce> {
   }
 
   @Transactional
-  public int toggleFavori(int idAnnonce) throws AuthException, NotFoundException {
+  public int toggleFavori(int idAnnonce) throws AuthException, NotFoundException, ValidationException {
     Utilisateur u = utilisateurService.getAuthenticated();
-    Favori favori = favoriService.existOrLiked(u.getId(), idAnnonce);
-    System.out.println(favori.getDateAjout());
+    AnnonceEtFavori favori = favoriService.existOrLiked(u.getId(), idAnnonce);
+    Favori f = new Favori();
+    f.setId(new FavoriAnnonceID(u.getId(), idAnnonce));
+
+    if (favori.getIdUtilisateur() == u.getId()) {
+      throw new ValidationException("Vous ne pouvez pas mettre votre propre annonce en favori.");
+    }
     if (favori.getDateAjout() == null) {
-      // Favori f = new Favori();
-      // f.setId(new FavoriAnnonceID(u.getId(), idAnnonce));
-      favoriService.save(favori);
+      if (favori.getStatus() != 5) {
+        throw new ValidationException("Seule les annonces disponibles peuvent être mises en favori.");
+      } else {
+        favoriService.save(f);
+      }
       return 1;
     } else {
-      System.out.println("delete ohhhh " + favori.getIdUtilisateur() + " a " + favori.getIdUtilisateur());
-      favoriService.delete(favori);
+      System.out.println("delete ohhhh " + favori.getIdUtilisateur() + " a " +
+          favori.getIdUtilisateur());
+      favoriService.delete(f);
       return -1;
     }
   }
@@ -166,6 +175,19 @@ public class AnnonceService extends GenericService<Annonce> {
     histo.setStatus(config.getAnnonceVendu());
     historiqueService.save(histo);
     updateStatus(idAnnonce, config.getAnnonceVendu());
+  }
+
+  public List<AnnonceDTO> findDeletedAnnonceOfConnectedUser(int page, int taille) throws AuthException {
+    Utilisateur u = utilisateurService.getAuthenticated();
+    List<AnnonceValide> aG = aGeneralService.findDeletedOf(u.getId(), page, taille);
+    List<AnnonceDTO> annonces = new ArrayList<>();
+    for (AnnonceValide a : aG) {
+      AnnonceDTO dto = new AnnonceDTO(a);
+      dto.setPhotos(findPhotos(a.getId()));
+      dto.setDateMaj(a.getValidation());
+      annonces.add(dto);
+    }
+    return annonces;
   }
 
   public List<AnnonceDTO> findAnnonceNonValideOfConnectedUser(int page, int taille) throws AuthException {
@@ -208,6 +230,20 @@ public class AnnonceService extends GenericService<Annonce> {
     return annonceRepository.getPhotos(idAnnonce);
   }
 
+  public Annonce findByIdAndAddView(int idAnnonce) throws NotFoundException {
+    Annonce a = findById(idAnnonce);
+    try {
+      Utilisateur u = utilisateurService.getAuthenticated();
+      if (u.getRole().getReference().equals("ADMIN") == false) {
+        getByIdAndView(idAnnonce, u.getId());
+      }
+    } catch (AuthException e) {
+      System.out.println("Détails sans connexion");
+    }
+    return a;
+  }
+
+  @Transactional(rollbackOn = { Exception.class })
   public Annonce findById(int idAnnonce) throws NotFoundException {
     System.out.println("maka détails annonce");
     Utilisateur u = new Utilisateur();
@@ -219,7 +255,11 @@ public class AnnonceService extends GenericService<Annonce> {
     }
     try {
       AnnonceEtFavori a = (AnnonceEtFavori) entityManager.createNativeQuery(
-          "select a.*, null as date_maj, f.date_ajout from v_annonce_general a left outer join annonce_favori f on a.id = f.id_annonce and f.id_utilisateur = :user where a.id = :id",
+          """
+                select a.*, f.date_ajout
+                from v_annonce_gen_a_jour a
+                left outer join annonce_favori f on a.id = f.id_annonce and f.id_utilisateur = :user where a.id = :id
+              """,
           AnnonceEtFavori.class).setParameter("user", u.getId()).setParameter("id", idAnnonce).getSingleResult();
       a.setPhotos(findPhotos(a.getId()));
       return new Annonce(a);
@@ -229,21 +269,29 @@ public class AnnonceService extends GenericService<Annonce> {
     }
   }
 
-  @Transactional
-  public void getByIdAndView(int idAnnonce, int iduser) throws Exception {
-    VueAnnonce vueAnnonce = new VueAnnonce();
-    vueAnnonce.setIdUtilisateur(iduser);
-    vueAnnonce.setIdAnnonce(idAnnonce);
-    try {
+  public void getByIdAndView(int idAnnonce, Integer iduser) {
+    List<VueAnnonce> v = vueAnnonceService.findByIdUtilisateurAndIdAnnonce(iduser, idAnnonce);
+    if (v.size() == 0) {
+      VueAnnonce vueAnnonce = new VueAnnonce();
+      vueAnnonce.setIdUtilisateur(iduser);
+      vueAnnonce.setIdAnnonce(idAnnonce);
+
       vueAnnonceService.save(vueAnnonce);
       annonceRepository.addView(idAnnonce);
-    } catch (DataIntegrityViolationException e) {
-      System.out.println("deja vu");
+
+    } else {
+      System.out.println("=========== annonce déjà vue ========");
     }
   }
 
-  public HistoriqueAnnonceDTO findHistorique(int idAnnonce) throws NotFoundException, ValidationException {
+  public HistoriqueAnnonceDTO findHistorique(int idAnnonce)
+      throws NotFoundException, ValidationException, AuthException {
     Annonce annonce = find(idAnnonce);
+
+    Utilisateur u = utilisateurService.getAuthenticated();
+    if (annonce.getIdUtilisateur() != u.getId() && u.getIdRole() != 1) {
+      throw new ValidationException("Accès interdit. Ceci n'est pas votre annonce");
+    }
     List<HistoriqueAnnonce> historiques = historiqueService.findByIdAnnonce(idAnnonce);
 
     List<HistoriqueAnnonceMin> historiqueMin = new ArrayList<HistoriqueAnnonceMin>();

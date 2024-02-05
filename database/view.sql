@@ -152,18 +152,11 @@ from annonce a
     on a.id = h.id_annonce
 where h.status = 10;
 
--- create or replace view v_annonce_valide as
--- select a.*, h.date_maj 
--- from annonce a 
---     join v_max_historique_annonce h 
---     on a.id = h.id_annonce
--- where h.status =5;
+-- 02/02/2023 9:17
+create view v_annonce_gen_a_jour as
+select a.*, h.date_maj
+from v_annonce_general a 
+left join historique_annonce h on a.id = h.id_annonce and h.status = 5;
 
-select id_utilisateur, count(*) nbr
-from v_annonce_valide v
-where TO_CHAR(v.date_maj::date, 'YYYYMM') <= '202401'
-group by id_utilisateur;
-
--- select id_utilisateur, count(*) nbr, sum(commission) commission
--- from v_annonce_vendu
--- group by id_utilisateur;
+-- TODO:
+-- alana ao am annonce_favori ny autolike

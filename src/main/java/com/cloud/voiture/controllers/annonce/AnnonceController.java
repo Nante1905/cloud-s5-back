@@ -61,7 +61,7 @@ public class AnnonceController extends GenericController<Annonce> {
   @GetMapping("/{id}")
   public ResponseEntity<Response> find(@PathVariable(name = "id") int id) {
     try {
-      return ResponseEntity.ok(new Response(annonceService.findById(id), ""));
+      return ResponseEntity.ok(new Response(annonceService.findByIdAndAddView(id), ""));
     } catch (NotFoundException e) {
       return ResponseEntity.status(404).body(new Response("Cette identifiant n'existe pas."));
     }
@@ -83,6 +83,24 @@ public class AnnonceController extends GenericController<Annonce> {
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseEntity.status(500).body(new Response(e.getMessage()));
+    }
+  }
+
+  @Secured({ "USER" })
+  @GetMapping("/supprime/moi")
+  public ResponseEntity<Response> getAnnonceSupprimeOfConnectedUser(
+      @RequestParam(required = false, defaultValue = "0") int page,
+      @RequestParam(required = false, defaultValue = "0") int taille) {
+    try {
+      return ResponseEntity.ok()
+          .body(new Response(annonceService.findDeletedAnnonceOfConnectedUser(page, taille), null));
+    } catch (AuthException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .body(new Response("Accès refusé.Veuillez vous connecter."));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new Response("Une erreur s'est produite"));
     }
   }
 
@@ -200,6 +218,13 @@ public class AnnonceController extends GenericController<Annonce> {
     } catch (ValidationException e) {
       e.printStackTrace();
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response(e.getMessage()));
+    } catch (AuthException e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Response(e.getMessage()));
+    } catch (Exception e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(new Response("Oups, une erreur s'est produite"));
     }
   }
 
@@ -369,6 +394,9 @@ public class AnnonceController extends GenericController<Annonce> {
       e.printStackTrace();
       return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
           .body(new Response("Annonce invalide: impossible de mettre en favori."));
+    } catch (ValidationException e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(new Response(e.getMessage()));
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseEntity.status(500).body(new Response("Une erreur s'est produite"));

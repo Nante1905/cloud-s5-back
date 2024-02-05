@@ -62,11 +62,22 @@ public class FavoriService {
         return favoriRepository.findById(new FavoriAnnonceID(idUtilisateur, idAnnonce)).orElse(null);
     }
 
-    public Favori existOrLiked(int idUtilisateur, int idAnnonce) throws NotFoundException {
-        System.out.println(idUtilisateur + "==================== " + idAnnonce);
+    public AnnonceEtFavori existOrLiked(int idUtilisateur, int idAnnonce) throws NotFoundException {
+        List<AnnonceEtFavori> f = entityManager
+                .createNativeQuery(
+                        """
+                                    select a.id , a.id_utilisateur, a.date_maj, f.date_ajout, a.status from v_annonce_gen_a_jour a left join annonce_favori f on f.id_annonce = a.id  and f.id_utilisateur = :user where a.id = :annonce
+                                """,
+                        AnnonceEtFavori.class)
+                .setParameter("user", idUtilisateur)
+                .setParameter("annonce", idAnnonce)
+                .getResultList();
 
-        return favoriRepository.existsOrLiked(idUtilisateur, idAnnonce)
-                .orElseThrow(() -> new NotFoundException());
+        if (f.size() == 0) {
+            throw new NotFoundException();
+        } else {
+            return f.get(0);
+        }
     }
 
     public void save(Favori f) {

@@ -21,7 +21,9 @@ public class AnnonceDTO {
     int etat;
     boolean favori;
     int status;
+    int vues;
     List<AnnoncePhoto> photos;
+    LocalDateTime dateMaj;
 
     public AnnonceDTO() {
     }
@@ -37,6 +39,7 @@ public class AnnonceDTO {
         setEtat(a.getEtat());
         setPrix(a.getPrix());
         setStatus(a.getStatus());
+        setVues(a.getNbVues());
     }
 
     public AnnonceDTO(AnnonceEtFavori a) {
@@ -46,7 +49,11 @@ public class AnnonceDTO {
         setModele(new ModeleDTO(a.getIdModele(), a.getNomModele()));
         setUtilisateur(new UtilisateurDTO(a.getIdUtilisateur(), a.getUtilisateurNom(), a.getUtilisateurPrenom(),
                 a.getAdresse(), a.getDateInscription()));
-        setCreation(a.getDateCreation());
+        if (a.getValidation() != null) {
+            setCreation(a.getValidation());
+        } else {
+            setCreation(a.getDateCreation());
+        }
         setEtat(a.getEtat());
         setPrix(a.getPrix());
         setFavori(a.isFavori());
@@ -155,6 +162,22 @@ public class AnnonceDTO {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getVues() {
+        return vues;
+    }
+
+    public void setVues(int vues) {
+        this.vues = vues;
+    }
+
+    public LocalDateTime getDateMaj() {
+        return dateMaj;
+    }
+
+    public void setDateMaj(LocalDateTime dateMaj) {
+        this.dateMaj = dateMaj;
     }
 
 }

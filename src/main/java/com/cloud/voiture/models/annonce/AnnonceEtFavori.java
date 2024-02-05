@@ -34,6 +34,16 @@ public class AnnonceEtFavori extends AnnonceValide {
     // TODO Auto-generated constructor stub
   }
 
+  public AnnonceEtFavori(Integer idAnnonce, Integer idUtilisateur, Timestamp validation, Timestamp dateLike,
+      Integer status) {
+    super();
+    setId(idAnnonce);
+    setIdUtilisateur(idUtilisateur);
+    setValidation(validation);
+    setDateAjout(dateLike);
+    setStatus(status);
+  }
+
   public boolean isFavori() {
     return dateAjout != null;
   }

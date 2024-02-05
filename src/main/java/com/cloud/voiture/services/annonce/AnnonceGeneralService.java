@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.cloud.voiture.crud.service.GenericService;
 import com.cloud.voiture.models.annonce.AnnonceGeneral;
+import com.cloud.voiture.models.annonce.AnnonceValide;
 import com.cloud.voiture.repositories.annonce.AnnonceGeneralRepository;
 
 @Service
@@ -39,6 +40,15 @@ public class AnnonceGeneralService extends GenericService<AnnonceGeneral> {
         return aGeneralRepository.findNonValide(page, taille);
     }
 
+    public List<AnnonceValide> findDeletedOf(int idUtilisateur, int page, int taille) {
+        if (page == 0) {
+            return aGeneralRepository.findDeleted(idUtilisateur);
+        }
+        if (taille == 0) {
+            taille = TAILLE_PAGE;
+        }
+        return aGeneralRepository.findDeleted(idUtilisateur, page, taille);
+    }
 
     public List<AnnonceGeneral> findNonValideOf(int idUtilisateur, int page, int taille) {
         if (page == 0) {

@@ -99,6 +99,7 @@ public class Annonce extends GenericModel {
     setDescription(a.getDescription());
     setPrix(a.getPrix());
     setStatus(a.getStatus());
+    System.out.println("status " + a.getStatus() + " maj  " + a.getValidation());
     if (a.status == 5) {
       setDateCreation(a.getValidation());
     } else {
@@ -117,6 +118,7 @@ public class Annonce extends GenericModel {
     setVoiture(v);
     setPhotos(a.getPhotos());
     setFavori(a.isFavori());
+    setNbVues(a.getNbVues());
   }
 
   public int getId() {

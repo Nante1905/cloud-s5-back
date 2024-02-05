@@ -255,6 +255,7 @@ public class AnnonceGeneral extends GenericModel {
     }
 
     public int getNbVues() {
+        System.out.println("maka nb vue");
         return nbVues;
     }
 
