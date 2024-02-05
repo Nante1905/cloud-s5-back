@@ -52,8 +52,18 @@ public class DiscussionService {
     }
 
     public Discussion save(CreatePrivateChatRequest request, int contacter) throws Exception {
+        int id1 = contacter;
+        int id2 = request.getTargetUserId();
         if (exist(contacter, request.getTargetUserId())) {
-            return repository.findByUserId1AndUserId2(contacter, request.getTargetUserId()).get();
+            Criteria criteria1 = Criteria.where("userId1").is(id1).and("userId2")
+                    .is(id2);
+            Criteria criteria2 = Criteria.where("userId1").is(id2).and("userId2")
+                    .is(id1);
+            Query query = new Query(new Criteria().orOperator(criteria1, criteria2));
+            System.out.println(query);
+            List<Discussion> discussions = mongoTemplate.find(query, Discussion.class);
+            if (discussions.size() != 0)
+                return discussions.get(0);
         }
         if (request.getTargetUserId() == contacter)
             throw new ValidationException("Vous ne pouvez pas créer de discussion avec vous meme");
