@@ -53,7 +53,7 @@ public class DiscussionService {
 
     public Discussion save(CreatePrivateChatRequest request, int contacter) throws Exception {
         if (exist(contacter, request.getTargetUserId())) {
-            throw new ValidationException("cette discusson existe déjà");
+            return repository.findByUserId1AndUserId2(contacter, request.getTargetUserId()).get();
         }
         if (request.getTargetUserId() == contacter)
             throw new ValidationException("Vous ne pouvez pas créer de discussion avec vous meme");
