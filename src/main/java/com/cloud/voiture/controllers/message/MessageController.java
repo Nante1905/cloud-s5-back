@@ -19,7 +19,7 @@ import com.cloud.voiture.services.message.DiscussionService;
 import com.cloud.voiture.services.message.MessageService;
 import com.cloud.voiture.types.response.Response;
 
-@Secured({"USER"})
+@Secured({ "USER" })
 @RestController
 @RequestMapping("/message")
 public class MessageController {
@@ -38,7 +38,9 @@ public class MessageController {
             int iduser = utilisateurService.getAuthenticated().getId();
             if (discussionService.allowed(request.getChatId(), iduser)) {
                 return ResponseEntity
-                        .ok(new Response(messageService.findMessagesByidDiscussion(request.getChatId(), request.getPagination().getNumero() , request.getPagination().getTaillePage() ), ""));
+                        .ok(new Response(messageService.findMessagesByidDiscussion(request.getChatId(),
+                                request.getPagination().getNumero(), request.getPagination().getTaillePage(),
+                                request.getExtraSkip()), ""));
             } else {
                 throw new UnauthorizedChatting();
             }

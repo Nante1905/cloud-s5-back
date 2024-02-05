@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -14,7 +15,6 @@ import com.cloud.voiture.chat.requests.ChatMessageRequest;
 import com.cloud.voiture.models.message.Message;
 import com.cloud.voiture.repositories.message.MessageRepository;
 import com.cloud.voiture.services.UtilisateurService;
-import org.springframework.data.domain.Sort;
 
 @Service
 public class MessageService {
@@ -26,10 +26,10 @@ public class MessageService {
     private UtilisateurService utilisateurService;
     @Autowired
     private DiscussionService discussionService;
-    
-    public Message addMessage(ChatMessageRequest request) throws Exception{
+
+    public Message addMessage(ChatMessageRequest request) throws Exception {
         int iduser = utilisateurService.getAuthenticated().getId();
-        if(discussionService.allowed(request.getDiscussionId(), iduser)==false){
+        if (discussionService.allowed(request.getDiscussionId(), iduser) == false) {
             throw new UnauthorizedChatting();
         }
         Message message = new Message();
@@ -44,7 +44,7 @@ public class MessageService {
         return repository.findAll();
     }
 
-    public List<Message> findMessagesByidDiscussion(String idDiscussion , int page , int size) {
+    public List<Message> findMessagesByidDiscussion(String idDiscussion, int page, int size, int extraSkip) {
         Criteria criteria = Criteria.where("idDiscussion").is(idDiscussion);
         Query query = new Query(criteria);
 
@@ -53,18 +53,17 @@ public class MessageService {
 
         query.limit(size);
 
-        query.with(Sort.by(Sort.Direction.ASC, "dateEnvoi"));
-
+        query.with(Sort.by(Sort.Direction.DESC, "dateEnvoi"));
 
         return mongoTemplate.find(query, Message.class);
     }
 
     public List<Message> findMessagesByUsers(int expediteurId, int destinataireId) {
-    Criteria criteria1 = Criteria.where("expediteurId").is(expediteurId).and("destinataireId").is(destinataireId);
-    Criteria criteria2 = Criteria.where("expediteurId").is(destinataireId).and("destinataireId").is(expediteurId);
-    
-    Query query = new Query(new Criteria().orOperator(criteria1, criteria2));
+        Criteria criteria1 = Criteria.where("expediteurId").is(expediteurId).and("destinataireId").is(destinataireId);
+        Criteria criteria2 = Criteria.where("expediteurId").is(destinataireId).and("destinataireId").is(expediteurId);
 
-    return mongoTemplate.find(query, Message.class);
-}
+        Query query = new Query(new Criteria().orOperator(criteria1, criteria2));
+
+        return mongoTemplate.find(query, Message.class);
+    }
 }

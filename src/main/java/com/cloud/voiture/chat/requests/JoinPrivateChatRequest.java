@@ -5,6 +5,8 @@ import com.cloud.voiture.models.customPagination.CustomPagination;
 public class JoinPrivateChatRequest {
     private String chatId;
     private CustomPagination pagination;
+    int extraSkip;
+
     public String getChatId() {
         return chatId;
     }
@@ -19,5 +21,13 @@ public class JoinPrivateChatRequest {
 
     public void setPagination(CustomPagination pagination) {
         this.pagination = pagination;
+    }
+
+    public int getExtraSkip() {
+        return extraSkip;
+    }
+
+    public void setExtraSkip(int extraSkip) {
+        this.extraSkip = extraSkip;
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.cloud.voiture.chat.requests.CreatePrivateChatRequest;
 import com.cloud.voiture.exceptions.ValidationException;
-import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.models.message.Discussion;
 import com.cloud.voiture.repositories.message.DiscussionRepository;
 import com.cloud.voiture.services.UtilisateurService;
@@ -25,11 +24,11 @@ public class DiscussionService {
     private MongoTemplate mongoTemplate;
     private UtilisateurService utilisateurService;
 
-    public List<Utilisateur> findUsersByIdDiscussion(String idDiscussion) {
+    public List<Integer> findUsersByIdDiscussion(String idDiscussion) {
         Discussion discussion = repository.findByIdDiscussion(idDiscussion);
-        Utilisateur gauche = discussion.getGauche();
-        Utilisateur droite = discussion.getDroite();
-        return List.of(gauche, droite);
+        // Utilisateur gauche = discussion.getGauche();
+        // Utilisateur droite = discussion.getDroite();
+        return List.of(discussion.getUserId1(), discussion.getUserId2());
     }
 
     public boolean allowed(String idDiscussion, int userId) {

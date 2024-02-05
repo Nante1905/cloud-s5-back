@@ -1,6 +1,5 @@
 package com.cloud.voiture.chat.config;
 
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +13,7 @@ public class SocketIoConfig {
 
     @Value("${socket-server.port}")
     private Integer port;
+
     @Bean
     public SocketIOServer socketIoServer() {
         com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
