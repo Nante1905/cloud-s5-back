@@ -44,8 +44,8 @@ public class AuthController {
     @PostMapping("register")
     public ResponseEntity<?> register(@RequestBody Utilisateur newUser) throws Exception {
         try {
-            this.authenticationService.register(newUser);
-            return ResponseEntity.ok(new Response("", "Inscription réussie."));
+            Utilisateur u = this.authenticationService.register(newUser);
+            return ResponseEntity.ok(new Response(u, "Inscription réussie."));
         } catch (Exception e) {
             return ResponseEntity.status(401).body(new Response("Une erreur s'est produite."));
         }

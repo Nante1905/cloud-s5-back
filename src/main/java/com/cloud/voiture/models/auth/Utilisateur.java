@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import com.cloud.voiture.config.ApplicationTimeZone;
 import com.cloud.voiture.crud.model.GenericModel;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -46,7 +47,7 @@ public class Utilisateur extends GenericModel {
     String password;
 
     @Column(insertable = false)
-    LocalDateTime dateInscription;
+    LocalDateTime dateInscription = LocalDateTime.now(ApplicationTimeZone.ZONE_ID);
 
     @NotNull(message = "")
     @NotBlank(message = "")
