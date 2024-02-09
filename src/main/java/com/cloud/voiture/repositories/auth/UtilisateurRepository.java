@@ -13,4 +13,5 @@ public interface UtilisateurRepository extends GenericRepository<Utilisateur> {
 
     @Query("SELECT u FROM Utilisateur u join fetch u.role WHERE u.email = :email")
     public Optional<Utilisateur> findByEmail(String email);
+
 }
