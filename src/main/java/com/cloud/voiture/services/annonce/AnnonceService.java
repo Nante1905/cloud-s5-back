@@ -369,7 +369,7 @@ public class AnnonceService extends GenericService<Annonce> {
 
     // sending notification
     List<String> tokens = notifPushService.getTokenOf(a.getIdUtilisateur());
-    NotificationPush notif = new NotificationPush("Annonce validée",
+    NotificationPush notif = new NotificationPush("Annonce refusée",
         "L'admin a refusé votre annonce sur " + a.getNomMarque() + " - " + a.getNomModele(), tokens);
     try {
       if (tokens.size() > 0) {

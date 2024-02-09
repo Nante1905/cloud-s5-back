@@ -64,6 +64,8 @@ public class SecurityConfig {
                             .requestMatchers(HttpMethod.PUT, "/couleurs").hasAuthority("ADMIN")
                             .requestMatchers(HttpMethod.DELETE, "/couleurs").hasAuthority("ADMIN")
                             .requestMatchers("/annonces/estimate").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/notif-token").permitAll()
+                            .requestMatchers("/socket.io/**").permitAll()
                             .anyRequest().authenticated();
 
                 })
