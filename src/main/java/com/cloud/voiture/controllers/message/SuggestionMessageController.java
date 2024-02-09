@@ -35,7 +35,8 @@ public class SuggestionMessageController {
             SuggestionMessage body = service.addSuggestionMessage(suggestionMessage);
             return ResponseEntity.ok().body(new Response(body, "Inserer avec succes"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response(e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new Response("Une erreur s'est produite"));
         }
     }
 

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import com.cloud.voiture.models.auth.Utilisateur;
 import com.cloud.voiture.services.UtilisateurService;
 
+import jakarta.security.auth.message.AuthException;
+
 @Service
 public class AuthenticationService {
 
@@ -27,7 +29,7 @@ public class AuthenticationService {
                 return jwtManager.generateToken(user,
                         this.customUserDetailsService.getAuthorities(user));
             }
-            throw new Exception("Identifiants incorrects. Réessayez.");
+            throw new AuthException("Identifiants incorrects. Réessayez.");
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

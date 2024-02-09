@@ -93,7 +93,7 @@ public class GenericController<T extends GenericModel> {
             Paginated<T> result = service.findAll(page, pageSize);
             return ResponseEntity.ok(new Response(result, ""));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(new Response(e.getMessage()));
+            return ResponseEntity.status(500).body(new Response("Une erreur s'est produite"));
         }
     }
 

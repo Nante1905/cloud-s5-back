@@ -12,6 +12,8 @@ import com.cloud.voiture.services.authentication.AuthenticationService;
 import com.cloud.voiture.types.auth.AuthModel;
 import com.cloud.voiture.types.response.Response;
 
+import jakarta.security.auth.message.AuthException;
+
 @RestController
 @RequestMapping("auth")
 public class AuthController {
@@ -25,8 +27,11 @@ public class AuthController {
             String token = this.authenticationService.login(body.getEmail(), body.getPassword());
 
             return ResponseEntity.ok(new Response(token, "Bienvenue!"));
-        } catch (Exception e) {
+        } catch (AuthException e) {
             return ResponseEntity.status(401).body(new Response(e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(401).body(new Response("Une erreur s'est produite"));
         }
     }
 
@@ -37,7 +42,7 @@ public class AuthController {
 
             return ResponseEntity.ok(new Response(token, "Bienvenue!"));
         } catch (Exception e) {
-            return ResponseEntity.status(401).body(new Response(e.getMessage()));
+            return ResponseEntity.status(500).body(new Response(e.getMessage()));
         }
     }
 

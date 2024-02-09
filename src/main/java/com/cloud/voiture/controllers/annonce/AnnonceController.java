@@ -82,7 +82,7 @@ public class AnnonceController extends GenericController<Annonce> {
       return ResponseEntity.ok(new Response(result, ""));
     } catch (Exception e) {
       e.printStackTrace();
-      return ResponseEntity.status(500).body(new Response(e.getMessage()));
+      return ResponseEntity.status(500).body(new Response("Une erreur s'est produite"));
     }
   }
 
@@ -155,7 +155,6 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
-  @GetMapping("/moi")
   @Override
   @DeleteMapping("/{id}")
   public ResponseEntity<Response> delete(@PathVariable(name = "id") int id) {
@@ -204,7 +203,7 @@ public class AnnonceController extends GenericController<Annonce> {
       System.out.println(annonces.size());
       return ResponseEntity.ok(new Response(annonces, ""));
     } catch (Exception e) {
-      return ResponseEntity.status(500).body(new Response(e.getMessage()));
+      return ResponseEntity.status(500).body(new Response("Une erreur s'est produite"));
     }
   }
 
@@ -234,7 +233,7 @@ public class AnnonceController extends GenericController<Annonce> {
       EstimationPrix estimationPrix = voitureService.estimate(voiture);
       return ResponseEntity.ok(new Response(estimationPrix, ""));
     } catch (Exception e) {
-      return ResponseEntity.status(500).body(new Response(e.getMessage()));
+      return ResponseEntity.status(500).body(new Response("Une erreur s'est produite"));
     }
   }
 
@@ -295,7 +294,7 @@ public class AnnonceController extends GenericController<Annonce> {
     } catch (AuthException e) {
       return ResponseEntity.status(403).body(new Response(e.getMessage()));
     } catch (Exception e) {
-      return ResponseEntity.status(500).body(new Response(e.getMessage()));
+      return ResponseEntity.status(500).body(new Response("Une erreur s'est produite"));
     }
   }
 
@@ -358,7 +357,7 @@ public class AnnonceController extends GenericController<Annonce> {
       List<AnnonceDTO> results = annonceService.getAllNonValide(page, taille);
       return ResponseEntity.ok(new Response(results, ""));
     } catch (Exception e) {
-      return ResponseEntity.status(500).body(new Response(e.getMessage()));
+      return ResponseEntity.status(500).body(new Response("Une erreur s'est produite"));
 
     }
   }

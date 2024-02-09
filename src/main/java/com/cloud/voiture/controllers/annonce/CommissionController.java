@@ -27,7 +27,7 @@ public class CommissionController extends GenericController<Commission> {
       Commission current = commissionService.getLast();
       return ResponseEntity.ok(new Response(current, ""));
     } catch (Exception e) {
-      return ResponseEntity.status(500).body(new Response(e.getMessage()));
+      return ResponseEntity.status(500).body(new Response("Une erreur s'est produite"));
     }
   }
 

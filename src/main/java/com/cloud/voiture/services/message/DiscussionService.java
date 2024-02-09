@@ -51,7 +51,7 @@ public class DiscussionService {
         return false;
     }
 
-    public Discussion save(CreatePrivateChatRequest request, int contacter) throws Exception {
+    public Discussion save(CreatePrivateChatRequest request, int contacter) throws ValidationException {
         int id1 = contacter;
         int id2 = request.getTargetUserId();
         if (exist(contacter, request.getTargetUserId())) {
