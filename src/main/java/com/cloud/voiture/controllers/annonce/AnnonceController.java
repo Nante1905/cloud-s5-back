@@ -272,10 +272,10 @@ public class AnnonceController extends GenericController<Annonce> {
       } catch (Exception ex) {
         ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(new Response(ex.getMessage()));
+            .body(new Response("Une erreur s'est produite: impossible de supprimer les photos"));
       }
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body(new Response(e.getMessage()));
+          .body(new Response("Une erreur s'est produite: Vérifiez votre type de données"));
     }
   }
 

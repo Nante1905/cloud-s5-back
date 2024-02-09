@@ -58,6 +58,7 @@ public class AnnonceDTO {
         setPrix(a.getPrix());
         setFavori(a.isFavori());
         setStatus(a.getStatus());
+        setVues(a.getNbVues());
     }
 
     public static List<AnnonceDTO> convertAnnonceGeneral(List<AnnonceGeneral> annonces) {
