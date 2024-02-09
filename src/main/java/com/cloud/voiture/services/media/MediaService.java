@@ -35,7 +35,7 @@ public class MediaService {
 
         String bucketName = "cloud-photo-cab19.appspot.com";
         String uuid = UUID.randomUUID().toString();
-        String fileName = uuid + media.getFileName();
+        String fileName = uuid;
 
         BlobId blobId = BlobId.of(bucketName, fileName); // Replace with your bucker name
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(media.getContentType()).build();
