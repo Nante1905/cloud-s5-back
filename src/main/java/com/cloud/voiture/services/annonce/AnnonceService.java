@@ -235,7 +235,7 @@ public class AnnonceService extends GenericService<Annonce> {
     Annonce a = findById(idAnnonce);
     try {
       Utilisateur u = utilisateurService.getAuthenticated();
-      if (u.getRole().getReference().equals("ADMIN") == false) {
+      if (u.getRole().getReference().equals("ADMIN") == false && u.getId() != a.getIdUtilisateur()) {
         getByIdAndView(idAnnonce, u.getId());
       }
     } catch (AuthException e) {
