@@ -68,19 +68,21 @@ public class MessageController {
             Message message = messageService.addMessage(messageRequest);
             // sending notification
 
+            Utilisateur sender = utilisateurService.getAuthenticated();
             Utilisateur to = new Utilisateur();
             List<Integer> discussionUsers = this.discussionService
                     .findUsersByIdDiscussion(messageRequest.getDiscussionId());
             for (int u : discussionUsers) {
-                if (u != messageRequest.getIdExpedit()) {
+                if (u != sender.getId()) {
                     to = this.utilisateurService.find(u);
                 }
             }
 
             List<String> tokens = notifPushService.getTokenOf(to.getId());
-            NotificationPush notif = new NotificationPush(to.getPrenom() + " " + to.getNom(),
+            NotificationPush notif = new NotificationPush(sender.getPrenom() + " " + sender.getNom(),
                     message.getContenu(),
                     tokens);
+            System.out.println("tokens: " + tokens);
             try {
                 if (tokens.size() > 0) {
                     notifPushService.sendNotif(notif);
