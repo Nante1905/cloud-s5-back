@@ -11,7 +11,7 @@ public interface StatistiqueRepo extends JpaRepository<Couleur, Integer> {
     @Query(value = "select * from f_benefice_par_mois(?1, ?2)", nativeQuery = true)
     public List<Object[]> getBeneficeParMois(int mois, int annee);
 
-    @Query(value = "select count(*) from v_annonce_vendu vav where extract(month from vav.date_maj) = 1 and extract(year from vav.date_maj) = 2024", nativeQuery = true)
+    @Query(value = "select count(*) from v_annonce_vendu vav where extract(month from vav.date_maj) = ?1 and extract(year from vav.date_maj) = ?2", nativeQuery = true)
     public int getNbVendu(int mois, int annee);
 
     @Query(value = "select count(*) from v_annonce_valide where extract(month from date_maj) = ?1 and extract(year from date_maj) = ?2", nativeQuery = true)
