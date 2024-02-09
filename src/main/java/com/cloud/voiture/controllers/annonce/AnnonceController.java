@@ -155,7 +155,6 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
-  @GetMapping("/moi")
   @Override
   @DeleteMapping("/{id}")
   public ResponseEntity<Response> delete(@PathVariable(name = "id") int id) {
