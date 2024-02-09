@@ -155,7 +155,6 @@ public class AnnonceController extends GenericController<Annonce> {
     }
   }
 
-  @GetMapping("/moi")
   @Override
   @DeleteMapping("/{id}")
   public ResponseEntity<Response> delete(@PathVariable(name = "id") int id) {
@@ -168,7 +167,8 @@ public class AnnonceController extends GenericController<Annonce> {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
           .body(new Response("Vous n'avez aucune annonce avec cette identifiant"));
     } catch (ValidationException e) {
-      return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(new Response(e.getMessage()));
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response(e.getMessage()));
     } catch (Exception e) {
       e.printStackTrace();
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -272,10 +272,10 @@ public class AnnonceController extends GenericController<Annonce> {
       } catch (Exception ex) {
         ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(new Response(ex.getMessage()));
+            .body(new Response("Une erreur s'est produite: impossible de supprimer les photos"));
       }
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body(new Response(e.getMessage()));
+          .body(new Response("Une erreur s'est produite: Vérifiez votre type de données"));
     }
   }
 

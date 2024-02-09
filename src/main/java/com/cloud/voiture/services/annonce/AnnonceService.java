@@ -230,11 +230,12 @@ public class AnnonceService extends GenericService<Annonce> {
     return annonceRepository.getPhotos(idAnnonce);
   }
 
+  @Transactional(rollbackOn = Exception.class)
   public Annonce findByIdAndAddView(int idAnnonce) throws NotFoundException {
     Annonce a = findById(idAnnonce);
     try {
       Utilisateur u = utilisateurService.getAuthenticated();
-      if (u.getRole().getReference().equals("ADMIN") == false) {
+      if (u.getRole().getReference().equals("ADMIN") == false && u.getId() != a.getIdUtilisateur()) {
         getByIdAndView(idAnnonce, u.getId());
       }
     } catch (AuthException e) {
@@ -269,6 +270,7 @@ public class AnnonceService extends GenericService<Annonce> {
     }
   }
 
+  @Transactional(rollbackOn = { Exception.class })
   public void getByIdAndView(int idAnnonce, Integer iduser) {
     List<VueAnnonce> v = vueAnnonceService.findByIdUtilisateurAndIdAnnonce(iduser, idAnnonce);
     if (v.size() == 0) {
@@ -278,7 +280,7 @@ public class AnnonceService extends GenericService<Annonce> {
 
       vueAnnonceService.save(vueAnnonce);
       annonceRepository.addView(idAnnonce);
-
+      System.out.println("Ajoutée comme vue =====================");
     } else {
       System.out.println("=========== annonce déjà vue ========");
     }
